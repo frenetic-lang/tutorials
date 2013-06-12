@@ -1,7 +1,7 @@
 Chapter 7: Firewall Redux
 =========================
 
-In [Chapter 3](03-OxFirewall.md), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured flow table to implement the same function efficiently. 
+In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured flow table to implement the same function efficiently. 
 This NetCore program has the same features: `if dlTyp = 0x800 && nwProto = 1 then drop else all`. 
 
 In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see 
@@ -195,6 +195,6 @@ Then, running `curl 10.0.0.4:25` should succeed from `h3`, but fail form `h2`.
 
 ## Next chapter: [Multi-switch Programming][Ch8]
 
-[Ch8]: 08-NCMultiSwitch.md
+[Ch8]: 08-NCMultiSwitch
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html

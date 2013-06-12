@@ -155,7 +155,7 @@ arrive on the controller.
 ## Next chapter: [NetCore Introduction][Ch6]
 
 
-[Ch6]: 06-NetCoreIntroduction.md
+[Ch6]: 06-NetCoreIntroduction
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 

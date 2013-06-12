@@ -141,6 +141,6 @@ Show that your firewall in `Firewall.nc` is truly reuseable.  Reimplement your s
 
 ## Next chapter: [Monitoring with NetCore][Ch9]
 
-[Ch9]: 09-NCMonitoring.md
-[Ch7]: 07-NCFirewall.md
+[Ch9]: 09-NCMonitoring
+[Ch7]: 07-NCFirewall
 

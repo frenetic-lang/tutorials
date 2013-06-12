@@ -27,7 +27,7 @@ $ cd guide/netcore-tutorial-code
 
 ### Example 1: A Naive Repeater (Redux)
 
-In the [OxRepeater](02-OxRepeater.md) chapter, you learned how to program an
+In the [OxRepeater](02-OxRepeater) chapter, you learned how to program an
 efficient repeater by adding rules to the switch flow table.  Recall that a
 repeater simply forwards incoming packets out all other ports.
 
@@ -60,7 +60,7 @@ whether to forward a packet out port 1 or port 2, depending on the packet's
 OpenFlow-supported fields, such as the <code>srcIP</code>, <code>dstIP</code>
 or <code>dlTyp</code>.  Conditions can also be formed using conjunctions
 (<code>&&</code>), disjunctions (<code>||</code>) and negation (<code>!</code>)
-of other conditions.  See the [manual](A-NCManual.md) for the complete list of
+of other conditions.  See the [manual](A-NCManual) for the complete list of
 predicates. 
 
 The last line of the program uses <code>monitorTable(1,repeater)</code>, which
@@ -115,7 +115,7 @@ which drops all packets on the floor.
 
 ## Next chapter: [Firewall Redux][Ch7]
 
-[Ch7]: 07-NCFirewall.md
+[Ch7]: 07-NCFirewall
 
 [topo_1]: images/topo_1.png "Default Mininet topology."
 [topo_2]: images/topo_2.png "Simple linear topology."

@@ -139,11 +139,11 @@ Handy References
 
 [Packet]: http://frenetic-lang.github.io/frenetic/docs/Packet.html
 
-[Ch2]: 02-OxRepeater.md
-[Ch3]: 03-OxFirewall.md
-[Ch4]: 04-OxMonitor.md
-[Ch5]: 05-OxLearning.md
-[Ch6]: 06-NetCoreIntroduction.md
-[Ch7]: 07-NCFirewall.md
-[Ch8]: 08-NCMultiSwitch.md
-[Ch9]: 09-NCMonitoring.md
+[Ch2]: 02-OxRepeater
+[Ch3]: 03-OxFirewall
+[Ch4]: 04-OxMonitor
+[Ch5]: 05-OxLearning
+[Ch6]: 06-NetCoreIntroduction
+[Ch7]: 07-NCFirewall
+[Ch8]: 08-NCMultiSwitch
+[Ch9]: 09-NCMonitoring

@@ -1,7 +1,7 @@
 Chapter 9: Monitoring with NetCore
 ==================================
 
-In [Chapter 4](04-OxMonitor.md), you wrote an Ox controller that measured the volume of HTTP traffic on the network. You first wrote the _packet_in_
+In [Chapter 4](04-OxMonitor), you wrote an Ox controller that measured the volume of HTTP traffic on the network. You first wrote the _packet_in_
 function to count all HTTP traffic on the controller. To count packets efficiently, you had to:
 
 - Create flow table rules that match HTTP traffic exclusively,
@@ -73,7 +73,7 @@ discarded.
 Sequential and parallel composition make it easier to write SDN controller
 programs, but it all gets compiled to OpenFlow rules in the end.  To get a feel
 for how the compiler works, let's take another look at a NetCore version of the
-efficient firewall from the [OxFirewall](03-OxFirewall.md) chapter, altering it
+efficient firewall from the [OxFirewall](03-OxFirewall) chapter, altering it
 slightly to block SSH rather than ICMP traffic:
 
 ```
@@ -148,4 +148,4 @@ higher up.
 
 ## Next chapter: [Tutorial Wrap-up][Ch10]
 
-[Ch10]: 10-WrapUp.md
+[Ch10]: 10-WrapUp

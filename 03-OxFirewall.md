@@ -161,13 +161,13 @@ packets at the controller.
 
 [Packet]: http://frenetic-lang.github.io/frenetic/docs/Packet.html
 
-[Ch2]: 02-OxRepeater.md
-[Ch3]: 03-OxFirewall.md
-[Ch4]: 04-OxMonitor.md
-[Ch5]: 05-OxLearning.md
-[Ch6]: 06-NetCoreIntroduction.md
-[Ch7]: 07-NetCoreComposition.md
-[Ch8]: 08-DynamicNetCore.md
+[Ch2]: 02-OxRepeater
+[Ch3]: 03-OxFirewall
+[Ch4]: 04-OxMonitor
+[Ch5]: 05-OxLearning
+[Ch6]: 06-NetCoreIntroduction
+[Ch7]: 07-NetCoreComposition
+[Ch8]: 08-DynamicNetCore
 
 [OpenFlow_Core]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html
 
