@@ -1,6 +1,3 @@
-Frenetic Tutorial
-=================
-
 Getting Started
 ---------------
 
