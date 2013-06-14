@@ -94,36 +94,45 @@ and switches. So, you do need both implementations.
 
 ### Exercise 1: A Naive Repeater
 
-In this part, you will only write the `packet_in` function for the repeater,
-thereby processing all packets at the controller.
+In this part, you will write a repeater that processes all packets at the controller.
+Therefore, this repeater only needs to process `packet_in` messages. You should
+use the template below:
 
-Use [Repeater.ml](ox-tutorial-code/Repeater.ml) as a starting point. This file and
-the entire tutorial is included with the tutorial VM.  Open a terminal
-and type:
+```ocaml
+(* Repeater.ml *)
+open OxPlatform
+open OpenFlow0x01_Core
 
+module MyApplication = struct
+  include OxStart.DefaultTutorialHandlers
+
+  let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
+     ...
+
+end
+
+module Controller = OxStart.Make (MyApplication)
 ```
-$ cd src/frenetic/guide/ox-tutorial-code
+
+Within the body of `packet_in`, you need to use [send_packet_out], 
+which takes a list of actions (`apply_actions`) to apply to the packet:
+
+```ocaml
+let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
+  Printf.printf "%s\n%!" (packetIn_to_string pk);
+  send_packet_out sw 0l {
+    output_payload = pk.input_payload;
+    port_id = None;
+    apply_actions = ... (* [FILL] *);
+  }
 ```
 
-We recommend working in this directory. It has a Makefile that links
-to the Ox libraries for you.
+ou need to fill in the list of actions to send the packet out of
+every port (excluding the input port). This is easier than it
+sounds, because you can do it with just one OpenFlow action.
 
-#### Programming Task
-
-[Repeater.ml](ox-tutorial-code/Repeater.ml) contains the skeleton of
-an Ox application. It defines two functions: `switch_connected`, which
-is called when switches come online and connect to the controller, and
-`packet_in`, which is called whenever a packet is sent from a switch
-to the controller.
-
-[Repeater.ml](ox-tutorial-code/Repeater.ml) has a `packet_in` function
-that just sends every packet out port 1. This is obviously wrong. To be a
-repeater, it has to send each packet out of every port (excluding the input
-port). This is easier than it sounds, because you can do it with just
-one OpenFlow action.
-
-Find the right action in the Ox manual (it is in the [OpenFlow_Core]
-module) and use it.
+**Find the right action in the Ox manual (it is in the [OpenFlow_Core]
+module) and fill it in.**
 
 <h4 id="compiling">Compiling your Controller</h4>
 
