@@ -267,14 +267,10 @@ Processing all packets at the controller is very inefficient.
 You will now add rules to the switch's flow table to have the switch
 process packets itself.
 
-For this part, continue building on the naive repeater you wrote above.
+For this part, continue building on the naive repeater you wrote above. Build on `ox-tutorial-solutions/Repeater1.ml` if necessary.
 
-> Build on `ox-tutorial-solutions/Repeater1.ml` if necessary.
-
-#### Programming Task
-
-Fill in the `switch_connected` handler in your program, using the following
-as a template:
+Your task is to write a `switch_connected` handler in your program,
+using the following as a template:
 
 ```ocaml
 let switch_connected (sw : switchId) : unit =
