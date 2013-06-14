@@ -37,6 +37,11 @@ simple platform for writing OpenFlow controllers in OCaml. Apart from
 managing the socket connections and serialization, Ox gives you direct
 access to the OpenFlow protocol.
 
+Ox is loosely based on platforms such as 
+[POX](https://openflow.stanford.edu/display/ONL/POX+Wiki) and
+[NOX](http://www.noxrepo.org/nox/about-nox/). The concepts and techniques
+you learn in this tutorial are applicable to those platforms too.
+
 [[2 Ox Repeater][Ch2]] [[3 Ox Firewall][Ch3]] [[4 Ox Monitor][Ch4]]
 [[5 Ox Learning][Ch5]]
 
@@ -45,6 +50,12 @@ access to the OpenFlow protocol.
   (NetCoreDSL). You will see that NetCoreDSL provides high-level
   abstractions and rich, compositional features that make SDN
   programming much easier.
+
+> TODO(arjun): I'd rather not introduce another name (NetCoreDSL).
+> In fact, maybe we should jettison the name NetCore altogether (apart
+> from the file extension .nc). Let's just call chapters 6 - 8 "Frenetic".
+> Below, let's just state that you can write Frenetic programs embedded
+> in OCaml too.
 
 [[6 NetCore Introduction][Ch6]] [[7 NetCore Firewall][Ch7]] [[8
 Multiple Switches][Ch8]] [[9 NetCore Monitoring][Ch9]]
@@ -95,14 +106,8 @@ Handy References
 
 - [Ox Platform Reference](http://frenetic-lang.github.io/frenetic/docs/)
   
-  You will write your controllers using Ox, which is a lightweight
-  platform for writing controllers in OCaml. This tutorial will guide you
-  though writing Ox controllers.
-
-  Ox is loosely based on platforms such as 
-  [POX](https://openflow.stanford.edu/display/ONL/POX+Wiki) and
-  [NOX](http://www.noxrepo.org/nox/about-nox/). The concepts and techniques
-  you learn in this tutorial are applicable to those platforms too.
+  In the first part of this tutorial, you will write controllers using
+  the Ox Controller platform.
 
 - [OpenFlow 1.0 Specification](http://www.openflow.org/documents/openflow-spec-v1.0.0.pdf)
 
@@ -112,8 +117,7 @@ Handy References
   and data types into OCaml.
 
   You don't need to read the OpenFlow specification to follow the
-  guide. But, if you want to understand OpenFlow in depth, you should
-  read it eventually.
+  guide. But, you will need to do so to understand OpenFlow in depth.
 
 - [Mininet](http://mininet.org/walkthrough/)
 
@@ -122,7 +126,6 @@ Handy References
   so you don't really need to read this.
 
 ## Next chapter: [Ox Repeater][Ch2]
-
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 
