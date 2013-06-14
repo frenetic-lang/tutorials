@@ -104,7 +104,7 @@ packetIn{
   payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,ICMP echo request (buffered at 279)
 }
 ...
-```
+  ```
 
   This indicates that the controller sees the ping request and drops it,
   thus no host ever sends a reply.
