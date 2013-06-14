@@ -131,8 +131,8 @@ ou need to fill in the list of actions to send the packet out of
 every port (excluding the input port). This is easier than it
 sounds, because you can do it with just one OpenFlow action.
 
-**Find the right action in the Ox manual (it is in the [OpenFlow_Core]
-module) and fill it in.**
+Find the right action in the Ox manual (it is in the [OpenFlow_Core]
+module) and fill it in. 
 
 <h4 id="compiling">Compiling your Controller</h4>
 
