@@ -48,14 +48,14 @@ You can use `Hashtbl.add` to add a new host/port mapping:
 Hashtbl.add known_hosts <pkt_src> <pkt_in_port>
 ```
 
-With this in hand, modify the `learning_packet_in` function in [Learning.ml](ox-tutorial-code/Learning.ml) to extract the ethernet source address and input port from incoming packets, storing them in the hash table.  Then, fix `packet_in` to extract the ethernet destination address, and update `packet_in` to invoke `learning_packet_in` and then `routing_packet_in`.
+With this in hand, modify the `learning_packet_in` function in [Learning.ml](ox-tutorial-code/Learning.ml) to extract the ethernet source address and input port from incoming packets, storing them in the hash table.  Then, fix `routing_packet_in` to extract the ethernet destination address, and update `packet_in` to invoke `learning_packet_in` and then `routing_packet_in`.
 
 #### Compiling and Testing your Learning Switch
 
 You should first test that your learning switch preserves connectivity by
 sending ICMP messages between each host pair.  Then, use `tcpdump` to ensure
-that your learning switch stops flooding once it learns the locations of two
-hosts.
+that your learning switch stops flooding once it learns the locations of each
+pair of hosts.
 
 - Build and launch the controller:
 
@@ -86,7 +86,7 @@ of learning:
 At this point, your learning switch should have learned the locations of all
 three hosts.  To test that your controller no longer floods traffic, we will
 invoke `tcpdump` to monitor packets arriving at `h1` while sending traffic
-from `h2` to `h3`.  No traffic should reach `h1`:
+from `h2` to `h3`.  No traffic should reach `h1`.
 
   * In Mininet, start new terminals for `h1`, `h2`, and `h3`:
 
@@ -101,6 +101,13 @@ from `h2` to `h3`.  No traffic should reach `h1`:
     tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
     listening on h1-eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
     ```
+
+    A brief explanation of the flags:
+
+    - `-c 1` closes `tcpdump` after receiving one packet.
+    - `port 80` ignores packets that do not arrive on port 80.
+
+    Together, these flags cause `tcpdump` to exit as soon as a packet arrives on port 80.
 
   * In the terminal for `h2`, start a local fortune server:
   
