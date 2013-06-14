@@ -24,12 +24,11 @@ A learning switch has two logically distinct components:
   builds this table by inspecting the source ethernet address and inport
   of every packet at the switch.
 
-- The *routing module* uses the table mapping hosts to ports in order to 
-  route incoming traffic.  That is, if the switch receives a packet for
-  destination _X_ and the learning module has learned that _X_
-  is accessible through port _N_, then the routing module forwards the
-  packet directly out port _N_. (If the table does not have an
-  entry for _X_, it simply floods the packet.)
+- The *routing module* uses this table in order to route incoming traffic: 
+  if the switch receives a packet for destination _X_ and the learning 
+  module has learned that _X_ is accessible through port _N_, then the 
+  routing module forwards the packet directly out port _N_. (If the table 
+  does not have an entry for _X_, it simply floods the packet.)
 
 Naturally, you will begin by writing a `packet_in` function that learns host
 locations. 
