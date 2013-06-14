@@ -269,8 +269,7 @@ process packets itself.
 
 For this part, continue building on the naive repeater you wrote above.
 
-> Build on its [solution file](ox-tutorial-code/Sol_Repeater1.ml)
-> if necessary.
+> Build on `ox-tutorial-solutions/Repeater1.ml` if necessary.
 
 #### Programming Task
 
