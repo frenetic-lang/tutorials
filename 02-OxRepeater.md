@@ -139,8 +139,7 @@ module) and fill it in.
 
 <h4 id="compiling">Compiling your Controller</h4>
 
-To build your controller, run the following command in the
-`ox-tutorial-code` directory:
+To build your controller, run the following command:
 
 ```
 $ make Repeater.d.byte
