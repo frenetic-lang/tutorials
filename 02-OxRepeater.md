@@ -167,14 +167,14 @@ hosts and have them ping each other:
 - Start Mininet in a separate terminal window:
 
   ```
-  $ sudo mn --controller=remote --topo=single,3 --mac --arp
+  $ sudo mn --controller=remote --topo=single,4 --mac --arp
   ```
 
   A brief explanation of the flags:
 
-  * `topo=single,3` creates a network with one switch and three hosts.
+  * `topo=single,4` creates a network with one switch and hosts hosts.
 
-  * `--mac` sets the hosts' mac addresses to 1, 2, and 3 (instead
+  * `--mac` sets the hosts' mac addresses to 1, 2, 3, and 4 (instead
     of random numbers). This makes debugging a lot easier.
     
   * `--arp` statically configures the ARP tables on all hosts, so you don't have to
@@ -302,7 +302,7 @@ receive any packets itself.
 - In a separate terminal, start Mininet:
 
   ```
-  $ sudo mn --controller=remote --topo=single,3 --mac
+  $ sudo mn --controller=remote --topo=single,4 --mac
   ```
 
 - Build and start the controller:
