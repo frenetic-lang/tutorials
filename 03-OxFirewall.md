@@ -20,7 +20,8 @@ You can use it to parse packets as follows:
 
 ```ocaml
 let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
-  ... parse_payload pktIn.input_payload ...
+  let pk = parse_payload pktIn.input_payload in
+  ...
 ```
 Applying `parse_payload` parses the packet into a series of nested
 frames. The easiest way to examine packet headers is to then use the
@@ -39,6 +40,7 @@ Starting from [Firewall.ml](ox-tutorial-code/Firewall.ml), fill in the
 
 #### Firewall Template
 
+```ocaml
 open OpenFlow0x01_Core
 open OxPlatform
 
@@ -49,11 +51,12 @@ module MyApplication = struct
   let is_icmp_packet (pk : Packet.packet) = ... (* [FILL] *)
 
   let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
+    let pk = parse_payload pktIn.input_payload in
     Printf.printf "%s\n%!" (packetIn_to_string pktIn);
     send_packet_out sw 0l {
       output_payload = pktIn.input_payload;
       port_id = None;
-      apply_actions = if is_icmp_packet (parse_payload pktIn.input_payload) then [] else [Output AllPorts]
+      apply_actions = if is_icmp_packet pk then [] else [Output AllPorts]
     }
 
 end
