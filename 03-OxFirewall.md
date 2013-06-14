@@ -89,22 +89,22 @@ module Controller = OxStart.Make (MyApplication)
 - On the controller terminal, you should see the controller receiving
   several ICMP echo requests, but no ICMP echo replies:
   
-  ```
+  <pre>
 Switch 1 connected.
 packetIn{
   total_len=98 port=1 reason=NoMatch
-  payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,ICMP echo request (buffered at 277)
+  payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,<b>ICMP echo request</b> (buffered at 277)
 }
 packetIn{
   total_len=98 port=1 reason=NoMatch
-  payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,ICMP echo request (buffered at 278)
+  payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,<b>ICMP echo request</b> (buffered at 278)
 }
 packetIn{
   total_len=98 port=1 reason=NoMatch
-  payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,ICMP echo request (buffered at 279)
+  payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,<b>ICMP echo request</b> (buffered at 279)
 }
 ...
-  ```
+  </pre>
 
   This indicates that the controller sees the ping request and drops it,
   thus no host ever sends a reply.
@@ -140,7 +140,6 @@ packetIn{
 In this part, you will extend your implementation of the firewall
 function to also implement the firewall using flow tables.
 You can build on `ox-tutorial-solutions/Firewall2.ml` if necessary.
-
 
 Fill in the `switch_connected` event handler. You need to install two
 entries into the flow table: one for ICMP traffic and the other for
