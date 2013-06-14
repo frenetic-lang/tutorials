@@ -50,9 +50,10 @@ module MyApplication = struct
 
   include OxStart.DefaultTutorialHandlers
 
-  let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50 (* Initial capacity. *)
+  let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50
 
-  (* [FILL] Store the location (port) of each host in the known_hosts hash table. *)
+  (* [FILL] Store the location (port) of each host in the known_hosts hash
+     table. *)
   let learning_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     ...
 
@@ -78,7 +79,8 @@ module MyApplication = struct
   let switch_connected (sw : switchId) : unit =
     Printf.printf "Switch %Ld connected.\n%!" sw
 
-  (* [FILL] Modify this packet_in function to run both learning_packet_in and routing_packet_in. *)
+  (* [FILL] Modify this packet_in function to run both learning_packet_in and
+     routing_packet_in. *)
   let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
     Printf.printf "%s\n%!" (packetIn_to_string pk);
     ...
@@ -91,8 +93,10 @@ module Controller = OxStart.Make (MyApplication)
 Note that it contains a hash table to map hosts to ports:
 
 ```ocaml
-let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50 (* initial capacity *)
+let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50
 ```
+
+> `50` is the initial capacity of the hash table.
 
 You can use `Hashtbl.add` to add a new host/port mapping:
 
