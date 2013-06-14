@@ -35,8 +35,65 @@ locations.
 
 #### Programming Task
 
-Use [Learning.ml](ox-tutorial-code/Learning.ml) as a template.  It contains a
-hash table to map hosts to ports:
+You should use the template below to get started.  Save it in a file called
+`Learning.ml` and place it in the directory
+`~/src/frenetic/ox-tutorial-workspace/Learning.ml`.
+
+```
+(* ~/src/frenetic/ox-tutorial-workspace/Learning.ml *)
+
+open OxPlatform
+open OpenFlow0x01_Core
+open Packet
+
+module MyApplication = struct
+
+  include OxStart.DefaultTutorialHandlers
+
+  let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50 (* initial capacity *)
+
+  (* [FILL] Store the location (port) of each host in the
+     known_hosts hash table. Use the code in the tutorial as a guide. *)
+  let learning_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
+    ...
+
+  (* [FILL] Route packets to known hosts out the correct port,
+     otherwise flood them. *)
+  let routing_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
+    let pk = parse_payload pktIn.input_payload in
+    let pkt_dst = ... (* [FILL] *) in
+    try
+      let out_port = Hashtbl.find known_hosts pkt_dst in
+      Printf.printf "Sending via port %d to %Ld.\n" out_port pkt_dst;
+      send_packet_out sw 0l {
+        output_payload = pktIn.input_payload;
+        port_id = None;
+        apply_actions = [Output (PhysicalPort out_port)]
+      }
+    with Not_found ->
+      (Printf.printf "Flooding to %Ld.\n" pkt_dst;
+       send_packet_out sw 0l {
+         output_payload = pktIn.input_payload;
+         port_id = None;
+         apply_actions = [Output AllPorts]
+       })
+
+
+  let switch_connected (sw : switchId) : unit =
+    Printf.printf "Switch %Ld connected.\n%!" sw
+
+  (* [FILL] Modify this packet_in function to run both
+     learning_packet_in and routing_packet_in *)
+  let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
+    Printf.printf "%s\n%!" (packetIn_to_string pk);
+    ...
+
+end
+
+module Controller = OxStart.Make (MyApplication)
+```
+
+Note that it contains a hash table to map hosts to ports:
 
 ```ocaml
 let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50 (* initial capacity *)
@@ -48,7 +105,11 @@ You can use `Hashtbl.add` to add a new host/port mapping:
 Hashtbl.add known_hosts <pkt_src> <pkt_in_port>
 ```
 
-With this in hand, modify the `learning_packet_in` function in [Learning.ml](ox-tutorial-code/Learning.ml) to extract the ethernet source address and input port from incoming packets, storing them in the hash table.  Then, fix `routing_packet_in` to extract the ethernet destination address, and update `packet_in` to invoke `learning_packet_in` and then `routing_packet_in`.
+With this in hand, modify the `learning_packet_in` function in
+[Learning.ml](ox-tutorial-code/Learning.ml) to extract the ethernet source
+address and input port from incoming packets, storing them in the hash table.
+Then, fix `routing_packet_in` to extract the ethernet destination address, and
+update `packet_in` to invoke `learning_packet_in` and then `routing_packet_in`.
 
 #### Compiling and Testing your Learning Switch
 
@@ -149,11 +210,13 @@ bidirectional communication between the source and desination hosts.
 
 > Hint: only install new flow rules when both the source and destination host
 > locations are known.  Otherwise, the controller may not learn the location of
-> every host. For example, when `h1` sends a packet to `h2`, we
-> learn the location of `h1`. If we immediately install a rule directing all
-> traffic destined for `h1` out the correct port, then it will match all future
-> traffic from `h2` to `h1`, keeping traffic from `h2` in the dataplane (and
-> hence never arriving at the controller and triggering `packet_in`).
+> every host. For example, the first packet `h1` sends to `h2` will be
+> redirected to the controller, and the controller will learn the location of
+> `h1`.  If the controller immediately installs a rule directing all traffic
+> destined for `h1` out the correct port, then the switch will keep all future
+> traffic from `h2` to `h1` in the dataplane, preventing the controller from
+> learning the location of `h2` by observing its outgoing traffic in the form
+> of `packet_in` messages.
 
 After the controller learns the location of every host, no more packets should
 arrive on the controller.
@@ -161,7 +224,7 @@ arrive on the controller.
 ## Next chapter: [NetCore Introduction][Ch6]
 
 
-[Ch6]: 06-NetCoreIntroduction
+[Ch6]: 06-NetCore-Introduction
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 
