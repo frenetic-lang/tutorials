@@ -96,10 +96,13 @@ and switches. So, you do need both implementations.
 
 In this part, you will write a repeater that processes all packets at the controller.
 Therefore, this repeater only needs to process `packet_in` messages. You should
-use the template below:
+use the template below.
+
+Save it in a file called `Repeater.ml` and place it in the directory
+`~/src/frenetic/ox-tutorial-workspace/Repeater.ml`.
 
 ```ocaml
-(* Repeater.ml *)
+(* ~/src/frenetic/ox-tutorial-workspace/Repeater.ml *)
 open OxPlatform
 open OpenFlow0x01_Core
 
@@ -127,7 +130,7 @@ let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
   }
 ```
 
-ou need to fill in the list of actions to send the packet out of
+You need to fill in the list of actions to send the packet out of
 every port (excluding the input port). This is easier than it
 sounds, because you can do it with just one OpenFlow action.
 
