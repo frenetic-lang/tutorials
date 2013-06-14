@@ -84,13 +84,13 @@ You will build the repeater in two steps:
   you will add rules to the flow table to implement the packet-processing
   function on the switch itself.
 
-> This two-step exercise may seem contrived for a simple repeater. But, we
-> will quickly escalate to programs that are tricky to implement
-> efficiently. For these programs, the first naive implementation will
-> serve as a reference implementation to help you determine if your
-> efficient implementation is correct. We will also witness some corner
-> cases where it is necessary to process packets on both the controller
-> and switches. So, you do need both implementations.
+This two-step exercise may seem contrived for a simple repeater. But, we
+will quickly escalate to programs that are tricky to implement
+efficiently. For these programs, the first naive implementation will
+serve as a reference implementation to help you determine if your
+efficient implementation is correct. We will also witness some corner
+cases where it is necessary to process packets on both the controller
+and switches. So, you do need both implementations.
 
 ### Exercise 1: A Naive Repeater
 
