@@ -123,7 +123,7 @@ let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
   send_packet_out sw 0l {
     output_payload = pk.input_payload;
     port_id = None;
-    apply_actions = ... (* [FILL] *);
+    apply_actions = ... (* [FILL] *)
   }
 ```
 
