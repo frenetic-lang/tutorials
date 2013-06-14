@@ -69,9 +69,12 @@ packet-processing function efficiently.
 
 ## Warmup: Programming a Repeater
 
-As a warmup exercise, you will build a repeater: a switch that
-forwards incoming packets on all other ports. You will do so in two
-steps:
+As a warmup exercise, you will build a repeater. A repeater is a
+network device that forwards input packets out of all other ports.
+
+![Repeater](images/repeater.png)
+
+You will build the repeater in two steps:
 
 - First, you will leave the flow table empty, so all packets are
   diverted to the controller for processing. At the controller, you can
