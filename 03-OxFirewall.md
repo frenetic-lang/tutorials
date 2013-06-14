@@ -8,7 +8,7 @@ programs, such as Web servers.  You will first write the `packet_in`
 function for the firewall.  After you've tested it successfully,
 you'll configure the flow table to implement the firewall efficiently.
 
-### The Firewall Function
+## The Firewall Function
 
 Unlike the repeater, which blindly forwards packets, the firewall's
 `packet_in` function needs to inspect packets' headers to determine if
@@ -32,13 +32,10 @@ The frame type for IP packets
 is 0x800 (`Packet.dlTyp pk = 0x800`) and the protocol number for ICMP is 1
 (`Packet.nwProto pk = 1`).
 
-#### Programming Task
+### Firewall Template
 
-
-Starting from [Firewall.ml](ox-tutorial-code/Firewall.ml), fill in the
-`is_icmp_packet` function.  
-
-#### Firewall Template
+You can use the following template, which only requires you to fill
+in the `is_icmp_packet` function.
 
 ```ocaml
 open OpenFlow0x01_Core
@@ -64,7 +61,7 @@ end
 module Controller = OxStart.Make (MyApplication)
 ```
 
-#### Building and Testing Your Firewall
+### Building and Testing Your Firewall
 
 - Build and launch the controller:
 
@@ -77,7 +74,7 @@ module Controller = OxStart.Make (MyApplication)
   parameters you've used before:
 
   ```
-  $ sudo mn --controller=remote --topo=single,3 --mac
+  $ sudo mn --controller=remote --topo=single,4 --mac --arp
   ```
 
 - Test to ensure that pings fail within Mininet:
@@ -138,14 +135,12 @@ packetIn{
 
     This command should succeed.
 
-### An Efficient Firewall
+## An Efficient Firewall
 
 In this part, you will extend your implementation of the firewall
 function to also implement the firewall using flow tables.
+You can build on `ox-tutorial-solutions/Firewall2.ml` if necessary.
 
-> Use [Sol_Firewall1.ml](ox-tutorial-code/Sol_Firewall1.ml) if necessary.
-
-#### Programming Task
 
 Fill in the `switch_connected` event handler. You need to install two
 entries into the flow table: one for ICMP traffic and the other for
