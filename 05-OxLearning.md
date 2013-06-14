@@ -110,10 +110,9 @@ found, the packet is forwarded directly out the host's port; otherwise, the
 packet is flooded.
 
 Your job is to populate the known hosts table.  Modify the `learning_packet_in`
-function in [Learning.ml](ox-tutorial-code/Learning.ml) to extract the ethernet
-source address and input port from incoming packets, storing them in the hash
-table.  Then, update `packet_in` to invoke `learning_packet_in` followed by
-`routing_packet_in`.
+function in your Learning.ml to extract the ethernet source address and input
+port from incoming packets, storing them in the hash table.  Then, update
+`packet_in` to invoke `learning_packet_in` followed by `routing_packet_in`.
 
 #### Compiling and Testing your Learning Switch
 
