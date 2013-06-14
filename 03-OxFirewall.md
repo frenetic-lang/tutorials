@@ -16,22 +16,50 @@ they should be dropped.
 
 To do so, you need to parse the packet received. Ox includes a packet
 parsing library that supports some common packet formats, including ICMP.
-You can use it to parse the packet as follows:
+You can use it to parse packets as follows:
 
 ```ocaml
 let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
-  let pk = parse_payload pktIn.input_payload in
-  ...
+  ... parse_payload pktIn.input_payload ...
 ```
 Applying `parse_payload` parses the packet into a series of nested
 frames. The easiest way to examine packet headers is to then use the
 [header accessor functions] in the packet library.
 
+You need to know that the
+The frame type for IP packets
+is 0x800 (`Packet.dlTyp pk = 0x800`) and the protocol number for ICMP is 1
+(`Packet.nwProto pk = 1`).
+
 #### Programming Task
 
+
 Starting from [Firewall.ml](ox-tutorial-code/Firewall.ml), fill in the
-`is_icmp_packet` function.  The _frame type_ for IP packets
-is _0x800_ and the _protocol number_ for ICMP is _1_.
+`is_icmp_packet` function.  
+
+#### Firewall Template
+
+open OpenFlow0x01_Core
+open OxPlatform
+
+module MyApplication = struct
+
+  include OxStart.DefaultTutorialHandlers
+
+  let is_icmp_packet (pk : Packet.packet) = ... (* [FILL] *)
+
+  let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
+    Printf.printf "%s\n%!" (packetIn_to_string pktIn);
+    send_packet_out sw 0l {
+      output_payload = pktIn.input_payload;
+      port_id = None;
+      apply_actions = if is_icmp_packet (parse_payload pktIn.input_payload) then [] else [Output AllPorts]
+    }
+
+end
+
+module Controller = OxStart.Make (MyApplication)
+```
 
 #### Building and Testing Your Firewall
 
