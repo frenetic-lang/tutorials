@@ -52,16 +52,13 @@ module MyApplication = struct
 
   let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50 (* initial capacity *)
 
-  (* [FILL] Store the location (port) of each host in the
-     known_hosts hash table. Use the code in the tutorial as a guide. *)
+  (* [FILL] Store the location (port) of each host in the known_hosts hash table. *)
   let learning_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     ...
 
-  (* [FILL] Route packets to known hosts out the correct port,
-     otherwise flood them. *)
   let routing_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     let pk = parse_payload pktIn.input_payload in
-    let pkt_dst = ... (* [FILL] *) in
+    let pkt_dst = pk.dlDst in
     try
       let out_port = Hashtbl.find known_hosts pkt_dst in
       Printf.printf "Sending via port %d to %Ld.\n" out_port pkt_dst;
@@ -77,7 +74,6 @@ module MyApplication = struct
          port_id = None;
          apply_actions = [Output AllPorts]
        })
-
 
   let switch_connected (sw : switchId) : unit =
     Printf.printf "Switch %Ld connected.\n%!" sw
@@ -105,11 +101,16 @@ You can use `Hashtbl.add` to add a new host/port mapping:
 Hashtbl.add known_hosts <pkt_src> <pkt_in_port>
 ```
 
-With this in hand, modify the `learning_packet_in` function in
-[Learning.ml](ox-tutorial-code/Learning.ml) to extract the ethernet source
-address and input port from incoming packets, storing them in the hash table.
-Then, fix `routing_packet_in` to extract the ethernet destination address, and
-update `packet_in` to invoke `learning_packet_in` and then `routing_packet_in`.
+The `routing_packet_in` function first extracts the ethernet source address
+from the packet, and then looks it up in the table of known host locations.  If
+found, the packet is forwarded directly out the host's port; otherwise, the
+packet is flooded.
+
+Your job is to populate the known hosts table.  Modify the `learning_packet_in`
+function in [Learning.ml](ox-tutorial-code/Learning.ml) to extract the ethernet
+source address and input port from incoming packets, storing them in the hash
+table.  Then, update `packet_in` to invoke `learning_packet_in` followed by
+`routing_packet_in`.
 
 #### Compiling and Testing your Learning Switch
 
@@ -203,7 +204,7 @@ so that we might learn its location.
 
 #### Programming Task
 
-Augment the `try..with` block in your `routing_packet_in` function to install
+Augment the `try..with` block in the `routing_packet_in` function to install
 two new flows when a packet arrives and `known_hosts` contains the location of
 the destination host.  Together, these two flows should enable direct,
 bidirectional communication between the source and desination hosts.
