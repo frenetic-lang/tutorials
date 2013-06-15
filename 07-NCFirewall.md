@@ -2,7 +2,7 @@ Chapter 7: Firewall Redux
 =========================
 
 In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured the flow table to implement the same function efficiently. 
-This single-line Frenetic program does the same thing: `if dlTyp = 0x800 && nwProto = 1 then drop else all`. 
+This single-line Frenetic program performs the same function: `if dlTyp = 0x800 && nwProto = 1 then drop else all`. 
 
 In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see 
 that your firewall is easy to reuse and apply to any other topology.
@@ -38,7 +38,7 @@ let routing =
 monitorTable(1, routing)
 ```
 
-Fill in the rest of the policy by editing [Chapter7.nc](netcore-tutorial-code/Chapter7.nc). 
+Fill in the rest of the policy by editing [Chapter7.nc](frenetic-tutorial-code/Chapter7.nc). 
 
 #### Testing
 
@@ -146,7 +146,7 @@ Assume standard port numbers:
 - HTTP servers are on port 80 and 
 - SMTP servers are on port 25.
 
-> See [Sol_Chapter7_Routing.nc](netcore-tutorial-code/Sol_Chapter7_Routing.nc), if you
+> See [Sol_Chapter7_Routing.nc](frenetic-tutorial-code/Sol_Chapter7_Routing.nc), if you
 > did not finish the previous task.
 
 Your edited file will probably have the following structure:

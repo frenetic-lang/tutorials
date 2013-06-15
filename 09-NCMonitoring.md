@@ -83,11 +83,11 @@ monitorTable(1, firewall)
 
 We added a table query to show the flow table that Frenetic produces for the
 firewall.  Now, fire up the firewall
-([Ox_Firewall.nc](netcore-tutorial-code/Ox_Firewall.nc)).  You should see the
+([Ox_Firewall.nc](frenetic-tutorial-code/Ox_Firewall.nc)).  You should see the
 following output:
 
 ```
-$ frenetic netcore-tutorial-code/Ox_Firewall.nc
+$ frenetic frenetic-tutorial-code/Ox_Firewall.nc
 Flow table at switch 1 is:
  {dlTyp = ip, nwProto = tcp, tpDst = 22} => []
  {*} => [Output AllPorts]
@@ -108,7 +108,7 @@ monitorTable(1, firewall + monitor)
 
 The flow table should look something like this:
 ```
-$ frenetic netcore-tutorial-code/Ox_Firewall_Monitor.nc
+$ frenetic frenetic-tutorial-code/Ox_Firewall_Monitor.nc
 Flow table at switch 1 is:
  {dlTyp = ip, nwSrc = 10.0.0.1, nwProto = tcp, tpDst = 22} => []
  {dlTyp = ip, nwProto = tcp, tpDst = 22} => []
