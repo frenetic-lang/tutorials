@@ -62,16 +62,16 @@ Multiple Switches][Ch8]] [[9 Frenetic Monitoring][Ch9]]
 
 ### Frenetic
 
-This tutorial should also be viewed as a stepping stone toward learning how to
-program in the more powerful *Frenetic* environment. *Frenetic* is a
-general-purpose SDN programming language embedded as a set of libraries in
-OCaml.  Frenetic applications react to network events, such as topology changes 
-and statistics queries.  For example:
+This tutorial should also be viewed as a stepping stone toward
+learning how to program in the more powerful *Frenetic* environment
+which allows you to write Frenetic program embedded in OCaml.
+Frenetic applications react to network events, such as topology
+changes and statistics queries.  For example:
 
 1. An event reaches the application.
 
-1. The application generates a new static network configuration (using
-   NetCore) and sends it to the Frenetic run time.
+1. The application generates a new static network configuration and
+   sends it to the Frenetic run time.
 
 1. The Frenetic run time compiles it to OpenFlow and updates the
    running network.
