@@ -1,8 +1,8 @@
 Chapter 7: Firewall Redux
 =========================
 
-In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured flow table to implement the same function efficiently. 
-This Frenetic program has the same features: `if dlTyp = 0x800 && nwProto = 1 then drop else all`. 
+In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured the flow table to implement the same function efficiently. 
+This single-line Frenetic program does the same thing: `if dlTyp = 0x800 && nwProto = 1 then drop else all`. 
 
 In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see 
 that your firewall is easy to reuse and apply to any other topology.
@@ -16,12 +16,12 @@ You are going to program the following network of four hosts and one switch:
 The host with MAC address `00:00:00:00:00:0n` is connected to port `n`. Mininet has builtin support for building single-switch topologies:
 
 ```
-$ sudo mn --controller=remote --topo=single,4 --mac
+$ sudo mn --controller=remote --topo=single,4 --mac --arp
 ```
 
 ### Exercise 1: Routing
 
-Write a routing policy for this network. Use `monitorTable` to examine the flow table that the compiler generates and try a few `ping`s between hosts.
+Write a routing policy for this network. Use `monitorTable` to examine the flow table that the compiler generates. Try a few `ping`s between hosts.
 
 As you've seen, Frenetic supports ordinary `if`-`then`-`else` expressions.
 So, you can implement the routing policy as follows:
@@ -107,7 +107,7 @@ Now that basic connectivity works, you should enforce the access control policy 
   <td>HTTP, SMTP</td>
   <td>SMTP</td>
   <td>HTTP, SMTP</td>
-  <td>HTTP, SMTP</td>
+  <td>HTTP, SMTP</td><br>
 </tr>
 </table>
 
