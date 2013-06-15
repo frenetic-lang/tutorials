@@ -2,7 +2,7 @@ Chapter 7: Firewall Redux
 =========================
 
 In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured flow table to implement the same function efficiently. 
-This NetCore program has the same features: `if dlTyp = 0x800 && nwProto = 1 then drop else all`. 
+This Frenetic program has the same features: `if dlTyp = 0x800 && nwProto = 1 then drop else all`. 
 
 In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see 
 that your firewall is easy to reuse and apply to any other topology.
@@ -23,7 +23,7 @@ $ sudo mn --controller=remote --topo=single,4 --mac
 
 Write a routing policy for this network. Use `monitorTable` to examine the flow table that the compiler generates and try a few `ping`s between hosts.
 
-As you've seen, NetCore supports ordinary `if`-`then`-`else` expressions.
+As you've seen, Frenetic supports ordinary `if`-`then`-`else` expressions.
 So, you can implement the routing policy as follows:
 
 ```
@@ -127,7 +127,7 @@ clients (rows) and servers (columns). For example, consider the top-right corner
 </table>
 
 This cell indicates that HTTP connections (port 80) are allowed between client
-`00:00:00:00:00:01` and the server `00:00:00:00:00:04`. To realize this policy in NetCore, you need to allow packets from the client to port 80 on the server *and* from port 80 on the server to the client:
+`00:00:00:00:00:01` and the server `00:00:00:00:00:04`. To realize this policy in Frenetic, you need to allow packets from the client to port 80 on the server *and* from port 80 on the server to the client:
 
 ```
 if (dlSrc = 00:00:00:00:00:01 && dlDst = 00:00:00:00:00:04 && tcpDstPort = 80) ||

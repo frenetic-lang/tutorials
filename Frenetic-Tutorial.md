@@ -28,7 +28,7 @@ Introduction
 ------------
 
 In this tutorial, you will learn to program software-defined networks (SDNs)
-using OpenFlow and NetCore, the surface language of Frenetic. The tutorial is
+using OpenFlow and Frenetic. The tutorial is
 divided into two sections:
 
 * **Ox:** Chapters 2 &mdash; 5 introduce the nuts and bolts of
@@ -45,9 +45,9 @@ you learn in this tutorial are applicable to those platforms too.
 [[2 Ox Repeater][Ch2]] [[3 Ox Firewall][Ch3]] [[4 Ox Monitor][Ch4]]
 [[5 Ox Learning][Ch5]]
 
-* **NetCore:** Chapters 6 &mdash; 8 teach you how to program SDNs
-  using the _NetCore_ domain-specific programming language
-  (NetCoreDSL). You will see that NetCoreDSL provides high-level
+* **Frenetic:** Chapters 6 &mdash; 8 teach you how to program SDNs
+  using the _Frenetic_ domain-specific programming language
+  (FreneticDSL). You will see that FreneticDSL provides high-level
   abstractions and rich, compositional features that make SDN
   programming much easier.
 
@@ -57,8 +57,8 @@ you learn in this tutorial are applicable to those platforms too.
 > Below, let's just state that you can write Frenetic programs embedded
 > in OCaml too.
 
-[[6 NetCore Introduction][Ch6]] [[7 NetCore Firewall][Ch7]] [[8
-Multiple Switches][Ch8]] [[9 NetCore Monitoring][Ch9]]
+[[6 Frenetic Introduction][Ch6]] [[7 Frenetic Firewall][Ch7]] [[8
+Multiple Switches][Ch8]] [[9 Frenetic Monitoring][Ch9]]
 
 ### Frenetic
 
@@ -77,11 +77,11 @@ and statistics queries.  For example:
    running network.
 
 Static network configurations are built using
-[NetCoreLib](http://frenetic-lang.github.io/frenetic/docs/NetCore_Types.html),
-which has the same semantics as NetCore, which is presented in this tutorial.
+[FreneticLib](http://frenetic-lang.github.io/frenetic/docs/NetCore_Types.html),
+which has the same semantics as FreneticDSL, which is presented in this tutorial.
 Hence, a Frenetic program is really just a general-purpose
 OCaml program that reacts to network events and generates a stream of
-NetCore policies.
+FreneticDSL policies.
 
 #### Why Frenetic?
 

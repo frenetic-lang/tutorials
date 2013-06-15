@@ -1,6 +1,6 @@
 # Chapter 8: Multi-Switch Programming (at last!)
 
-In this chapter, you'll finally work with a multi-switch network. First, you'll write and test a routing policy. Then, you'll use the re-use firewall you wrote in the last chapter and apply it to this network. In fact, you'll learn how package your firewall into a reusable module that you can compose with any other policy. You'll accomplish this using a key feature of NetCore: _sequential composition_.
+In this chapter, you'll finally work with a multi-switch network. First, you'll write and test a routing policy. Then, you'll use the re-use firewall you wrote in the last chapter and apply it to this network. In fact, you'll learn how package your firewall into a reusable module that you can compose with any other policy. You'll accomplish this using a key feature of Frenetic: _sequential composition_.
 
 ## Topology
 
@@ -23,7 +23,7 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 
 ### Exercise 1: Routing
 
-Using NetCore, write a routing policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch routing policy, you can use the `switch = n` predicate as follows:
+Using Frenetic, write a routing policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch routing policy, you can use the `switch = n` predicate as follows:
 
 ```
 let routing =
@@ -86,7 +86,7 @@ let firewall =
 firewall
 ```
 
-To truly separate the routing policy from the firewall policy, you will use NetCore's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
+To truly separate the routing policy from the firewall policy, you will use Frenetic's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
 and run them in sequence:
 
 ```
@@ -139,7 +139,7 @@ Per the firewall, host `00:00:00:00:00:02` cannot send a packet to port `25` on 
 
 Show that your firewall in `Firewall.nc` is truly reuseable.  Reimplement your solution in `Chapter7.nc` in a modular fashion using `Firewall.nc`. You may start with `Sol_Chapter7.nc` if you wish. 
 
-## Next chapter: [Monitoring with NetCore][Ch9]
+## Next chapter: [Monitoring with Frenetic][Ch9]
 
 [Ch9]: 09-NCMonitoring
 [Ch7]: 07-NCFirewall

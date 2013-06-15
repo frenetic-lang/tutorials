@@ -1,4 +1,4 @@
-Chapter 9: Monitoring with NetCore
+Chapter 9: Monitoring with Frenetic
 ==================================
 
 In [Chapter 4](04-OxMonitor), you wrote an Ox controller that measured the volume of HTTP traffic on the network. You first wrote the _packet_in_
@@ -9,15 +9,15 @@ function to count all HTTP traffic on the controller. To count packets efficient
 - Interpret the OpenFlow statistics replies, and
 - Calculate the sum of HTTP request and HTTP replies.
 
-The following NetCore program does all of the above:
+The following Frenetic program does all of the above:
 
 ```
 if tcpSrcPort = 80 || tcpDstPort = 80 then monitorLoad(5, "HTTP traffic")
 ```
 
-However, unlike the Ox controller, which flooded all traffic, this NetCore program doesn't forward any traffic it all. Instead, you can compose it
+However, unlike the Ox controller, which flooded all traffic, this Frenetic program doesn't forward any traffic it all. Instead, you can compose it
 with any routing policy. In this chapter you'll learn how to do so using
-NetCore's _parallel composition_ operator.
+Frenetic's _parallel composition_ operator.
 
 ## Parallel Composition
 
@@ -72,7 +72,7 @@ discarded.
 
 Sequential and parallel composition make it easier to write SDN controller
 programs, but it all gets compiled to OpenFlow rules in the end.  To get a feel
-for how the compiler works, let's take another look at a NetCore version of the
+for how the compiler works, let's take another look at a Frenetic version of the
 efficient firewall from the [OxFirewall](03-OxFirewall) chapter, altering it
 slightly to block SSH rather than ICMP traffic:
 
@@ -81,7 +81,7 @@ let firewall = if !(tcpDstPort = 22) then all in
 monitorTable(1, firewall)
 ```
 
-We added a table query to show the flow table that NetCore produces for the
+We added a table query to show the flow table that Frenetic produces for the
 firewall.  Now, fire up the firewall
 ([Ox_Firewall.nc](netcore-tutorial-code/Ox_Firewall.nc)).  You should see the
 following output:
@@ -94,7 +94,7 @@ Flow table at switch 1 is:
  {*} => [Output AllPorts]
 ```
 
-As you can see from the latter two rules, NetCore is less efficient 
+As you can see from the latter two rules, Frenetic is less efficient 
 (in terms of switch rule space used) than a
 human programmer.  (But not for long, we hope!)  Nevertheless, this should look
 very similar to the flow table you programmed.
@@ -127,7 +127,7 @@ rule.  Rule 1, for example, is necessary to precisely count traffic from <code>h
 Without it, our query would miss any SSH traffic sent from <code>h1</code>, as it would be
 lumped in with all the other SSH traffic dropped by rule 2.
 
-In general, NetCore creates a flow table for two policies joined by parallel
+In general, Frenetic creates a flow table for two policies joined by parallel
 composition (<code>P1 + P2</code>) by creating flow tables for <code>P1</code>
 and <code>P2</code>, and taking the Cartesian product of these tables, and then
 concatenating the original tables.  The result looks like this:
@@ -139,8 +139,8 @@ both <code>P1</code> and <code>P2</code> are matched here.  Because **A** is
 given a higher priority, any packets that reach **B** or **C** may match
 <code>P1</code> *or* <code>P2</code>, but not both.
 
-As an aside, NetCore policies are total functions: they always process every
-packet, even if that "processing" is simply to drop it.  Hence, NetCore adds a
+As an aside, Frenetic policies are total functions: they always process every
+packet, even if that "processing" is simply to drop it.  Hence, Frenetic adds a
 final, catch-all rule to the flow table to drop packets that are not matched
 higher up.
 
