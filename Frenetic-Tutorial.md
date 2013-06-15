@@ -143,7 +143,7 @@ Handy References
 [Ch3]: 03-OxFirewall
 [Ch4]: 04-OxMonitor
 [Ch5]: 05-OxLearning
-[Ch6]: 06-NetCoreIntroduction
+[Ch6]: 06-NetCore-Introduction
 [Ch7]: 07-NCFirewall
 [Ch8]: 08-NCMultiSwitch
 [Ch9]: 09-NCMonitoring
