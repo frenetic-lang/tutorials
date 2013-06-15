@@ -60,9 +60,9 @@ Using Mininet, ensure that you can ping between all hosts:
 mininet> pingall
 ```
 
-## Access Control Policy
+## Firewall Policy
 
-Now that basic connectivity works, you should enforce the access control policy written in the table below:
+Now that basic connectivity works, you should enforce the access control (firewall) policy written in the table below:
 
 <table>
 <tr>
@@ -86,52 +86,52 @@ Now that basic connectivity works, you should enforce the access control policy 
   <td>HTTP, SMTP</td>
   <td>HTTP, SMTP</td>
   <td>Deny All</td>
-  <td>HTTP</td>
+  <td>Deny All</td>
 </tr>
 <tr>
   <th>00:00:00:00:00:02</th>
   <td>HTTP, SMTP</td>
   <td>HTTP, SMTP</td>
   <td>Deny All</td>
-  <td>HTTP</td>
+  <td>Deny All</td>
 </tr>
 <tr>
   <th>00:00:00:00:00:03</th>
   <td>HTTP, SMTP</td>
   <td>SMTP</td>
-  <td>HTTP, SMTP</td>
-  <td>HTTP, SMTP</td>
+  <td>Deny All</td>
+  <td>Deny All</td>
 </tr>
 <tr>
   <th>00:00:00:00:00:04</th>
   <td>HTTP, SMTP</td>
   <td>SMTP</td>
-  <td>HTTP, SMTP</td>
-  <td>HTTP, SMTP</td><br>
+  <td>Deny All</td>
+  <td>Deny All</td><br>
 </tr>
 </table>
 
 Each cell in this table has a list of allowed protocols for connections between
-clients (rows) and servers (columns). For example, consider the top-right corner of the table:
+clients (rows) and servers (columns). For example, consider this entry in the table:
 
 
 <table>
 <tr>
   <th></th>
-  <th>00:00:00:00:00:04</th>
+  <th>00:00:00:00:00:02</th>
 </tr>
 <tr>
-  <th>00:00:00:00:00:01</th>
-  <td>HTTP</td>
+  <th>00:00:00:00:00:04</th>
+  <td>SMTP</td>
 </tr>
 </table>
 
-This cell indicates that HTTP connections (port 80) are allowed between client
-`00:00:00:00:00:01` and the server `00:00:00:00:00:04`. To realize this policy in Frenetic, you need to allow packets from the client to port 80 on the server *and* from port 80 on the server to the client:
+This cell indicates that (only) SMTP connections (port 25) are allowed between client
+`00:00:00:00:00:04` and the server `00:00:00:00:00:02`. To realize this policy in Frenetic, you need to allow packets from the client to port 25 on the server *and* from port 25 on the server to the client:
 
 ```
-if (dlSrc = 00:00:00:00:00:01 && dlDst = 00:00:00:00:00:04 && tcpDstPort = 80) ||
-   (dlSrc = 00:00:00:00:00:04 && dlDst = 00:00:00:00:00:01 && tcpSrcPort = 80)
+if (dlSrc = 00:00:00:00:00:04 && dlDst = 00:00:00:00:00:02 && tcpDstPort = 25) ||
+   (dlSrc = 00:00:00:00:00:02 && dlDst = 00:00:00:00:00:04 && tcpSrcPort = 25)
 then
   routing
 else
@@ -140,7 +140,7 @@ else
 
 ### Exercise 2: Firewall + Routing
 
-Wrap the routing policy you wrote above within a fire-walling policy.
+Wrap the routing policy you wrote above within a policy implementing the firewall.
 Assume standard port numbers:
 
 - HTTP servers are on port 80 and 
@@ -182,8 +182,6 @@ $ sudo mn --controller=remote --topo=single,4 --mac --arp
 mininet> xterm h1 h2 h3 h4
 ```
 
-For test servers, just run _fortune_ on port 80 and 25.
-
 Instead of trying a comprehensive test, just test a few points of the access control policy. For example, if you run _fortune_ on port 25 on `h4`:
 
 ```
@@ -191,7 +189,7 @@ Instead of trying a comprehensive test, just test a few points of the access con
 $ while true; do fortune | nc -l 25; done
 ```
 
-Then, running `curl 10.0.0.4:25` should succeed from `h3`, but fail form `h2`.
+Then, running `curl 10.0.0.4:25` should succeed from `h3`, but fail from `h2`.
 
 ## Next chapter: [Multi-switch Programming][Ch8]
 
