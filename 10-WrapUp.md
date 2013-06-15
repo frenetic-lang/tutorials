@@ -10,7 +10,7 @@ an SDN controller, install rules in the data plane and monitor traffic
 statistics.  
 
   - *Frenetic* is a high-level domain-specific language for specifying SDN
-policies.  In just a few, simple lines of code, you could specify routing 
+policies.  In just a few, simple lines of code, you could specify forwarding
 policy and queries for multi-switch networks in a modular, compositional 
 fashion.  The Frenetic compiler (built using Ox, of course) compiled your 
 high-level programs in to flow tables that are installed automatically in 

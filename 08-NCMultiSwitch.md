@@ -1,6 +1,6 @@
 # Chapter 8: Multi-Switch Programming (at last!)
 
-In this chapter, you'll finally work with a multi-switch network. First, you'll write and test a routing policy. Then, you'll use the re-use firewall you wrote in the last chapter and apply it to this network. In fact, you'll learn how package your firewall into a reusable module that you can compose with any other policy. You'll accomplish this using a key feature of Frenetic: _sequential composition_.
+In this chapter, you'll finally work with a multi-switch network. First, you'll write and test a forwarding policy. Then, you'll use the re-use firewall you wrote in the last chapter and apply it to this network. In fact, you'll learn how package your firewall into a reusable module that you can compose with any other policy. You'll accomplish this using a key feature of Frenetic: _sequential composition_.
 
 ## Topology
 
@@ -21,12 +21,12 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 
 
 
-### Exercise 1: Routing
+### Exercise 1: Forwarding
 
-Using Frenetic, write a routing policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch routing policy, you can use the `switch = n` predicate as follows:
+Using Frenetic, write a forwarding policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch forwarding policy, you can use the `switch = n` predicate as follows:
 
 ```
-let routing =
+let forwarding =
   if switch = 1 then
     (* Policy for Switch 1 *)
     ...
@@ -39,21 +39,21 @@ let routing =
   else
     drop
 
-routing
+forwarding
 ```
 
 Change in to the chapter8 directory:
 ```
 $ cd chapter8
 ```
-Here, you'll find the template above in `frenetic-tutorial-code/Chapter8/Routing.nc`. Fill it in.
+Here, you'll find the template above in `frenetic-tutorial-code/Chapter8/Forwarding.nc`. Fill it in.
 
 #### Testing
 
-Launch Frenetic in a terminal by invoking `Routing.nc`:
+Launch Frenetic in a terminal by invoking `Forwarding.nc`:
 
 ```
-$ frenetic Routing.nc
+$ frenetic Forwarding.nc
 ```
 
 Then launch Mininet in another:
@@ -70,23 +70,23 @@ mininet> pingall
 ## A Reusable Firewall Using Sequential Composition
 
 Now that basic connectivity works, your goal is to apply exactly the same access control policy you built in the
-last chapter to this new network. Unfortunately, you cannot simply reuse the firewall in its current form, since it has baked-in the routing policy for the one-switch network.
+last chapter to this new network. Unfortunately, you cannot simply reuse the firewall in its current form, since it has baked-in the forwarding policy for the one-switch network.
 
 Your policy from [Chapter 7][Ch7] probably has this shape:
 
 ```
-let routing = (* routing for 1 switch only *)
+let forwarding = (* forwarding for 1 switch only *)
 
 let firewall =
   if (* traffic allowed *) then
-    routing
+    forwarding
   else
     drop
 
 firewall
 ```
 
-To truly separate the routing policy from the firewall policy, you will use Frenetic's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
+To truly separate the forwarding policy from the firewall policy, you will use Frenetic's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
 and run them in sequence:
 
 ```
@@ -97,35 +97,35 @@ This form of composition is akin to pipes in Unix. You can think of `P; Q` as a 
 
 You've probably used _grep_ and pipes in Linux to filter lines of text. You can similarly use sequential composition to filter packets:
 
-`firewall; routing`
+`firewall; forwarding`
 
-For this to work, you do need to make one small change to `firewall`:  replace all occurrences of `routing` with  the special action `pass`. The `pass` action is the identity function on packets. When you use `pass` in a policy, you don't forward it out of a port, but simply leave it unchanged to be processed by the next policy in a sequence.
+For this to work, you do need to make one small change to `firewall`:  replace all occurrences of `forwarding` with  the special action `pass`. The `pass` action is the identity function on packets. When you use `pass` in a policy, you don't forward it out of a port, but simply leave it unchanged to be processed by the next policy in a sequence.
 Hopefully, it is evident that if your firewall only applies `pass` and `drop`, then it becomes truly topology-independent.
 
 ### Exercise 2: Abstracting the Firewall
 
-In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.nc` and edit it to just `pass` and `drop` packets.  Then you will build a multi-module policy that involves `Firewall.nc`, `Routing.nc` and `Main.nc`.
+In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.nc` and edit it to just `pass` and `drop` packets.  Then you will build a multi-module policy that involves `Firewall.nc`, `Forwarding.nc` and `Main.nc`.
 
 > If you didn't finish Chapter 7, use
 > `frenetic-tutorial-code/Sol_Chapter7_Firewall.nc`.
-> If you didn't finish the routing policy above, see
-> `frenetic-tutorial-code/Chapter8/Sol_Routing.nc`.
+> If you didn't finish the forwarding policy above, see
+> `frenetic-tutorial-code/Chapter8/Sol_Forwarding.nc`.
 
-Once you have a firewall policy and a routing policy to start from, continue as follows.
+Once you have a firewall policy and a forwarding policy to start from, continue as follows.
 
 - Move the code for `firewall` function from `Chapter7.nc` in to `Chapter8/Firewall.nc`.
 
-- In `firewall`, you have (possibly several) occurrences of `routing` (i.e., the routing policy from Chapter 7).  Replace all occurrences of `routing` with `pass`.
+- In `firewall`, you have (possibly several) occurrences of `forwarding` (i.e., the forwarding policy from Chapter 7).  Replace all occurrences of `forwarding` with `pass`.
   
-- Edit `Routing.nc` to include `Firewall.nc` and compose the firewall and
-  the routing policy:
+- Edit `Forwarding.nc` to include `Firewall.nc` and compose the firewall and
+  the forwarding policy:
 
   ```
   include "Firewall.nc"
 
-  let routing = ...
+  let forwarding = ...
 
-  firewall; routing
+  firewall; forwarding
   ```
   
   You should test this policy just as you tested the firewall in

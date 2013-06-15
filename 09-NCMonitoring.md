@@ -16,12 +16,12 @@ if tcpSrcPort = 80 || tcpDstPort = 80 then monitorLoad(5, "HTTP traffic")
 ```
 
 However, unlike the Ox controller, which flooded all traffic, this Frenetic program doesn't forward any traffic it all. Instead, you can compose it
-with any routing policy. In this chapter you'll learn how to do so using
+with any forwarding policy. In this chapter you'll learn how to do so using
 Frenetic's _parallel composition_ operator.
 
 ## Parallel Composition
 
-When you monitor the network, you do so *in parallel* with the routing policy. Intuitively, you want to send packets to two places: the
+When you monitor the network, you do so *in parallel* with the forwarding policy. Intuitively, you want to send packets to two places: the
 controller, for inspection, and wherever they may be destined in the network. To support this idiom, you need new kind of operator on policies:
 *parallel composition*, written `P1 + P2`. Intuitively, when applied to
 a packet `pk`, the parallel composition creates two copies of `pk` and
@@ -36,9 +36,9 @@ $ cd Chapter9
 ```
 Proceed as follows:
 
-- Open up `Main.nc`.  There we have included `Sol_Firewall.nc` from Chapter 8 and copied in the routing solution we defined (you can replace our router with yours if you like).  
+- Open up `Main.nc`.  There we have included `Sol_Firewall.nc` from Chapter 8 and copied in the forwarding solution we defined (you can replace our router with yours if you like).  
 - Fill in the definition of `monitoring` to create infrastructure for monitoring the web traffic sent by `h2`. More specifically, create a different string label for each of the other hosts ("H2->H1", "H2->H3", "H2->H4") and use `monitorLoad` to print the number of HTTP packets sent from `h2` to each of the other hosts separately.
-- Fill in the definition of `app` to compose your monitoring policy with `firewall` and `routing` definitions.
+- Fill in the definition of `app` to compose your monitoring policy with `firewall` and `forwarding` definitions.
 
 When you are done, testing your monitor.
 

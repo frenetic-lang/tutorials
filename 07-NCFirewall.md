@@ -19,15 +19,15 @@ The host with MAC address `00:00:00:00:00:0n` is connected to port `n`. Mininet 
 $ sudo mn --controller=remote --topo=single,4 --mac --arp
 ```
 
-### Exercise 1: Routing
+### Exercise 1: Forwarding
 
-Write a routing policy for this network. Use `monitorTable` to examine the flow table that the compiler generates. Try a few `ping`s between hosts.
+Write a forwarding policy for this network. Use `monitorTable` to examine the flow table that the compiler generates. Try a few `ping`s between hosts.
 
 As you've seen, Frenetic supports ordinary `if`-`then`-`else` expressions.
-So, you can implement the routing policy as follows:
+So, you can implement the forwarding policy as follows:
 
 ```
-let routing =
+let forwarding =
   if dlDst=00:00:00:00:00:01 then
      fwd(1)
   else if (* destination is 2, forward out port 2, etc. *)
@@ -35,7 +35,7 @@ let routing =
   else
     drop
     
-monitorTable(1, routing)
+monitorTable(1, forwarding)
 ```
 
 Fill in the rest of the policy by editing `frenetic-tutorial-code/Chapter7.nc`.
@@ -133,30 +133,30 @@ This cell indicates that (only) SMTP connections (port 25) are allowed between c
 if (dlSrc = 00:00:00:00:00:04 && dlDst = 00:00:00:00:00:02 && tcpDstPort = 25) ||
    (dlSrc = 00:00:00:00:00:02 && dlDst = 00:00:00:00:00:04 && tcpSrcPort = 25)
 then
-  routing
+  forwarding
 else
   drop
 ```
 
-### Exercise 2: Firewall + Routing
+### Exercise 2: Firewall + Forwarding
 
-Wrap the routing policy you wrote above within a policy implementing the firewall.
+Wrap the forwarding policy you wrote above within a policy implementing the firewall.
 Assume standard port numbers:
 
 - HTTP servers are on port 80 and 
 - SMTP servers are on port 25.
 
-> See `frenetic-tutorial-code/Sol_Chapter7_Routing.nc`, if you
+> See `frenetic-tutorial-code/Sol_Chapter7_Forwarding.nc`, if you
 > did not finish the previous task.
 
 Your edited file will probably have the following structure:
 
 ```
-let routing = (* from part 1, above *)
+let forwarding = (* from part 1, above *)
 
 let firewall =
   if (* traffic is allowed *) then
-    routing
+    forwarding
   ...
   else
     drop
