@@ -38,7 +38,7 @@ let routing =
 monitorTable(1, routing)
 ```
 
-Fill in the rest of the policy by editing [Chapter7.nc](frenetic-tutorial-code/Chapter7.nc). 
+Fill in the rest of the policy by editing `frenetic-tutorial-code/Chapter7.nc`.
 
 #### Testing
 
@@ -146,7 +146,7 @@ Assume standard port numbers:
 - HTTP servers are on port 80 and 
 - SMTP servers are on port 25.
 
-> See [Sol_Chapter7_Routing.nc](frenetic-tutorial-code/Sol_Chapter7_Routing.nc), if you
+> See `frenetic-tutorial-code/Sol_Chapter7_Routing.nc`, if you
 > did not finish the previous task.
 
 Your edited file will probably have the following structure:

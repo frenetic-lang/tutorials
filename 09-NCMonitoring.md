@@ -83,7 +83,7 @@ monitorTable(1, firewall)
 
 We added a table query to show the flow table that Frenetic produces for the
 firewall.  Now, fire up the firewall
-([Ox_Firewall.nc](frenetic-tutorial-code/Ox_Firewall.nc)).  You should see the
+(`frenetic-tutorial-code/Ox_Firewall.nc`).  You should see the
 following output:
 
 ```

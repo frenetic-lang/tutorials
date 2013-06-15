@@ -46,7 +46,7 @@ Change in to the chapter8 directory:
 ```
 $ cd chapter8
 ```
-Here, you'll find the template above in [Routing.nc](frenetic-tutorial-code/Chapter8/Routing.nc). Fill it in.
+Here, you'll find the template above in `frenetic-tutorial-code/Chapter8/Routing.nc`. Fill it in.
 
 #### Testing
 
@@ -107,9 +107,9 @@ Hopefully, it is evident that if your firewall only applies `pass` and `drop`, t
 In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.nc` and edit it to just `pass` and `drop` packets.  Then you will build a multi-module policy that involves `Firewall.nc`, `Routing.nc` and `Main.nc`.
 
 > If you didn't finish Chapter 7, use
-> [Sol_Chapter7_Firewall.nc](frenetic-tutorial-code/Sol_Chapter7_Firewall.nc).
+> `frenetic-tutorial-code/Sol_Chapter7_Firewall.nc`.
 > If you didn't finish the routing policy above, see
-> [Sol_Routing.nc](frenetic-tutorial-code/Chapter8/Sol_Routing.nc).
+> `frenetic-tutorial-code/Chapter8/Sol_Routing.nc`.
 
 Once you have a firewall policy and a routing policy to start from, continue as follows.
 
