@@ -83,30 +83,30 @@ Now that basic connectivity works, you should enforce the access control (firewa
     Client MAC<br>address
   </th>
   <th>00:00:00:00:00:01</th>
-  <td>HTTP, SMTP</td>
-  <td>HTTP, SMTP</td>
+  <td>Deny All</td>
+  <td>HTTP</td>
   <td>Deny All</td>
   <td>Deny All</td>
 </tr>
 <tr>
   <th>00:00:00:00:00:02</th>
-  <td>HTTP, SMTP</td>
-  <td>HTTP, SMTP</td>
+  <td>HTTP</td>
+  <td>Deny All</td>
   <td>Deny All</td>
   <td>Deny All</td>
 </tr>
 <tr>
   <th>00:00:00:00:00:03</th>
-  <td>HTTP, SMTP</td>
-  <td>SMTP</td>
   <td>Deny All</td>
   <td>Deny All</td>
+  <td>Deny All</td>
+  <td>ICMP</td>
 </tr>
 <tr>
   <th>00:00:00:00:00:04</th>
-  <td>HTTP, SMTP</td>
-  <td>SMTP</td>
   <td>Deny All</td>
+  <td>Deny All</td>
+  <td>ICMP</td>
   <td>Deny All</td><br>
 </tr>
 </table>
