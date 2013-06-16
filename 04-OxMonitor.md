@@ -31,15 +31,54 @@ let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
 
 #### Programming Task
 
-Use [Monitor.ml](ox-tutorial-code/Monitor.ml) as a template for this exercise.
+Use the following code as a template for this exercise.  Save it in a file
+called `Monitor.ml` and place it in the directory
+`~/src/frenetic/ox-tutorial-workspace/Monitor.ml`.
+
+```
+(* ~/src/frenetic/ox-tutorial-workspace/Monitor.ml *)
+
+open OxPlatform
+open OpenFlow0x01_Core
+module Stats = OpenFlow0x01_Stats
+
+module MyApplication = struct
+
+  include OxStart.DefaultTutorialHandlers
+  
+  (* [FILL] copy over the packet_in function from Firewall.ml
+     verbatim, including any helper functions. *)
+  let firewall_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
+    ()
+
+  (* [FILL]: Match HTTP packets *)
+  let is_http_packet (pk : Packet.packet) =
+    false
+
+  let num_http_packets = ref 0
+   
+  let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
+    Printf.printf "%s\n%!" (packetIn_to_string pktIn);
+    firewall_packet_in sw xid pktIn;
+    if is_http_packet (parse_payload pktIn.input_payload) then
+      begin
+        num_http_packets := !num_http_packets + 1;
+        Printf.printf "Saw %d HTTP packets.\n%!" !num_http_packets
+      end
+
+end
+
+module Controller = OxStart.Make (MyApplication)
+```
+
+Your task:
 
 - Write the `is_http_packet` predicate, using the [header accessor
   functions] you used to build the firewall.
 
-- You're not just monitoring Web traffic. You need to firewall ICMP
-  traffic and apply the repeater to non-ICMP traffic, as you did
-  before. In fact, you should use the `packet_in` function from
-  `Firewall.ml` _verbatim_.
+- Remember, you're not just monitoring Web traffic. You need to firewall ICMP
+  traffic and apply the repeater to non-ICMP traffic, as you did before. In
+  fact, you should use the `packet_in` function from `Firewall.ml` _verbatim_.
 
 #### Building and Testing Your Monitor
 
