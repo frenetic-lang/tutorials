@@ -139,24 +139,13 @@ else
 ```
 
 
-Because this firewall policy is symmetric (hosts are allowed to be both clients and servers for the same service), you can handle both cases more simply:
-
-```
-if ((dlSrc = 00:00:00:00:00:02 && dlDst = 00:00:00:00:00:01) ||
-    (dlSrc = 00:00:00:00:00:01 && dlDst = 00:00:00:00:00:02))  && (tcpSrcPort = 80 || tcpDstPort = 80)
-then
-  forwarding
-else
-  drop
-```
-
 ### Exercise 2: Firewall + Forwarding
 
 Wrap the forwarding policy you wrote above within a policy implementing the firewall.
-Assume standard port numbers:
+Assume standard numberings:
 
-- HTTP servers are on port 80 and 
-- SMTP servers are on port 25.
+- HTTP packets are on port 80 and 
+- ICMP packets are nwProto 1.
 
 > See `frenetic-tutorial-code/Sol_Chapter7_Forwarding.nc`, if you
 > did not finish the previous task.
