@@ -7,7 +7,7 @@ This single-line Frenetic program performs the same function:
 `if nwProto = 1 then drop else all`. 
 
 In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see 
-that your firewall is easy to reuse and apply to any other topology.
+how to turn your firewall into an easy-to-reuse component that can be applied to any other topology.
 
 ## Topology 
 
