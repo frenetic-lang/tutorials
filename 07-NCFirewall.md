@@ -2,7 +2,9 @@ Chapter 7: Firewall Redux
 =========================
 
 In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured the flow table to implement the same function efficiently. 
-This single-line Frenetic program performs the same function: `if nwProto = 1 then drop else all`. 
+This single-line Frenetic program performs the same function: 
+
+`if nwProto = 1 then drop else all`. 
 
 In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see 
 that your firewall is easy to reuse and apply to any other topology.
