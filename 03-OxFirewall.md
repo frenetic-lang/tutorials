@@ -27,7 +27,6 @@ Applying `parse_payload` parses the packet into a series of nested
 frames. The easiest way to examine packet headers is to then use the
 [header accessor functions] in the packet library.
 
->> TODO(Arjun): Frame type or DL type? confusing name?
 You need to know that the
 frame type for IP packets
 is 0x800 (`Packet.dlTyp pk = 0x800`) and the protocol number for ICMP is 1
