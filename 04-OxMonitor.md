@@ -82,8 +82,6 @@ Your task:
 
 #### Building and Testing Your Monitor
 
-> TODO(Cole): Chunk out into exercise 1/2/3? Break between?
-
 You should first test that your monitor preserves the features of the
 firewall and repeater. To do so, you'll run the same tests you in the previous
 chapter. You should next test  the monitor by checking that traffic to and from
@@ -169,8 +167,6 @@ port 80 increments the counter (and that other traffic does not).
 
 ### Efficiently Monitoring Web Traffic
 
-> TODO(Cole): Packets or bytes?
-
 Switches themselves keeps track of the number of packets (and bytes)
 they receive.  To implement an efficient monitor, you will use
 OpenFlow's [statistics] API to query these counters.
@@ -182,7 +178,7 @@ table:
 
 <table>
 <tr>
-  <th>Priority</th> <th>Pattern</th> <th>Action</th> <th>Counter (bytes)</th>
+  <th>Priority</th> <th>Pattern</th> <th>Action</th> <th>Counter</th>
 </tr>
 <tr>
   <td>60</td><td>ICMP</td><td>drop</td><td>10</td>
@@ -205,25 +201,22 @@ problem?
 
 #### Programming Task 1
 
-Augment `Monitor.ml` to build a flow table. The forwarding logic only
-requires two rules &mdash; one for ICMP and the other for non-ICMP traffic
-&mdash; but you'll need additional rules to ensure that you have
-fine-grained counters.  Once you have determined the rules you need,
-create the rules as you did before using `send_flow_mod` in the
-`switch_connected` function.
+Augment `Monitor.ml` to build a flow table. The forwarding logic only requires
+two rules &mdash; one for ICMP and the other for non-ICMP traffic &mdash; but
+you'll need additional rules to ensure that you have fine-grained counters.
+Once you have determined the rules you need, add the `switch_connected`
+function to your `Monitor.ml` and create the rules as you did before using
+`send_flow_mod`.
 
 #### Programming Task 2
 
 *Complete Programming Task 1 before moving on to this task.*
-
-> TODO(Cole): Whole template code?
 
 As you realized in the previous programing task, you cannot write a
 single OpenFlow pattern that matches both HTTP requests and
 replies. You need to match them separately, using two rules, which will
 give you two counters. Therefore, you need to read each counter
 independently and calculate their sum.
-
 
 You can read counters by calling [send_stats_request] periodically.
 To do so, you can use the following function:
@@ -237,6 +230,8 @@ let rec periodic_stats_request sw interval xid pat =
     periodic_stats_request sw interval xid pat in
   timeout interval callback
 ```
+
+> Add this definition to your `Monitor.ml`.
 
 This function issues a request every `interval` seconds for counters
 that match `pat`. Use `periodic_stats_request` in
@@ -253,7 +248,8 @@ let switch_connected (sw : switchId) : unit =
 ```
 
 You need to fill in the patterns `match_http_requests` and
-`match_http_responses`, which you have already calculated.
+`match_http_responses`, which you have already calculated in order to install
+the rules using `send_flow_mod`.
 
 Finally, you need a `stats_reply` function that will handle the stats
 responses from the switch and calculate the sum of the two
