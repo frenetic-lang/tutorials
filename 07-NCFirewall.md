@@ -68,7 +68,7 @@ Now that basic connectivity works, you should enforce the access control (firewa
 <tr>
   <th style="visibility: hidden"></th>
   <th style="visibility: hidden"></th>
-  <th colspan="4">Server MAC address</th>
+  <th colspan="4">Dst MAC address</th>
 </tr>
 <tr>
   <th style="visibility: hidden"></th>
@@ -80,7 +80,7 @@ Now that basic connectivity works, you should enforce the access control (firewa
 </tr>
 <tr>
   <th rowspan="5" style="-webkit-transform:rotate(270deg)" >
-    Client MAC<br>address
+    Src MAC<br>address
   </th>
   <th>00:00:00:00:00:01</th>
   <td>Deny All</td>
@@ -118,20 +118,20 @@ clients (rows) and servers (columns). For example, consider this entry in the ta
 <table>
 <tr>
   <th></th>
-  <th>00:00:00:00:00:02</th>
+  <th>00:00:00:00:00:01</th>
 </tr>
 <tr>
-  <th>00:00:00:00:00:04</th>
-  <td>SMTP</td>
+  <th>00:00:00:00:00:02</th>
+  <td>HTTP</td>
 </tr>
 </table>
 
-This cell indicates that (only) SMTP connections (port 25) are allowed between client
-`00:00:00:00:00:04` and the server `00:00:00:00:00:02`. To realize this policy in Frenetic, you need to allow packets from the client to port 25 on the server *and* from port 25 on the server to the client:
+This cell indicates that (only) HTTP connections (port 80) are allowed between client
+`00:00:00:00:00:02` and the server `00:00:00:00:00:01`. To realize this policy in Frenetic, you need to allow packets from the client to port 80 on the server *and* from port 80 on the server to the client:
 
 ```
-if (dlSrc = 00:00:00:00:00:04 && dlDst = 00:00:00:00:00:02 && tcpDstPort = 25) ||
-   (dlSrc = 00:00:00:00:00:02 && dlDst = 00:00:00:00:00:04 && tcpSrcPort = 25)
+if (dlSrc = 00:00:00:00:00:02 && dlDst = 00:00:00:00:00:01 && tcpDstPort = 80) ||
+   (dlSrc = 00:00:00:00:00:01 && dlDst = 00:00:00:00:00:02 && tcpSrcPort = 80)
 then
   forwarding
 else
