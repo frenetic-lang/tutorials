@@ -131,7 +131,7 @@ pair of hosts.
 - In a separate terminal window, start Mininet:
 
   ```shell
-  $ sudo mn --controller=remote --topo=single,3 --mac
+  $ sudo mn --controller=remote --topo=single,4 --mac
   ```
 
 - Test all-pairs connectivity:
