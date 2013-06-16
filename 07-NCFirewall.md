@@ -142,10 +142,10 @@ else
 ### Exercise 2: Firewall + Forwarding
 
 Wrap the forwarding policy you wrote above within a policy implementing the firewall.
-Assume standard port numbers:
+Assume standard numberings:
 
-- HTTP servers are on port 80 and 
-- SMTP servers are on port 25.
+- HTTP packets are on port 80 and 
+- ICMP packets are nwProto 1.
 
 > See `frenetic-tutorial-code/Sol_Chapter7_Forwarding.nc`, if you
 > did not finish the previous task.
