@@ -82,6 +82,8 @@ Your task:
 
 #### Building and Testing Your Monitor
 
+> TODO(Cole): Chunk out into exercise 1/2/3? Break between?
+
 You should first test that your monitor preserves the features of the
 firewall and repeater. To do so, you'll run the same tests you in the previous
 chapter. You should next test  the monitor by checking that traffic to and from
@@ -167,6 +169,8 @@ port 80 increments the counter (and that other traffic does not).
 
 ### Efficiently Monitoring Web Traffic
 
+> TODO(Cole): Packets or bytes?
+
 Switches themselves keeps track of the number of packets (and bytes)
 they receive.  To implement an efficient monitor, you will use
 OpenFlow's [statistics] API to query these counters.
@@ -211,6 +215,8 @@ create the rules as you did before using `send_flow_mod` in the
 #### Programming Task 2
 
 *Complete Programming Task 1 before moving on to this task.*
+
+> TODO(Cole): Whole template code?
 
 As you realized in the previous programing task, you cannot write a
 single OpenFlow pattern that matches both HTTP requests and
