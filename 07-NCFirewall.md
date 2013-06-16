@@ -183,14 +183,16 @@ $ sudo mn --controller=remote --topo=single,4 --mac --arp
 mininet> xterm h1 h2 h3 h4
 ```
 
-Instead of trying a comprehensive test, just test a few points of the access control policy. For example, if you run _fortune_ on port 25 on `h4`:
+Instead of trying a comprehensive test, just test a few points of the access control policy. For example, if you run _fortune_ on port 80 on `h1`:
 
 ```
-## Run on h4's terminal
-$ while true; do fortune | nc -l 25; done
+## Run on h1's terminal
+$ while true; do fortune | nc -l 80; done
 ```
 
-Then, running `curl 10.0.0.4:25` should succeed from `h3`, but fail from `h2`.
+Then, running `curl 10.0.0.4:80` should succeed from `h2`, but fail from `h3`.
+
+Similarly, pinging `h3` should succeed from `h4`, but fail from `h1`.
 
 ## Next chapter: [Multi-switch Programming][Ch8]
 
