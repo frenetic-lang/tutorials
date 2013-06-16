@@ -51,12 +51,6 @@ you learn in this tutorial are applicable to those platforms too.
   abstractions and rich, compositional features that make SDN
   programming much easier.
 
-> TODO(arjun): I'd rather not introduce another name (NetCoreDSL).
-> In fact, maybe we should jettison the name NetCore altogether (apart
-> from the file extension .nc). Let's just call chapters 6 - 8 "Frenetic".
-> Below, let's just state that you can write Frenetic programs embedded
-> in OCaml too.
-
 [[6 Frenetic Introduction][Ch6]] [[7 Frenetic Firewall][Ch7]] [[8
 Multiple Switches][Ch8]] [[9 Frenetic Monitoring][Ch9]]
 
