@@ -1,6 +1,6 @@
 # Chapter 8: Multi-Switch Programming (at last!)
 
-In this chapter, you'll finally work with a multi-switch network. First, you'll write and test a routing policy. Then, you'll use the re-use firewall you wrote in the last chapter and apply it to this network. In fact, you'll learn how package your firewall into a reusable module that you can compose with any other policy. You'll accomplish this using a key feature of NetCore: _sequential composition_.
+In this chapter, you'll finally work with a multi-switch network. First, you'll write and test a routing policy. Then, you'll use the re-use firewall you wrote in the last chapter and apply it to this network. In fact, you'll learn how package your firewall into a reusable module that you can compose with any other policy. You'll accomplish this using a key feature of Frenetic: _sequential composition_.
 
 ## Topology
 
@@ -23,7 +23,7 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 
 ### Exercise 1: Routing
 
-Using NetCore, write a routing policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch routing policy, you can use the `switch = n` predicate as follows:
+Using Frenetic, write a routing policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch routing policy, you can use the `switch = n` predicate as follows:
 
 ```
 let routing =
@@ -46,7 +46,7 @@ Change in to the chapter8 directory:
 ```
 $ cd chapter8
 ```
-Here, you'll find the template above in [Routing.nc](netcore-tutorial-code/Chapter8/Routing.nc). Fill it in.
+Here, you'll find the template above in `frenetic-tutorial-code/Chapter8/Routing.nc`. Fill it in.
 
 #### Testing
 
@@ -86,7 +86,7 @@ let firewall =
 firewall
 ```
 
-To truly separate the routing policy from the firewall policy, you will use NetCore's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
+To truly separate the routing policy from the firewall policy, you will use Frenetic's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
 and run them in sequence:
 
 ```
@@ -107,9 +107,9 @@ Hopefully, it is evident that if your firewall only applies `pass` and `drop`, t
 In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.nc` and edit it to just `pass` and `drop` packets.  Then you will build a multi-module policy that involves `Firewall.nc`, `Routing.nc` and `Main.nc`.
 
 > If you didn't finish Chapter 7, use
-> [Sol_Chapter7_Firewall.nc](netcore-tutorial-code/Sol_Chapter7_Firewall.nc).
+> `frenetic-tutorial-code/Sol_Chapter7_Firewall.nc`.
 > If you didn't finish the routing policy above, see
-> [Sol_Routing.nc](netcore-tutorial-code/Chapter8/Sol_Routing.nc).
+> `frenetic-tutorial-code/Chapter8/Sol_Routing.nc`.
 
 Once you have a firewall policy and a routing policy to start from, continue as follows.
 
@@ -139,7 +139,7 @@ Per the firewall, host `00:00:00:00:00:02` cannot send a packet to port `25` on 
 
 Show that your firewall in `Firewall.nc` is truly reuseable.  Reimplement your solution in `Chapter7.nc` in a modular fashion using `Firewall.nc`. You may start with `Sol_Chapter7.nc` if you wish. 
 
-## Next chapter: [Monitoring with NetCore][Ch9]
+## Next chapter: [Monitoring with Frenetic][Ch9]
 
 [Ch9]: 09-NCMonitoring
 [Ch7]: 07-NCFirewall

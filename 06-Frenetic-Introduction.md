@@ -1,4 +1,4 @@
-Chapter 6: Introducing NetCore
+Chapter 6: Introducing Frenetic
 ==============================
 
 You've learned how to write controllers with OpenFlow. We've shown
@@ -12,17 +12,17 @@ you a simple, two step recipe to implement policies:
   implement the same policy efficiently.
 
 In the following chapters, we introduce a new way to program SDN policies.
-You write policy-functions in a little language we call **NetCore**.
-The NetCore compiler will then synthesize the flow tables needed to
+You write policy-functions in a little language we call **FreneticDSL**.
+The Frenetic compiler will then synthesize the flow tables needed to
 implement your policy-function efficiently. (It also
 sends statistics requests, accumulates replies, manages
 switch connections, and more.)
 
 The templates and solutions for this part of the tutorial are in
-the `netcore-tutorial-code` directory:
+the `frenetic-tutorial-code` directory:
 
 ```
-$ cd guide/netcore-tutorial-code
+$ cd guide/frenetic-tutorial-code
 ```
 
 ### Example 1: A Naive Repeater (Redux)
@@ -38,7 +38,7 @@ with two ports, numbered 1 and 2:
 
 Our first goal will be to program a
 switch-specific repeater that forwards traffic arriving at port 1 out port 2,
-and vice versa.  The following NetCore policy accomplishes that task.
+and vice versa.  The following Frenetic policy accomplishes that task.
 
 ```
 (* a simple repeater *)
@@ -49,7 +49,7 @@ let repeater =
 monitorTable(1, repeater)
 ```
 
-As in OCaml, NetCore comments are placed within <code>(*</code> and
+As in OCaml, Frenetic comments are placed within <code>(*</code> and
 <code>*)</code> (and comments may be nested). The <code>let</code> keyword
 introduces a new policy, which we have chosen to call <code>repeater</code>.
 An <code>if</code>-<code>then</code>-<code>else</code> statement determines
@@ -67,12 +67,12 @@ The last line of the program uses <code>monitorTable(1,repeater)</code>, which
 will print the flow table generated for switch <code>1</code> from the
 <code>repeater</code> policy.  It is equivalent to <code>repeater</code>, but
 with the side effect of printing the flow table.  Now, when you run the
-example, take a look at the flow table that the NetCore compiler creates for
+example, take a look at the flow table that the Frenetic compiler creates for
 you and compare it to your flow table rules from the Ox tutorial.
 
 #### Run the Example
 
-Within the <code>netcore-tutorial-code</code> directory, you should
+Within the <code>frenetic-tutorial-code</code> directory, you should
 find the repeater policy in <code>Repeater.nc</code>.  To start the
 repeater controller, just type:
 ```
