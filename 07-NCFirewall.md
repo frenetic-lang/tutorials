@@ -2,7 +2,9 @@ Chapter 7: Firewall Redux
 =========================
 
 In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured the flow table to implement the same function efficiently. 
-This single-line Frenetic program performs the same function: `if dlTyp = 0x800 && nwProto = 1 then drop else all`. 
+This single-line Frenetic program performs the same function: 
+
+`if nwProto = 1 then drop else all`. 
 
 In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see 
 that your firewall is easy to reuse and apply to any other topology.
@@ -68,7 +70,7 @@ Now that basic connectivity works, you should enforce the access control (firewa
 <tr>
   <th style="visibility: hidden"></th>
   <th style="visibility: hidden"></th>
-  <th colspan="4">Server MAC address</th>
+  <th colspan="4">Dst MAC address</th>
 </tr>
 <tr>
   <th style="visibility: hidden"></th>
@@ -80,7 +82,7 @@ Now that basic connectivity works, you should enforce the access control (firewa
 </tr>
 <tr>
   <th rowspan="5" style="-webkit-transform:rotate(270deg)" >
-    Client MAC<br>address
+    Src MAC<br>address
   </th>
   <th>00:00:00:00:00:01</th>
   <td>Deny All</td>
@@ -118,33 +120,34 @@ clients (rows) and servers (columns). For example, consider this entry in the ta
 <table>
 <tr>
   <th></th>
-  <th>00:00:00:00:00:02</th>
+  <th>00:00:00:00:00:01</th>
 </tr>
 <tr>
-  <th>00:00:00:00:00:04</th>
-  <td>SMTP</td>
+  <th>00:00:00:00:00:02</th>
+  <td>HTTP</td>
 </tr>
 </table>
 
-This cell indicates that (only) SMTP connections (port 25) are allowed between client
-`00:00:00:00:00:04` and the server `00:00:00:00:00:02`. To realize this policy in Frenetic, you need to allow packets from the client to port 25 on the server *and* from port 25 on the server to the client:
+This cell indicates that (only) HTTP connections (port 80) are allowed between client
+`00:00:00:00:00:02` and the server `00:00:00:00:00:01`. To realize this policy in Frenetic, you need to allow packets from the client to port 80 on the server *and* from port 80 on the server to the client:
 
 ```
-if (dlSrc = 00:00:00:00:00:04 && dlDst = 00:00:00:00:00:02 && tcpDstPort = 25) ||
-   (dlSrc = 00:00:00:00:00:02 && dlDst = 00:00:00:00:00:04 && tcpSrcPort = 25)
+if (dlSrc = 00:00:00:00:00:02 && dlDst = 00:00:00:00:00:01 && tcpDstPort = 80) ||
+   (dlSrc = 00:00:00:00:00:01 && dlDst = 00:00:00:00:00:02 && tcpSrcPort = 80)
 then
   forwarding
 else
   drop
 ```
 
+
 ### Exercise 2: Firewall + Forwarding
 
 Wrap the forwarding policy you wrote above within a policy implementing the firewall.
-Assume standard port numbers:
+Assume standard numberings:
 
-- HTTP servers are on port 80 and 
-- SMTP servers are on port 25.
+- HTTP packets are on port 80 and 
+- ICMP packets are nwProto 1.
 
 > See `frenetic-tutorial-code/Sol_Chapter7_Forwarding.nc`, if you
 > did not finish the previous task.
@@ -182,14 +185,16 @@ $ sudo mn --controller=remote --topo=single,4 --mac --arp
 mininet> xterm h1 h2 h3 h4
 ```
 
-Instead of trying a comprehensive test, just test a few points of the access control policy. For example, if you run _fortune_ on port 25 on `h4`:
+Instead of trying a comprehensive test, just test a few points of the access control policy. For example, if you run _fortune_ on port 80 on `h1`:
 
 ```
-## Run on h4's terminal
-$ while true; do fortune | nc -l 25; done
+## Run on h1's terminal
+$ while true; do fortune | nc -l 80; done
 ```
 
-Then, running `curl 10.0.0.4:25` should succeed from `h3`, but fail from `h2`.
+Then, running `curl 10.0.0.4:80` should succeed from `h2`, but fail from `h3`.
+
+Similarly, pinging `h3` should succeed from `h4`, but fail from `h1`.
 
 ## Next chapter: [Multi-switch Programming][Ch8]
 

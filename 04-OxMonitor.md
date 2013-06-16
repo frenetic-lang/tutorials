@@ -99,7 +99,7 @@ port 80 increments the counter (and that other traffic does not).
 - In a separate terminal window, start Mininet:
 
   ```
-  $ sudo mn --controller=remote --topo=single,3 --mac
+  $ sudo mn --controller=remote --topo=single,4 --mac
   ```
 
 - Test that the firewall correctly drops pings, reporting "100% packet loss":
