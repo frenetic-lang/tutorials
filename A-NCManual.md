@@ -3,7 +3,7 @@ NetCore Manual
 
 The NetCore Manual is intended as a lightweight reference to the syntax of the
 NetCore domain-specific language (NetCoreDSL).  More detailed documentation can
-be found in the [NetCore tutorial](01-Introduction).
+be found in the [NetCore tutorial](06-Frenetic-Introduction).
 
 
 NetCore Syntax
