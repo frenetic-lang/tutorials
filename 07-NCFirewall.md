@@ -192,7 +192,7 @@ Instead of trying a comprehensive test, just test a few points of the access con
 $ while true; do fortune | nc -l 80; done
 ```
 
-Then, running `curl 10.0.0.4:80` should succeed from `h2`, but fail from `h3`.
+Then, running `curl 10.0.0.1:80` should succeed from `h2`, but fail from `h3`.
 
 Similarly, pinging `h3` should succeed from `h4`, but fail from `h1`.
 
