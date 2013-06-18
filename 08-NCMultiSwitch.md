@@ -44,7 +44,7 @@ forwarding
 
 Change in to the chapter8 directory:
 ```
-$ cd chapter8
+$ cd Chapter8
 ```
 Here, you'll find the template above in `frenetic-tutorial-code/Chapter8/Forwarding.nc`. Fill it in.
 
