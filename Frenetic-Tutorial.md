@@ -15,13 +15,10 @@ all the software that you need pre-installed:
   environment and automatically log you into the account
   "frenetic". The password for this account is also "frenetic".
 
-- At a terminal, go to the tutorial directory, check for updates, and
-  rebuild the tutorial software:
-
+- At a terminal, check for any updates to the tutorial software:
   ```
-  $ cd src/frenetic
-  $ git pull
-  $ make reinstall
+  $ opam update
+  $ opam upgrade
   ```
 
 Introduction
