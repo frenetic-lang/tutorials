@@ -6,7 +6,7 @@ We strongly recomend using the tutorial VM we've prepared that has
 all the software that you need pre-installed. You can get the tutorial
 VM from the following link:
 
-[https://github.com/frenetic-lang/frenetic/releases/frenetic-1.0.1]
+https://github.com/frenetic-lang/frenetic/releases/frenetic-1.0.1
 
 Introduction
 ------------
