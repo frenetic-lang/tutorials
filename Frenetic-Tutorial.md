@@ -3,23 +3,10 @@ Getting Started
 
 This is a hands-on tutorial with several programming exercises.
 We strongly recomend using the tutorial VM we've prepared that has
-all the software that you need pre-installed:
+all the software that you need pre-installed. You can get the tutorial
+VM from the following link:
 
-- Download and install the [VirtualBox](https://www.virtualbox.org)
-  virtualization platform.
-  
-- Download the
-  [Frenetic Tutorial VM](http://www.cs.brown.edu/~arjun/frenetic.ova).
-
-- Launch the tutorial VM, which will launch a Linux desktop
-  environment and automatically log you into the account
-  "frenetic". The password for this account is also "frenetic".
-
-- At a terminal, check for any updates to the tutorial software:
-  ```
-  $ opam update
-  $ opam upgrade
-  ```
+[https://github.com/frenetic-lang/frenetic/releases/frenetic-1.0.1]
 
 Introduction
 ------------
