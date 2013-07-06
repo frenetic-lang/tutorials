@@ -172,7 +172,7 @@ hosts and have them ping each other:
 
   A brief explanation of the flags:
 
-  * `topo=single,4` creates a network with one switch and hosts hosts.
+  * `topo=single,4` creates a network with one switch and four hosts.
 
   * `--mac` sets the hosts' mac addresses to 1, 2, 3, and 4 (instead
     of random numbers). This makes debugging a lot easier.
