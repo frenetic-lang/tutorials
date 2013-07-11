@@ -96,11 +96,11 @@ Policies:
                  | <cpol> ; <seq_pol_list>
 
 <par_pol_list> ::= <cpol>
-                 | <cpol> | <par_pol_list>
+                 | <cpol> + <par_pol_list>
 
 <pol> ::= <cpol>
         | <cpol> ; <seq_pol_list>
-        | <cpol> | <par_pol_list>
+        | <cpol> + <par_pol_list>
         | let <id_1>, ... <id_n> = <module>(<arg_1> ,... , <arg_m>)
 
 <program> ::= <pol>
