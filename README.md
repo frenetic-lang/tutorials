@@ -1,7 +1,7 @@
-Frenetic
+Frenetic Tutorials
 ========
 
-The [**Frenetic Tutorial**](https://github.com/frenetic-lang/frenetic/wiki/Frenetic-Tutorial) is now available.
+This repo contains the code for the [**Frenetic Tutorial**](https://github.com/frenetic-lang/frenetic/wiki/Frenetic-Tutorial).
 
 Building from Source
 --------------------
@@ -18,23 +18,12 @@ Prerequisites:
   - lwt
   - cstruct 
   - oUnit
+  - frenetic
 
   These are available on OPAM:
 
   ```
-  $ opam install ocamlfind cstruct lwt ounit
-  ```
-
-- The [ocaml-packet](https://github.com/frenetic-lang/ocaml-packet) and
-  [ocaml-openflow](https://github.com/frenetic-lang/ocaml-openflow) libraries.
-  It is recommended that you build these from source as well.
-
-Building:
-
-From the root directory of the repository, simply run `make`
-
-  ```
-  $ make
+  $ opam install ocamlfind cstruct lwt ounit frenetic
   ```
 
 Documentation
