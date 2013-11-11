@@ -74,7 +74,8 @@ module Controller = OxStart.Make (MyApplication)
 Your task:
 
 - Write the `is_http_packet` predicate, using the [header accessor
-  functions] you used to build the firewall.
+  functions] you used to build the firewall. For HTTP, the port is 80, and the
+  `nwProto` is 6.
 
 - Remember, you're not just monitoring Web traffic. You need to firewall ICMP
   traffic and apply the repeater to non-ICMP traffic, as you did before. In
