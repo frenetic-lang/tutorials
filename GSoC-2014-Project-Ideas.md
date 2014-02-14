@@ -8,7 +8,7 @@ OpenStack is a cloud computing platform that orchestrates compute,
 storage, and network resources in public/private cloud
 environments. The OpenStack Networking API component exposes a
 networking-as-a-service model via a REST API. As part of the GSoC, a
-student could consider implementing the Neworking REST API for
+student could consider implementing the Networking REST API for
 Frenetic to allow it to work as a backend for OpenStack.
 
 * Mentor: Marco Canini
