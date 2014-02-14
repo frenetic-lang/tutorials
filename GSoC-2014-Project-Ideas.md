@@ -24,11 +24,11 @@ The current Frenetic implementation has partial support for OpenFlow 1.3 and
 no support for OpenFlow 1.4. As part of the GSoC, a student could consider
 implementing complete support for these two versions of the protocol.
 
-Mentor: Marco Canini
-Difficulty: medium
-Programming languages: OCaml and C
-Recommended reading:
-* [OpenFlow specs](https://www.opennetworking.org/sdn-resources/onf-specifications/openflow)
+* Mentor: Marco Canini
+* Difficulty: medium
+* Programming languages: OCaml and C
+* Recommended reading:
+  * [OpenFlow specs](https://www.opennetworking.org/sdn-resources/onf-specifications/openflow)
 
 # Adding network virtualization layer
 
