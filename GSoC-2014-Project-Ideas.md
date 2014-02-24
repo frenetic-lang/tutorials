@@ -23,8 +23,11 @@ Frenetic to allow it to work as a backend for OpenStack.
 The current Frenetic implementation has partial support for OpenFlow
 1.3 and has no support for OpenFlow 1.4. As part of the GSoC, a
 student could consider implementing complete support for these two
-versions of the protocol. Moreover, to simplify the interface
-upstream, they might consider designing an abstraction layer that
+versions of the protocol. This will require going through the protocol
+specs, creating the corresponding OCaml types and implementing the
+necessary message serializers and deserializers, as well as pretty printing
+functions. Moreover, to simplify the interface
+upstream, one might consider designing an abstraction layer that
 hides the differences between these versions of OpenFlow and allows
 switches speaking different versions to interoperate in the same
 network.
