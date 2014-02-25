@@ -74,7 +74,9 @@ To write network programs for Frenetic, developers must currently use
 either the custom syntax exposed by the Frenetic binary, or an OCaml
 API. As part of the GSoC, a student could consider implementing new
 language bindings to integrate the power of Frenetic to other
-languages.
+languages. A special type of > language bindings < proposal could also
+look into integrating Frenetic as the backend for a BGP implementation
+(e.g., bird).
 
 * Mentor: Spiros Eliopoulos
 * Difficulty: easy
