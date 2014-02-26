@@ -83,3 +83,16 @@ look into integrating Frenetic as the backend for a BGP implementation
 * Programming languages: OCaml and another language for the bindings (e.g., Python, Ruby, etc.)
 * Recommended reading:
   * [NetKAT: Semantic Foundations for Networks.](http://www.cs.cornell.edu/~jnfoster/papers/frenetic-netkat.pdf) In Symposium on Principles of Programming Languages (POPL), 2014
+
+# Frenetic Debugger
+
+Frenetic allows developers to write network programs but does not allow them to debug these programs. As with any software development toolkit, having tools to aid in debugging is very important.
+As part of the GSoC, a student could consider implementing a debugger for Frenetic. This should consist of (1) an introspection component within Frenetic to export the current state of the controller, (2) a component to read the state of the network by connecting to switches and querying the flow tables, and (3) a GUI that displays this information to the developer. Additionally, one could add a fourth component to implement the active debugging technique described in the references below.
+
+* Mentor: Marco Canini or Spiros Eliopoulos
+* Difficulty: medium/hard
+* Programming languages: OCaml and Python/Javascript
+* Recommended reading:
+  * [Where is the Debugger for my Software-Deﬁned Network?](http://conferences.sigcomm.org/sigcomm/2012/paper/hotsdn/p55.pdf) In Workshop on Hot Topics in Software-Defined Networking (HotSDN), 2012
+  * I Know What Your Packet Did Last Hop: Using Packet Histories to Troubleshoot Networks. In USENIX Symposium on Networked Systems Design and Implementation (NSDI), 2014, To appear.
+
