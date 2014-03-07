@@ -78,6 +78,20 @@ languages. A special type of "language bindings" proposal could also
 look into integrating Frenetic as the backend for a BGP implementation
 (e.g., bird).
 
+This answer applies to frenetic bindings for any target language, but I'll just use Python when referring to the target language. A lot of the work, however, will require development of APIs on the OCaml side. 
+
+Ultimately this project boils down to designing and implementing a wrapper of the Frenetic application API that exposes this API in another programming language. There are many possible ways to export the Frenetic API. One approach might be to expose the Frenetic API as a RESTful interface by an embedded HTTP server. Another approach might be to embed a language interpreter (e.g., Python or Ruby) into Frenetic itself.
+Another approach might be to use an RPC library such as Apache Thrift.
+
+This project requires two main components to be developed, one in OCaml and one in the programming language for the bindings:
+
+On the Frenetic side:
+* Wrap the Frenetic API in component that can expose this API to an external language. Exposing the API can be done via one of several possible mechanisms as described above.
+
+On the other language side:
+* Determine a representation of the NetKAT abstract syntax tree that programmers can use to construct policies (as an example, consider how Pyretic embeds into Python a set of types that are closely related to the NetKAT types).
+* Develop the component that interfaces with the Frenetic API
+
 * Mentor: Spiros Eliopoulos
 * Difficulty: easy
 * Programming languages: OCaml and another language for the bindings (e.g., Python, Ruby, etc.)
