@@ -33,7 +33,7 @@ Ultimately this project boils down to designing and implementing: (1) a set of t
 
 One approach would be to write code entirely in OCaml. In this case, the OpenFlow types in OCaml should have a similar structure to those already defined to support OpenFlow 1.0 and partially OpenFlow 1.3. The serializers/deserializers would be written in OCaml itself, along with unit tests to validate the correctness of the implementation using round trip testing of the form: deserialize(serialize(X)) == X.
 
-Another approach could be to adopt an existing C or C++ library that supports multiple versions of OpenFlow and integrate it into OCaml. One such library exists in OpenVSwitch. Another example might be [flowgrammable's OpenFlow library]( http://flowgrammable.org/sdn/openflow/message-layer/).
+Another approach could be to adopt an existing C or C++ library that supports multiple versions of OpenFlow and integrate it into OCaml. One such library is [libfluid](http://opennetworkingfoundation.github.io/libfluid/). Another one exists in OpenVSwitch. Another example might be [flowgrammable's OpenFlow library]( http://flowgrammable.org/sdn/openflow/message-layer/).
 Still, if an external library is adopted, it should be exported to OCaml by designing an API that is convenient to work with (read, similar to the existing OpenFlow 1.0 design).
 
 Moreover, to simplify the interface upstream, one might consider designing an abstraction layer that
