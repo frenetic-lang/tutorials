@@ -70,6 +70,7 @@ performance optimizations to reduce the number of rules.
 
 # Language Bindings
 
+## Goals
 To write network programs for Frenetic, developers must currently use
 either the custom syntax exposed by the Frenetic binary, or an OCaml
 API. As part of the GSoC, a student could consider implementing new
@@ -78,7 +79,7 @@ languages. A special type of "language bindings" proposal could also
 look into integrating Frenetic as the backend for a BGP implementation
 (e.g., bird).
 
-This answer applies to frenetic bindings for any target language, but I'll just use Python when referring to the target language. A lot of the work, however, will require development of APIs on the OCaml side. 
+## Details
 
 Ultimately this project boils down to designing and implementing a wrapper of the Frenetic application API that exposes this API in another programming language. There are many possible ways to export the Frenetic API. One approach might be to expose the Frenetic API as a RESTful interface by an embedded HTTP server. Another approach might be to embed a language interpreter (e.g., Python or Ruby) into Frenetic itself.
 Another approach might be to use an RPC library such as Apache Thrift.
@@ -92,6 +93,7 @@ On the other language side:
 * Determine a representation of the NetKAT abstract syntax tree that programmers can use to construct policies (as an example, consider how Pyretic embeds into Python a set of types that are closely related to the NetKAT types).
 * Develop the component that interfaces with the Frenetic API
 
+## Other info
 * Mentor: Spiros Eliopoulos
 * Difficulty: easy
 * Programming languages: OCaml and another language for the bindings (e.g., Python, Ruby, etc.)
