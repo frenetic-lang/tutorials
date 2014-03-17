@@ -119,5 +119,5 @@ As part of the GSoC, a student could consider implementing a debugger for Frenet
 * Programming languages: OCaml and Python/Javascript
 * Recommended reading:
   * [Where is the Debugger for my Software-Deﬁned Network?](http://conferences.sigcomm.org/sigcomm/2012/paper/hotsdn/p55.pdf) In Workshop on Hot Topics in Software-Defined Networking (HotSDN), 2012
-  * I Know What Your Packet Did Last Hop: Using Packet Histories to Troubleshoot Networks. In USENIX Symposium on Networked Systems Design and Implementation (NSDI), 2014, To appear.
+  * [I Know What Your Packet Did Last Hop: Using Packet Histories to Troubleshoot Networks.](http://yuba.stanford.edu/~nikhilh/pubs/handigol-nsdi14.pdf) In USENIX Symposium on Networked Systems Design and Implementation (NSDI), 2014, To appear.
 
