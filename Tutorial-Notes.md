@@ -1,0 +1,1 @@
+* Add instructions on how to reset the VM and Mininet when things shutdown unexpectedly.
