@@ -6,7 +6,7 @@
 
 * For [Learning Chapter](https://github.com/frenetic-lang/frenetic/wiki/05-OxLearning), add sample test results for the Efficient Learning Switch. Is the `switch_connected` function needed?
 
-* There are two Chapter 7's and two Chapter 8's. The [NetCore Composition Chapter](https://github.com/frenetic-lang/frenetic/wiki/07-NetCoreComposition) contains repeated information from the [NCMonitoring Chapter](https://github.com/frenetic-lang/frenetic/wiki/09-NCMonitoring)
+* There are two Chapter 7's and two Chapter 8's. The [NetCore Composition Chapter](https://github.com/frenetic-lang/frenetic/wiki/07-NetCoreComposition) contains repeated information from the [NCMonitoring Chapter](https://github.com/frenetic-lang/frenetic/wiki/09-NCMonitoring) (one diagram doesn't appear in the monitoring chapter) 
 
 * Update links on [WrapUp Chapter](https://github.com/frenetic-lang/frenetic/wiki/10-WrapUp)
 
