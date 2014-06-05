@@ -8,4 +8,6 @@
 
 * There are two Chapter 7's and two Chapter 8's. The [NetCore Composition Chapter](https://github.com/frenetic-lang/frenetic/wiki/07-NetCoreComposition) contains repeated information from the [NCMonitoring Chapter](https://github.com/frenetic-lang/frenetic/wiki/09-NCMonitoring)
 
-* 
+* Update links on [WrapUp Chapter](https://github.com/frenetic-lang/frenetic/wiki/10-WrapUp)
+
+* The [Using Frenetic from OCaml](https://github.com/frenetic-lang/frenetic/wiki/Using-Frenetic-from-OCaml) page is unfinished. (There is no tutorial)
