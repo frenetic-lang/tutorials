@@ -5,3 +5,7 @@
 * For [Monitor Chapter](https://github.com/frenetic-lang/frenetic/wiki/04-OxMonitor) consider adding sample test results after Programming Exercises 1 and 2 (unless we are expected get the same results as the first traffic monitoring Programming Task, then state that)
 
 * For [Learning Chapter](https://github.com/frenetic-lang/frenetic/wiki/05-OxLearning), add sample test results for the Efficient Learning Switch
+
+* There are two Chapter 7's and two Chapter 8's. The [NetCore Composition Chapter](https://github.com/frenetic-lang/frenetic/wiki/07-NetCoreComposition) contains repeated information from the [NCMonitoring Chapter](https://github.com/frenetic-lang/frenetic/wiki/09-NCMonitoring)
+
+* 
