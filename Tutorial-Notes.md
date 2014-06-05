@@ -12,4 +12,4 @@
 
 * The [Using Frenetic from OCaml](https://github.com/frenetic-lang/frenetic/wiki/Using-Frenetic-from-OCaml) page is unfinished. (There is no tutorial)
 
-* For the [NCFirewall Chapter](https://github.com/frenetic-lang/frenetic/wiki/07-NCFirewall), when running fortune on `h1`, `h3` and `h4` timeout. Is this expected behavior? When running fortune on `h3`,`h4` times out.
+* For the [NCFirewall Chapter](https://github.com/frenetic-lang/frenetic/wiki/07-NCFirewall), when running fortune on `h1`, `h3` and `h4` timeout when running curl. Is this expected behavior? When running fortune on `h3`,`h4` times out when running curl instead of connecting.
