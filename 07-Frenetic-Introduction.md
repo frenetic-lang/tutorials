@@ -1,4 +1,4 @@
-Chapter 6: Introducing Frenetic
+Chapter 7: Introducing Frenetic
 ==============================
 
 You've learned how to write controllers with OpenFlow. We've shown
