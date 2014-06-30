@@ -224,10 +224,10 @@ bidirectional communication between the source and desination hosts.
 After the controller learns the location of every host, no more packets should
 arrive on the controller.
 
-## Next chapter: [Frenetic Introduction][Ch6]
+## Next chapter: [Network Address Translator][Ch6]
 
 
-[Ch6]: 06-Frenetic-Introduction
+[Ch6]: 06-OxNat
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 
