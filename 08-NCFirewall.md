@@ -1,4 +1,4 @@
-Chapter 7: Firewall Redux
+Chapter 8: Firewall Redux
 =========================
 
 In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured the flow table to implement the same function efficiently. 
