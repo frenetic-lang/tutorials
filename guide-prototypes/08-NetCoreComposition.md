@@ -1,4 +1,4 @@
-Chapter 7: Composition Operators
+Chapter 8: Composition Operators
 =================================
 
 A key feature of the NetCore design is its support for modular
@@ -11,7 +11,7 @@ A Port Mapping Policy
 ----------------------
 
 Our goal in this subsection will be to adapt the simple repeater 
-from [Chapter 6](06-NetCoreIntroduction.md) so that instead of simply
+from [Chapter 7](07-NetCoreIntroduction.md) so that instead of simply
 acting as a repeater, our switch does some packet rewriting.  More
 specifically, we will create a switch that maps connections initiated by host 
 <code>h1</code>
