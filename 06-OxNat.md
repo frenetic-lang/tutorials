@@ -44,25 +44,25 @@ We will be using a topology that consists of two internal hosts and one external
   mininet> xterm h1 h2 h3
   ```
 
- * In the terminal for h3, add static entries into the arp table and start a fortune server.
+ * In the terminal for `h3`, add static entries into the arp table and start a fortune server.
 
-  ```shell
+  ```
   # arp -v -s [public IP address] [public MAC address]
   # while true; do fortune | nc -l 80; done
   ```
   The first command adds a static entry into the arp table that binds your public MAC address to your public   
   IP address.
 
-* In the terminal for h1, fetch a fortune from h3.
+* In the terminal for `h1`, fetch a fortune from `h3`.
   
-  ```shell
+  ```
   # curl 10.0.0.3:80
    ```
-You should’ve received a fortune. Now try to fetch a fortune on the h2 terminal. 
+You should’ve received a fortune. Now try to fetch a fortune on the `h2` terminal. 
 
 * In the terminal for the controller, check to see that your IP addresses are translating correctly.
   
-  ```shell
+  ```
   Outgoing flow packetIn{
    total_len=74 port=1 reason=NoMatch      
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
@@ -72,7 +72,7 @@ You should’ve received a fortune. Now try to fetch a fortune on the h2 termina
    ```
 * Incoming packets should look similar to this:
 
-  ```shell
+  ```
   Non TCP or incoming flow packetIn{
    total_len=74 port=3 reason=NoMatch      
    payload=dlSrc=00:00:00:00:00:03,dlDst=00:00:00:00:00:099,
@@ -104,7 +104,7 @@ Compile and test your controller the same way that you did before.
 
 * In the terminal for the controller, check to see that your IP addresses and port numbers are translating correctly.
 
-  ```shell
+  ```
   Outgoing flow packetIn{
    total_len=74 port=1 reason=NoMatch      
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
@@ -115,7 +115,7 @@ Compile and test your controller the same way that you did before.
 
 * Incoming packets should look similar to this:
  
-  ```shell
+  ```
   Non TCP or incoming flow packetIn{
    total_len=74 port=3 reason=NoMatch      
    payload=dlSrc=00:00:00:00:00:03,dlDst=00:00:00:00:00:099,
