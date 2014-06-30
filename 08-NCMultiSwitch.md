@@ -106,7 +106,7 @@ Hopefully, it is evident that if your firewall only applies `pass` and `drop`, t
 
 In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.nc` and edit it to just `pass` and `drop` packets.  Then you will build a multi-module policy that involves `Firewall.nc`, `Forwarding.nc` and `Main.nc`.
 
-> If you didn't finish Chapter 7, use
+> If you didn't finish Chapter 8, use
 > `frenetic-tutorial-code/Sol_Chapter7_Firewall.nc`.
 > If you didn't finish the forwarding policy above, see
 > `frenetic-tutorial-code/Chapter8/Sol_Forwarding.nc`.
