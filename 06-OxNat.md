@@ -30,7 +30,7 @@ place it in the directory `~/src/frenetic/ox-tutorial-workspace/Nat1.ml`.
 
 #### Compiling and Testing
 
-These tests will ensure that TCP packets are being sent and received to the correct hosts 
+These tests will ensure that TCP packets are being sent and received to the correct hosts
 and addresses are translated correctly.
 
  * Build and launch the controller:
@@ -63,8 +63,7 @@ connected by a switch.
   # while true; do fortune | nc -l 80; done
   ```
 The first command adds a static entry into the arp table that binds your public MAC
-address to your public   
-  IP address.
+address to your public IP address.
 
 * In the terminal for `h1`, fetch a fortune from `h3`.
   
@@ -80,7 +79,7 @@ correctly.
   Outgoing flow packetIn{
    total_len=74 port=1 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
-   nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)                          
+   nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)
   
   Translating Private IP:167772161 to Public IP:167772259.
    ```
