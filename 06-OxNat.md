@@ -38,7 +38,7 @@ These tests will ensure that TCP packets are being sent and received to the corr
 
 We will be using a topology that consists of two internal hosts and one external host connected by a switch.
 
- * In Mininet, start new terminals for h1, h2, and h3:
+ * In Mininet, start new terminals for `h1`, `h2`, and `h3`:
 
   ```
   mininet> xterm h1 h2 h3
@@ -64,9 +64,9 @@ You should’ve received a fortune. Now try to fetch a fortune on the `h2` termi
   
   ```
   Outgoing flow packetIn{
-   total_len=74 port=1 reason=NoMatch      
+   total_len=74 port=1 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
-   nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)                                                                                      
+   nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)                                                                                
   }
   Translating Private IP:167772161 to Public IP:167772259.
    ```
@@ -74,9 +74,9 @@ You should’ve received a fortune. Now try to fetch a fortune on the `h2` termi
 
   ```
   Non TCP or incoming flow packetIn{
-   total_len=74 port=3 reason=NoMatch      
+   total_len=74 port=3 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:03,dlDst=00:00:00:00:00:099,
-   nwSrc=10.0.0.3,nwDst=10.0.0.99,tpSrc=80;tpDst=42635 (buffered at 257)                                                                                      
+   nwSrc=10.0.0.3,nwDst=10.0.0.99,tpSrc=80;tpDst=42635 (buffered at 257)                                                                                  
    }
   Found a mapping in the hashtable!
   ```
@@ -106,9 +106,9 @@ Compile and test your controller the same way that you did before.
 
   ```
   Outgoing flow packetIn{
-   total_len=74 port=1 reason=NoMatch      
+   total_len=74 port=1 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
-   nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)                                                                                      
+   nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)                                                                                  
    }
   Translating Private IP:167772161:42635 to Public IP:167772259:5000.
   ```
@@ -117,9 +117,9 @@ Compile and test your controller the same way that you did before.
  
   ```
   Non TCP or incoming flow packetIn{
-   total_len=74 port=3 reason=NoMatch      
+   total_len=74 port=3 reason=NoMatch 
    payload=dlSrc=00:00:00:00:00:03,dlDst=00:00:00:00:00:099,
-   nwSrc=10.0.0.3,nwDst=10.0.0.99,tpSrc=80;tpDst=5000 (buffered at 257)                                                                                      
+   nwSrc=10.0.0.3,nwDst=10.0.0.99,tpSrc=80;tpDst=5000 (buffered at 257)                                                                              
    }
   Found a mapping in the hashtable!
   ```
