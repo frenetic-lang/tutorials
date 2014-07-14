@@ -22,7 +22,16 @@ to the public IP address and installs rules to forward the packet to the public 
     * If so, the public IP address of the packet is rewritten to the corresponding private
       IP address and rules are installed to forward the packet to the correct private port.
     * If not, the packet is simply dropped.
- 
+
+### Topology
+
+You will work with the following network topology:
+
+The figure shows 2 private hosts and a public host all connected with a single switch. You can create this topology easily with Mininet:
+
+```
+$ sudo mn --controller=remote --topo=single,3 --mac --arp
+```
 #### Programming Task
 
 You should use the template below to get started. Save it in a file called `Nat1.ml` and
@@ -43,7 +52,7 @@ and addresses are translated correctly.
  * In a separate terminal window, start Mininet:
 
   ```shell
-  $ sudo mn --controller=remote --topo=single,3 --mac
+  $ sudo mn --controller=remote --topo=single,3 --mac --arp
   ```
 
 We will be using a topology that consists of two internal hosts and one external host
