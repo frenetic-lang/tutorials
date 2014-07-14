@@ -72,8 +72,6 @@ packet-processing function efficiently.
 As a warmup exercise, you will build a repeater. A repeater is a
 network device that forwards input packets out of all other ports.
 
-![Repeater](images/repeater.png)
-
 You will build the repeater in two steps:
 
 - First, you will leave the flow table empty, so all packets are
