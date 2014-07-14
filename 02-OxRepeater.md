@@ -372,7 +372,7 @@ implement a policy change, you may see packets at the controller.
 [Ch7]: 07-NetCoreComposition
 [Ch8]: 08-DynamicNetCore
 
-[OpenFlow_Core]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html
+[OpenFlow_Core]: https://github.com/frenetic-lang/ocaml-openflow/blob/master/lib/OpenFlow0x04_Core.mli
 
 [send_flow_mod]: http://frenetic-lang.github.io/frenetic/docs/OxPlatform.html#VALsend_flow_mod
 
