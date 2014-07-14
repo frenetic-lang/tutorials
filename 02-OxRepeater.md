@@ -69,7 +69,7 @@ packet-processing function efficiently.
 
 ## Warmup: Programming a Repeater
 
-![Repeater](images/Repeater.jpg)
+![Repeater](images/Repeater.png)
 
 As a warmup exercise, you will build a repeater. A repeater is a
 network device that forwards input packets out of all other ports.
