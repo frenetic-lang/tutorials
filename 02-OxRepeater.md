@@ -278,12 +278,12 @@ let switch_connected (sw : switchId) _: unit =
   send_flow_mod sw 1l (add_flow priority pattern action_list)
 ```
 
-This function uses [send_flow_mod] to add a new rule to
+This function uses `send_flow_mod` to add a new rule to
 the flow table. Your task is to fill in `priority`, `pattern`, and
 `action_list`.
 
-- `pattern` is an OpenFlow [pattern] for matching packets.  Since your
-   repeater matches all packets, you can simply use [match_all].
+- `pattern` is an OpenFlow pattern for matching packets.  Since your
+   repeater matches all packets, you can simply use `match_all`.
    (We cover patterns in detail later.)
 
 - `priority` is a 16-bit priority for the rule. Since you just have one
