@@ -27,6 +27,8 @@ to the public IP address and installs rules to forward the packet to the public 
 
 You will work with the following network topology:
 
+![images](images/NatTopo.jpg)
+
 The figure shows 2 private hosts and a public host all connected with a single switch. You can create this topology easily with Mininet:
 
 ```
