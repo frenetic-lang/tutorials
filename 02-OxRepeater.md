@@ -3,7 +3,7 @@ Chapter 2: Repeater
 
 ### Introduction to OpenFlow
 
-In a basic SDN, all switches connect to a centralized controller
+In a basic software-defined networking (SDN), all switches connect to a centralized controller
 machine. The controller thus has a global view of the network and can
 program all switches to implement a unified, network-wide policy.
 To program a switch, the controller uses a standard protocol, such as
@@ -43,13 +43,13 @@ For example, consider the following flow table:
 We can understand the table by interpreting the patterns and actions
 in priority-order:
 
-1. The highest priority rule drops all ICMP packets (because it has an
+1. The highest priority rule drops all Internet Control Message Protocol (ICMP) packets (because it has an
    empty action list).
 
-2. The next rule sends TCP packets out of ports 2 and 5 (i.e., it
+2. The next rule sends Transmission Control Protocol (TCP) packets out of ports 2 and 5 (i.e., it
    creates two copies).
 
-3. The next rule sends UDP traffic to the special controller port (see
+3. The next rule sends User Datagram Protocol (UDP) traffic to the special controller port (see
    below).
 
 4. The final rule matches ICMP traffic. However, since this rule is
