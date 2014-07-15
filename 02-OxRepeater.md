@@ -152,8 +152,8 @@ $ make Repeater.d.byte
 If compilation succeeds, you should see output akin to this:
 
 ```
-ocamlbuild -use-ocamlfind -cflag -ppopt -cflag -lwt-debug Repeater.d.byte
-Finished, 4 targets (0 cached) in 00:00:00.
+ocamlbuild -use-ocamlfind Repeater1.d.byte
+Finished, 4 targets (4 cached) in 00:00:00.
 ```
 
 #### Testing your Controller
@@ -228,6 +228,8 @@ hosts and have them ping each other:
   Pinging should always succeed ("0% packet loss"). In addition, if
   your controller calls `printf` in its packet-in function, you will
   see the controller receiving all pings.
+
+Shut down the controller properly with `Ctrl+C` and Mininet with `Ctrl+D`.
 
 This repeater is functionally correct, but laughably inefficient.
 
