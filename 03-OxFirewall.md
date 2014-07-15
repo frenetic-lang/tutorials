@@ -139,7 +139,7 @@ packetIn{
 
 In this part, you will extend your implementation of the firewall
 function to also implement the firewall using flow tables.
-You can build on `ox-tutorial-solutions/Firewall2.ml` if necessary.
+You can build on `ox-tutorial-workspace/Firewall2.ml` if necessary.
 
 Fill in the `switch_connected` event handler. You need to install two
 entries into the flow table: one for ICMP traffic and the other for
