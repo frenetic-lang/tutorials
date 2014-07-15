@@ -117,7 +117,7 @@ end
 module Controller = OxStart.Make (MyApplication)
 ```
 
-Within the body of `packet_in`, you need to use [send_packet_out], 
+Within the body of `packet_in`, you need to use `send_packet_out`, 
 which takes a list of actions (`apply_actions`) to apply to the packet:
 
 ```ocaml
