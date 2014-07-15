@@ -287,7 +287,7 @@ packets before the switch is fully initialized?
 
 ## Next chapter: [Ox Learning Switch][Ch5]
 
-[statistics]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Stats.html
+[statistics]: https://github.com/frenetic-lang/ocaml-openflow/blob/master/lib/OpenFlow0x01_Stats.mli
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 
@@ -321,6 +321,3 @@ packets before the switch is fully initialized?
 
 [match_all]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html#VALmatch_all
 
-[example patterns]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html#patternexamples
-
-[header accessor functions]: http://frenetic-lang.github.io/frenetic/docs/Packet.html#accs
