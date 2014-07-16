@@ -188,7 +188,7 @@ from `h2` to `h3`.  No traffic should reach `h1`.
   * Finally, check the status of `tcpdump` in the terminal for `h1`; it should
     still be hanging, listening for an incoming packet.  If it terminated with
     the message `1 packet captured`, then your controller sent a packet to `h1`
-    as well as `h2`.
+    as well as `h2` (flooded the network).
 
     > Note that this will fail if you have not already used `ping` to learn the
     > locations of `h2` and `h3` before starting `tcpdump`.  Can you see why?
