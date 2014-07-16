@@ -11,7 +11,9 @@ module MyApplication = struct
     let callback () =
       Printf.printf "Sending stats request to %Ld\n%!" sw; 
       send_stats_request sw xid
-        (Stats.AggregateRequest (pat, 0xff, None));
+        (Stats.AggregateRequest {Stats.as_of_match = pat;
+                                 Stats.as_table_id = 0xff;
+                                 Stats.as_out_port = None});
       periodic_stats_request sw interval xid pat in
     timeout interval callback
       
