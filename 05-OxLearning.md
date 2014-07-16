@@ -224,6 +224,10 @@ bidirectional communication between the source and desination hosts.
 After the controller learns the location of every host, no more packets should
 arrive on the controller.
 
+#### Compiling and Testing your Efficient Learning Switch
+
+You should build and test your learning switch as before. 
+
 ## Next chapter: [Network Address Translator][Ch6]
 
 
