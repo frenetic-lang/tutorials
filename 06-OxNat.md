@@ -40,6 +40,7 @@ You should use the template below to get started. Save it in a file called `Nat1
 place it in the directory `~/src/frenetic/ox-tutorial-workspace/Nat1.ml`.
 
 ```ocaml
+(* ~/src/frenetic/ox-tutorial-workspace/Nat1.ml *)
 
 open OxPlatform
 open Packet
