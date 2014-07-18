@@ -39,7 +39,7 @@ You should use the template below to get started.  Save it in a file called
 `Learning.ml` and place it in the directory
 `~/src/frenetic/ox-tutorial-workspace/Learning.ml`.
 
-```
+```ocaml
 (* ~/src/frenetic/ox-tutorial-workspace/Learning.ml *)
 
 open OxPlatform
