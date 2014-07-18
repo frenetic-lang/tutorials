@@ -68,12 +68,13 @@ module MyApplication = struct
         && Packet.dlTyp pk = 0x800 
         && Packet.nwProto pk = 0x06 
       then
-	(* [FILL] Add packet info into hashtable and install rules to forward packet out of correct port *)
+	(* [FILL] Add packet info into hashtable and install rules to 
+           forward packet out of correct port *)
         ...
       else (* For packets arriving on port 3 *)
 	try (* If a mapping is found in the hashtable *)
 	  Printf.printf "Non TCP or incoming flow %s \n" (packetIn_to_string pktIn);
-          (* [FILL} Install reverse rules to forward packet back to correct host *)
+          (* [FILL] Install reverse rules to forward packet back to correct host *)
           ...
       with Not_found -> 
 	(* [FILL] If no mapping is found in hashtable then drop the packet *)
