@@ -35,7 +35,7 @@ Use the following code as a template for this exercise.  Save it in a file
 called `Monitor.ml` and place it in the directory
 `~/src/frenetic/ox-tutorial-workspace/Monitor.ml`.
 
-```
+```ocaml
 (* ~/src/frenetic/ox-tutorial-workspace/Monitor.ml *)
 
 open OxPlatform
