@@ -39,6 +39,51 @@ $ sudo mn --controller=remote --topo=single,3 --mac --arp
 You should use the template below to get started. Save it in a file called `Nat1.ml` and
 place it in the directory `~/src/frenetic/ox-tutorial-workspace/Nat1.ml`.
 
+```ocaml
+
+open OxPlatform
+open Packet
+open OpenFlow0x01_Core
+
+module MyApplication = struct
+
+  include OxStart.DefaultTutorialHandlers
+
+  let mappings = Hashtbl.create 50
+
+  let publicIP = 167772259l
+  let publicMAC = 153L
+
+  let privateIP1 = 167772161l
+
+  let privateIP2 = 167772162l
+
+   let switch_connected (sw:switchId) feats : unit = 
+    Printf.printf "Switch Connected %Ld\n%!" sw
+
+  let packet_in (sw: switchId) (xid : xid) (pktIn : packetIn) : unit = 
+    let pk = parse_payload pktIn.input_payload in
+      (* If the packet is of type TCP and came in through port 1 or 2 *)
+      if (pktIn.port = 1 || pktIn.port = 2)  
+        && Packet.dlTyp pk = 0x800 
+        && Packet.nwProto pk = 0x06 
+      then
+	(* [FILL] Add packet info into hashtable and install rules to forward packet out of correct port *)
+        ...
+      else (* For packets arriving on port 3 *)
+	try (* If a mapping is found in the hashtable *)
+	  Printf.printf "Non TCP or incoming flow %s \n" (packetIn_to_string pktIn);
+          (* [FILL} Install reverse rules to forward packet back to correct host *)
+          ...
+      with Not_found -> 
+	(* [FILL] If no mapping is found in hashtable then drop the packet *)
+        ...
+end
+
+module Controller = OxStart.Make (MyApplication)
+
+```
+
 #### Compiling and Testing
 
 These tests will ensure that TCP packets are being sent and received to the correct hosts
