@@ -73,7 +73,7 @@ module MyApplication = struct
         ...
       else (* For packets arriving on port 3 *)
 	try (* If a mapping is found in the hashtable *)
-	  Printf.printf "Non TCP or incoming flow %s \n" (packetIn_to_string pktIn);
+          Printf.printf "Non TCP or incoming flow %s \n" (packetIn_to_string pktIn);
           (* [FILL] Install reverse rules to forward packet back to correct host *)
           ...
         with Not_found -> 
