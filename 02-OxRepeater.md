@@ -275,7 +275,7 @@ Your task is to write a `switch_connected` handler in your program,
 using the following as a template:
 
 ```ocaml
-let switch_connected (sw : switchId) _: unit =
+let switch_connected (sw : switchId) feats : unit =
   Printf.printf "Switch %Ld connected.\n%!" sw;
   send_flow_mod sw 1l (add_flow priority pattern action_list)
 ```
