@@ -146,7 +146,7 @@ entries into the flow table: one for ICMP traffic and the other for
 all other traffic. Use the following template:
 
 ```ocaml
-let switch_connected (sw : switchId) : unit =
+let switch_connected (sw : switchId) feats : unit =
   Printf.printf "Switch %Ld connected.\n%!" sw;
   send_flow_mod sw 0l (add_flow priority1 pattern1 actions1);
   send_flow_mod sw 0l (add_flow priority2 pattern2 actions2)
