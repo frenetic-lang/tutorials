@@ -91,21 +91,21 @@ module Controller = OxStart.Make (MyApplication)
 These tests will ensure that TCP packets are being sent and received to the correct hosts
 and addresses are translated correctly.
 
- * Build and launch the controller:
+ * Start Mininet:
+
+  ```shell
+  $ sudo mn --controller=remote --topo=single,3 --mac --arp
+  ```
+
+ * In a separate terminal window, build and launch the controller:
 
   ```shell
   $ make Nat1.d.byte
   $ ./Nat1.d.byte
   ```
 
- * In a separate terminal window, start Mininet:
-
-  ```shell
-  $ sudo mn --controller=remote --topo=single,3 --mac --arp
-  ```
-
-We will be using a topology that consists of two internal hosts and one external host
-connected by a switch.
+  We will be using a topology that consists of two internal hosts and one external host
+  connected by a switch.
 
  * In Mininet, start new terminals for `h1`, `h2`, and `h3`:
 
