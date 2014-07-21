@@ -241,7 +241,7 @@ periodically reads the counter for HTTP requests and HTTP responses
 every five seconds:
 
 ```ocaml
-let switch_connected (sw : switchId) : unit =
+let switch_connected (sw : switchId) feats : unit =
   Printf.printf "Switch %Ld connected.\n%!" sw;
   periodic_stats_request sw 5.0 10l match_http_requests;
   periodic_stats_request sw 5.0 20l match_http_responses;
