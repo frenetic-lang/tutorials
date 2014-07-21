@@ -76,7 +76,7 @@ module MyApplication = struct
          apply_actions = [Output AllPorts]
        })
 
-  let switch_connected (sw : switchId) : unit =
+  let switch_connected (sw : switchId) feats : unit =
     Printf.printf "Switch %Ld connected.\n%!" sw
 
   (* [FILL] Modify this packet_in function to run both learning_packet_in and
