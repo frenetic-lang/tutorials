@@ -41,7 +41,7 @@ module MyApplication = struct
                inPort = Some src_port; 
                dlSrc = Some privateMAC;
 	       dlTyp = Some 0x800; 
-	       nwSrc = Some privateIP; 
+	       nwSrc = Some {m_value = privateIP; m_mask = None};
 	       nwProto = Some 0x06; 
 	       tpSrc = Some tcp_src } in
            send_flow_mod sw 0l (add_flow 20 match_pk action); 
@@ -63,7 +63,7 @@ module MyApplication = struct
 	      dlSrc = Some publicMAC;
 	      dlTyp = Some 0x800;	
 	      nwSrc = Some publicIP; 
-	      nwProto = Some 0x06; 
+	      nwProto = Some {m_value = publicIP; m_mask = None}; 
 	      tpDst = Some tcp_dst_pk } in
           let action = 
 	    [ SetDlDst mac_dst;
@@ -87,4 +87,4 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication
+module Controller = OxStart.Make (MyApplication)
