@@ -15,7 +15,7 @@ module MyApplication = struct
 
   let privateIP2 = 167772162l
 
-   let switch_connected (sw:switchId) feats : unit = 
+  let switch_connected (sw:switchId) feats : unit = 
     Printf.printf "Switch Connected %Ld\n%!" sw
 
   let packet_in (sw: switchId) (xid : xid) (pktIn : packetIn) : unit = 
@@ -75,15 +75,15 @@ module MyApplication = struct
               port_id = None;
               apply_actions = action
             }               
-      with Not_found -> 
-	begin
-	  Printf.printf "Didn't find a mapping in the hashtable\n%!";
-          send_packet_out sw 0l {
-            output_payload = pktIn.input_payload;
-            port_id = None;
-            apply_actions = []
-         }
-        end
+      	with Not_found -> 
+	  begin
+	    Printf.printf "Didn't find a mapping in the hashtable\n%!";
+            send_packet_out sw 0l {
+              output_payload = pktIn.input_payload;
+              port_id = None;
+              apply_actions = []
+            } 
+          end
 
 end
 
