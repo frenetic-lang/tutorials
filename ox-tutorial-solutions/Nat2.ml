@@ -14,9 +14,7 @@ module MyApplication = struct
   let privateIP1 = 167772161l
   let privateIP2 = 167772162l
 
-  let publicPort1 = 5000
-
-  let publicPort2 = 5001
+  let publicPort = ref 5000
 
   let switch_connected (sw:switchId) feats : unit = 
     Printf.printf "Switch Connected %Ld\n%!" sw
@@ -32,31 +30,28 @@ module MyApplication = struct
 	let privateMAC = pk.Packet.dlSrc in 
         let privateIP =  Packet.nwSrc pk in
         let src_port =  pktIn.port in
-	let publicPort = 
-	  if src_port = 1 
-	  then publicPort1 
-	  else publicPort2 in
-        let tcp_src = Packet.tpSrc pk (* with _ -> Printf.printf "ERRRR\n%!"; 0 *) in
+        let tcp_src = Packet.tpSrc pk in
         let action = 
         [SetDlSrc publicMAC;
          SetNwSrc publicIP; 
-         SetTpSrc publicPort; 
+         SetTpSrc !publicPort; 
          Output (PhysicalPort 3)] in
         let match_pk = 
 	{ match_all with 
           inPort = Some src_port; 
           dlSrc = Some privateMAC;
 	  dlTyp = Some 0x800; 
-	  nwSrc = Some privateIP; 
+	  nwSrc = Some {m_value = privateIP; m_mask = None}; 
 	  nwProto = Some 0x06; 
 	  tpSrc = Some tcp_src } in
-        Printf.printf "Translating Private IP: %ld:%d to Public IP: %ld:%d.\n%!" privateIP tcp_src publicIP publicPort;
-        Hashtbl.add mappings (publicPort) (privateMAC, privateIP, src_port, tcp_src);
+        Printf.printf "Translating Private IP: %ld:%d to Public IP: %ld:%d.\n%!" privateIP tcp_src publicIP !publicPort;
+        Hashtbl.add mappings (!publicPort) (privateMAC, privateIP, src_port, tcp_src);
         send_flow_mod sw 0l (add_flow 20 match_pk action);
         send_packet_out sw 0l {
   	  output_payload = pktIn.input_payload;
           port_id = None;
           apply_actions = action };
+	publicPort := !publicPort + 1
        end
     else 
       try
@@ -70,7 +65,7 @@ module MyApplication = struct
 	    inPort = Some src_port; 
 	    dlSrc = Some publicMAC;
 	    dlTyp = Some 0x800;	
-	    nwSrc = Some publicIP; 
+	    nwSrc = Some {m_value = publicIP; m_mask = None}; 
 	    nwProto = Some 0x06; 
 	    tpDst = Some pubPort } in 
         let action = 
