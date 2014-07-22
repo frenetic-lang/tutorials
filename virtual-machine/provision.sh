@@ -21,7 +21,7 @@ apt-get install -y \
   libappindicator1 \
   libcurl3
 
-# Install Chrome
+ # Install Chrome
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 dpkg -i google-chrome-stable_current_amd64.deb
@@ -62,9 +62,13 @@ greeter-session=lightdm-gtk-greeter
 EOF
 
 # Setup Frenetic
-su frenetic "opam init -y"
-su frenetic "opam repository add frenetic https://github.com/frenetic-lang/opam-bleeding.git"
-su frenetic "opam install -y frenetic ox"
+su frenetic -c "opam init -y"
+su frenetic -c "opam repository add frenetic https://github.com/frenetic-lang/opam-bleeding.git"
+su frenetic -c "opam install -y frenetic ox"
+
+# Stop OVS Controller so we can run Frenetic
+service openvswitch-controller stop
+update-rc.d openvswitch-controller disable
 
 # Zero free space
 cat /dev/zero > zero.fill; sync; sleep 1; sync; rm -f zero.fill
