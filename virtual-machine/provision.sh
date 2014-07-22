@@ -12,11 +12,14 @@ apt-get install -y \
   vim-gtk \
   emacs \
   opam \
-  ocaml-native-compilers \ # OPAM does not install these
+  ocaml-native-compilers \
   wireshark \
-  python-networkx \ # Not sure if this is needed
-  m4 \ # Necessary for OPAM
-  mininet
+  python-networkx \
+  m4 \
+  mininet \
+  git \
+  libappindicator1 \
+  libcurl3
 
 # Install Chrome
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
@@ -31,8 +34,6 @@ rm sublime-text_build-3059_amd64.deb
 
 # Create Frenetic account
 adduser --disabled-password --gecos frenetic
-PASSWORD=frenetic
-echo -e "$PASSWORD\n$PASSWORD\n" | passwd frenetic --stdin
 usermod -a -G sudo frenetic
 
 # Allow sudo without password (for "sudo mn")

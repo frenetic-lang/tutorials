@@ -16,5 +16,6 @@ Usage
 - Run this script as root:
 
   ```
-  curl https://github.com/frenetic-lang/tutorials/blob/master/virtual-machine/provision.sh | bash
+  wget https://raw.githubusercontent.com/frenetic-lang/tutorials/master/virtual-machine/provision.sh
+  bash provision.sh
   ```
