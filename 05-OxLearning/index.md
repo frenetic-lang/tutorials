@@ -42,7 +42,7 @@ You should use the template below to get started.  Save it in a file called
 `Learning.ml` and place it in the directory
 `~/src/frenetic/ox-tutorial-workspace/Learning.ml`.
 
-```ocaml
+~~~ ocaml
 (* ~/src/frenetic/ox-tutorial-workspace/Learning.ml *)
 
 open OxPlatform
@@ -91,21 +91,21 @@ module MyApplication = struct
 end
 
 module Controller = OxStart.Make (MyApplication)
-```
+~~~
 
 Note that it contains a hash table to map hosts to ports:
 
-```ocaml
+~~~ ocaml
 let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50
-```
+~~~
 
 > `50` is the initial capacity of the hash table.
 
 You can use `Hashtbl.add` to add a new host/port mapping:
 
-```ocaml
+~~~ ocaml
 Hashtbl.add known_hosts <pkt_src> <pkt_in_port>
-```
+~~~
 
 The `routing_packet_in` function first extracts the ethernet source address
 from the packet, and then looks it up in the table of known host locations.  If
@@ -126,29 +126,29 @@ pair of hosts.
 
 - Build and launch the controller:
 
-  ```shell
+  ~~~ shell
   $ make Learning.d.byte
   $ ./Learning.d.byte
-  ```
+  ~~~
 
 - In a separate terminal window, start Mininet:
 
-  ```shell
+  ~~~ shell
   $ sudo mn --controller=remote --topo=single,4 --mac
-  ```
+  ~~~
 
 - Test all-pairs connectivity:
 
-  ```
+  ~~~
   mininet> pingall
-  ```
+  ~~~
 
 - Run `pingall` again to ensure that connectivity remains after the first round
 of learning:
 
-  ```
+  ~~~
   mininet> pingall
-  ```
+  ~~~
 
 At this point, your learning switch should have learned the locations of all
 three hosts.  To test that your controller no longer floods traffic, we will
@@ -157,17 +157,17 @@ from `h2` to `h3`.  No traffic should reach `h1`.
 
   * In Mininet, start new terminals for `h1`, `h2`, and `h3`:
 
-    ```
+    ~~~
     mininet> xterm h1 h2 h3
-    ```
+    ~~~
 
   * In the terminal for `h1`, start `tcpdump`:
 
-    ```
+    ~~~
     # tcpdump -c 1 port 80
     tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
     listening on h1-eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
-    ```
+    ~~~
 
     A brief explanation of the flags:
 
@@ -178,15 +178,15 @@ from `h2` to `h3`.  No traffic should reach `h1`.
 
   * In the terminal for `h2`, start a local fortune server:
 
-    ```
+    ~~~
     # while true; do fortune | nc -l 80; done
-    ```
+    ~~~
 
   * In the terminal for `h3`, fetch a fortune from `h2`:
 
-    ```
+    ~~~
     # curl 10.0.0.2:80
-    ```
+    ~~~
 
   * Finally, check the status of `tcpdump` in the terminal for `h1`; it should
     still be hanging, listening for an incoming packet.  If it terminated with

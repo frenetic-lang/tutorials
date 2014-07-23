@@ -24,9 +24,9 @@ switch connections, and more.)
 The templates and solutions for this part of the tutorial are in
 the `frenetic-tutorial-code` directory:
 
-```
+~~~
 $ cd guide/frenetic-tutorial-code
-```
+~~~
 
 ### Example 1: A Naive Repeater (Redux)
 
@@ -43,14 +43,14 @@ Our first goal will be to program a
 switch-specific repeater that forwards traffic arriving at port 1 out port 2,
 and vice versa.  The following Frenetic policy accomplishes that task.
 
-```
+~~~
 (* a simple repeater *)
 
 let repeater =
   if inPort = 1 then fwd(2)
   else fwd(1) in
 monitorTable(1, repeater)
-```
+~~~
 
 As in OCaml, Frenetic comments are placed within <code>(*</code> and
 <code>*)</code> (and comments may be nested). The <code>let</code> keyword
@@ -78,37 +78,37 @@ you and compare it to your flow table rules from the Ox tutorial.
 Within the <code>frenetic-tutorial-code</code> directory, you should
 find the repeater policy in <code>Repeater.nc</code>.  To start the
 repeater controller, just type:
-```
+~~~
 $ frenetic Repeater.nc
-```
+~~~
 Now, in a separate terminal, start up mininet with the default, single
 switch topology.
-```
+~~~
 $ sudo mn --controller=remote
-```
+~~~
 
 #### Test the Example
 
 At the mininet prompt, test your repeater program by pinging <code>h2</code> from <code>h1</code>:
-```
+~~~
 mininet> h1 ping -c 1 h2
-```
+~~~
 You should see a trace like this one:
-```
+~~~
 PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
 64 bytes from 10.0.0.2: icmp_req=1 ttl=64 time=0.216 ms
 
 --- 10.0.0.2 ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.216/0.216/0.216/0.000 ms
-```
+~~~
 Ping <code>h1</code> from <code>h2</code> as well.
 Once you are convinced the repeater works,
 try replacing the given repeater with an even simpler one:
-```
+~~~
 let repeater = all in
 monitorTable(1, repeater)
-```
+~~~
 The <code>all</code> policy forwards any packet arriving at a switch out
 all ports on that switch except the port it arrived on.  Try testing
 that out too to see if you have done it correctly.

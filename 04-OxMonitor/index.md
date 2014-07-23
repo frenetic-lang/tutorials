@@ -20,7 +20,7 @@ received from port 80. Since the `packet_in` function receives all
 packets, all you need to do is increment a global counter each time
 `packet_in` receives a new packet:
 
-```ocaml
+~~~ ocaml
 let num_http_packets = ref 0
 
 let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
@@ -29,7 +29,7 @@ let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
       num_http_packets := !num_http_packets + 1;
       Printf.printf "Saw %d HTTP packets.\n%!" !num_http_packets
     end
-```
+~~~
 
 #### Programming Task
 
@@ -37,7 +37,7 @@ Use the following code as a template for this exercise.  Save it in a file
 called `Monitor.ml` and place it in the directory
 `~/src/frenetic/ox-tutorial-workspace/Monitor.ml`.
 
-```ocaml
+~~~ ocaml
 (* ~/src/frenetic/ox-tutorial-workspace/Monitor.ml *)
 
 open OxPlatform
@@ -71,7 +71,7 @@ module MyApplication = struct
 end
 
 module Controller = OxStart.Make (MyApplication)
-```
+~~~
 
 Your task:
 
@@ -92,56 +92,56 @@ port 80 increments the counter (and that other traffic does not).
 
 - Build and launch the controller:
 
-  ```shell
+  ~~~ shell
   $ make Monitor.d.byte
   $ ./Monitor.d.byte
-  ```
+  ~~~
 
 - In a separate terminal window, start Mininet:
 
-  ```
+  ~~~
   $ sudo mn --controller=remote --topo=single,4 --mac
-  ```
+  ~~~
 
 - Test that the firewall correctly drops pings, reporting "100% packet loss":
 
-  ```
+  ~~~
   mininet> h1 ping h2
   mininet> h2 ping h1
-  ```
+  ~~~
 
 - Test that Web traffic is unaffected, but logged. To do so, run a fortune
    server on one host and a client on another:
 
   * In Mininet, start new terminals for `h1` and `h2`:
 
-    ```
+    ~~~
     mininet> xterm h1 h2
-    ```
+    ~~~
 
   * In the terminal for `h1` start a local fortune server:
 
-    ```
+    ~~~
     # while true; do fortune | nc -l 80; done
-    ```
+    ~~~
 
   * In the terminal for `h2` fetch a fortune from `h1`:
 
-    ```
+    ~~~
     # curl 10.0.0.1:80
-    ```
+    ~~~
 
     This command should succeed and you should find HTTP traffic
     logged in the controller's terminal:
 
-    ```
+    ~~~
     Saw 1 HTTP packets.
     Saw 2 HTTP packets.
     Saw 3 HTTP packets.
     Saw 4 HTTP packets.
     Saw 5 HTTP packets.
     ...
-    ```
+    ~~~
 
 > If you are seeing <code>packetIn</code> messages in between the HTTP traffic logs,
 > you could comment out the appropriate printf commands.
@@ -154,16 +154,16 @@ port 80 increments the counter (and that other traffic does not).
 
   * On the terminal for `h1`:
 
-    ```
+    ~~~
     ^C
     $ while true; do fortune | nc -l 8080; done
-    ```
+    ~~~
 
   * On the terminal for `h2`, fetch a fortune:
 
-    ```
+    ~~~
     $ curl 10.0.0.1:8080
-    ```
+    ~~~
 
   The client should successfully download the fortune. However, none of
   these packets should get logged by the controller.
@@ -224,7 +224,7 @@ independently and calculate their sum.
 You can read counters by calling [send_stats_request] periodically.
 To do so, you can use the following function:
 
-```ocaml
+~~~ ocaml
 let rec periodic_stats_request sw interval xid pat =
   let callback () =
     Printf.printf "Sending stats request to %Ld\n%!" sw;
@@ -232,7 +232,7 @@ let rec periodic_stats_request sw interval xid pat =
       (Stats.AggregateRequest (pat, 0xff, None));
     periodic_stats_request sw interval xid pat in
   timeout interval callback
-```
+~~~
 
 > Add this definition to your `Monitor.ml`.
 
@@ -242,13 +242,13 @@ that match `pat`. Use `periodic_stats_request` in
 periodically reads the counter for HTTP requests and HTTP responses
 every five seconds:
 
-```ocaml
+~~~ ocaml
 let switch_connected (sw : switchId) feats : unit =
   Printf.printf "Switch %Ld connected.\n%!" sw;
   periodic_stats_request sw 5.0 10l match_http_requests;
   periodic_stats_request sw 5.0 20l match_http_responses;
   ...
-```
+~~~
 
 You need to fill in the patterns `match_http_requests` and
 `match_http_responses`, which you have already calculated in order to install
@@ -258,7 +258,7 @@ Finally, you need a `stats_reply` function that will handle the stats
 responses from the switch and calculate the sum of the two
 counters. We've provided one below:
 
-```ocaml
+~~~ ocaml
 let num_http_request_packets = ref 0L
 let num_http_response_packets = ref 0L
 
@@ -275,7 +275,7 @@ let stats_reply (sw : switchId) (xid : xid) (stats : Stats.reply) : unit =
       (Int64.add !num_http_request_packets !num_http_response_packets)
   | _ -> ()
 
-```
+~~~
 
 #### Building and Testing Your Monitor
 

@@ -13,9 +13,9 @@ function to count all HTTP traffic on the controller. To count packets efficient
 
 The following Frenetic program does all of the above:
 
-```
+~~~
 if tcpSrcPort = 80 || tcpDstPort = 80 then monitorLoad(5, "HTTP traffic")
-```
+~~~
 
 However, unlike the Ox controller, which flooded all traffic, this Frenetic program doesn't forward any traffic it all. Instead, you can compose it
 with any forwarding policy. In this chapter you'll learn how to do so using
@@ -33,9 +33,9 @@ applies `P1` to the first and `P2` to the second.  Overall, it generates the *un
 ### Exercise:Web Monitoring
 
 Cloud service providers will typically bill their clients in accordance to the resources they use.  Your task in this exercise is to set up monitoring infrastructure for the network developed in Chapter 8.  To do so, switch to the Chapter 9 directory.
-```
+~~~
 $ cd Chapter9
-```
+~~~
 Proceed as follows:
 
 - Open up `Main.nc`.  There we have included `Sol_Firewall.nc` from Chapter 8 and copied in the forwarding solution we defined (you can replace our router with yours if you like).
@@ -45,18 +45,18 @@ Proceed as follows:
 When you are done, testing your monitor.
 
 - Start mininet and launch an `xterm` on host `h2`:
-```
+~~~
 $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 mininet> xterm h2
-```
+~~~
 - Set up a fortune server on host `h2` :
-```
+~~~
 $ while true; do fortune | nc -l 80; done
-```
+~~~
 - Fetch fortunes from the other hosts.  For example:
-```
+~~~
 mininet> h1 curl 10.0.0.2:80
-```
+~~~
 
 During your experiments, you should should see the load between `h1` and `h2` escalate.  Your firewall should block requests from `h3` and `h4` to `h2` so you should never see the load from `h2` to `h3` or `h4` escalate.
 
@@ -78,23 +78,23 @@ for how the compiler works, let's take another look at a Frenetic version of the
 efficient firewall from the [OxFirewall](03-OxFirewall) chapter, altering it
 slightly to block SSH rather than ICMP traffic:
 
-```
+~~~
 let firewall = if !(tcpDstPort = 22) then all in
 monitorTable(1, firewall)
-```
+~~~
 
 We added a table query to show the flow table that Frenetic produces for the
 firewall.  Now, fire up the firewall
 (`frenetic-tutorial-code/Ox_Firewall.nc`).  You should see the
 following output:
 
-```
+~~~
 $ frenetic frenetic-tutorial-code/Ox_Firewall.nc
 Flow table at switch 1 is:
  {dlTyp = ip, nwProto = tcp, tpDst = 22} => []
  {*} => [Output AllPorts]
  {*} => [Output AllPorts]
-```
+~~~
 
 As you can see from the latter two rules, Frenetic is less efficient
 (in terms of switch rule space used) than a
@@ -102,21 +102,21 @@ human programmer.  (But not for long, we hope!)  Nevertheless, this should look
 very similar to the flow table you programmed.
 
 Now, let's add a query to monitor traffic for <code>h1</code>:
-```
+~~~
 let firewall = if !(tcpDstPort = 22) then all in
 let monitor = if srcIP = 10.0.0.1 then monitorLoad(10, "From H1") in
 monitorTable(1, firewall + monitor)
-```
+~~~
 
 The flow table should look something like this:
-```
+~~~
 $ frenetic frenetic-tutorial-code/Ox_Firewall_Monitor.nc
 Flow table at switch 1 is:
  {dlTyp = ip, nwSrc = 10.0.0.1, nwProto = tcp, tpDst = 22} => []
  {dlTyp = ip, nwProto = tcp, tpDst = 22} => []
  {dlTyp = ip, nwSrc = 10.0.0.1} => [Output AllPorts]
  {*} => [Output AllPorts]
-```
+~~~
 
 Let's break it down, rule by rule:
 * **Rule 1**: drop SSH traffic from <code>h1</code>.

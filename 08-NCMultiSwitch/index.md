@@ -14,9 +14,9 @@ You will work with the following tree topology:
 
 The figure labels hosts, switches, and port numbers. You can create this topology easily with Mininet:
 
-```
+~~~
 $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
-```
+~~~
 > `tree,2,2` creates a topology of height 2 and fanout 2.
 >
 > `--arp` populates host arp table so we don't have to
@@ -28,7 +28,7 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 
 Using Frenetic, write a forwarding policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch forwarding policy, you can use the `switch = n` predicate as follows:
 
-```
+~~~
 let forwarding =
   if switch = 1 then
     (* Policy for Switch 1 *)
@@ -43,32 +43,32 @@ let forwarding =
     drop
 
 forwarding
-```
+~~~
 
 Change in to the chapter8 directory:
-```
+~~~
 $ cd Chapter8
-```
+~~~
 Here, you'll find the template above in `frenetic-tutorial-code/Chapter8/Forwarding.nc`. Fill it in.
 
 #### Testing
 
 Launch Frenetic in a terminal by invoking `Forwarding.nc`:
 
-```
+~~~
 $ frenetic Forwarding.nc
-```
+~~~
 
 Then launch Mininet in another:
 
-```
+~~~
 $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
-```
+~~~
 
 Then, ensure that all hosts can reach each other:
-```
+~~~
 mininet> pingall
-```
+~~~
 
 ## A Reusable Firewall Using Sequential Composition
 
@@ -77,7 +77,7 @@ last chapter to this new network. Unfortunately, you cannot simply reuse the fir
 
 Your policy from [Chapter 7][Ch7] probably has this shape:
 
-```
+~~~
 let forwarding = (* forwarding for 1 switch only *)
 
 let firewall =
@@ -87,14 +87,14 @@ let firewall =
     drop
 
 firewall
-```
+~~~
 
 To truly separate the forwarding policy from the firewall policy, you will use Frenetic's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
 and run them in sequence:
 
-```
+~~~
 P; Q
-```
+~~~
 
 This form of composition is akin to pipes in Unix. You can think of `P; Q` as a way to pipe the packets produced by `P` into the policy `Q`. To achieve complex tasks, you can string a long chain of policies together, `P1; P2; P3; ...` just as you use pipes compose several different Unix programs together.
 
@@ -123,13 +123,13 @@ Once you have a firewall policy and a forwarding policy to start from, continue 
 - Edit `Forwarding.nc` to include `Firewall.nc` and compose the firewall and
   the forwarding policy:
 
-  ```
+  ~~~
   include "Firewall.nc"
 
   let forwarding = ...
 
   firewall; forwarding
-  ```
+  ~~~
 
   You should test this policy just as you tested the firewall in
   [Chapter 7][Ch7].

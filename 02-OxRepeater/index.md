@@ -104,7 +104,7 @@ use the template below.
 Save it in a file called `Repeater.ml` and place it in the directory
 `~/src/frenetic/ox-tutorial-workspace/Repeater.ml`.
 
-```ocaml
+~~~ ocaml
 (* ~/src/frenetic/ox-tutorial-workspace/Repeater.ml *)
 open OxPlatform
 open OpenFlow0x01_Core
@@ -118,12 +118,12 @@ module MyApplication = struct
 end
 
 module Controller = OxStart.Make (MyApplication)
-```
+~~~
 
 Within the body of `packet_in`, you need to use `send_packet_out`,
 which takes a list of actions (`apply_actions`) to apply to the packet:
 
-```ocaml
+~~~ ocaml
 let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
   Printf.printf "%s\n%!" (packetIn_to_string pk);
   send_packet_out sw 0l {
@@ -131,7 +131,7 @@ let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
     port_id = None;
     apply_actions = ... (* [FILL] *)
   }
-```
+~~~
 
 You need to fill in the list of actions to send the packet out of
 every port (excluding the input port). This is easier than it
@@ -144,9 +144,9 @@ module) and fill it in.
 
 To build your controller, run the following command:
 
-```
+~~~
 $ make Repeater.d.byte
-```
+~~~
 
 > The file extension indicates that it is a bytecode, debug build.  You
 > can use `make foo.d.byte` to compile any `foo.ml` file in this
@@ -154,10 +154,10 @@ $ make Repeater.d.byte
 
 If compilation succeeds, you should see output akin to this:
 
-```
+~~~
 ocamlbuild -use-ocamlfind Repeater1.d.byte
 Finished, 4 targets (4 cached) in 00:00:00.
-```
+~~~
 
 #### Testing your Controller
 
@@ -169,9 +169,9 @@ hosts and have them ping each other:
 
 - Start Mininet in a separate terminal window:
 
-  ```
+  ~~~
   $ sudo mn --controller=remote --topo=single,4 --mac --arp
-  ```
+  ~~~
 
   A brief explanation of the flags:
 
@@ -193,9 +193,9 @@ hosts and have them ping each other:
 
 - Start your controller back in the original terminal:
 
-  ```
+  ~~~
   $ ./Repeater.d.byte
-  ```
+  ~~~
 
   It should print `[Ox] Controller launching...`
   and then you should see switch 1 connecting to the controller:
@@ -203,7 +203,7 @@ hosts and have them ping each other:
 
 - From the Mininet prompt, you can make your hosts ping each other:
 
-  ```
+  ~~~
   mininet> h1 ping h2
   PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
   64 bytes from 10.0.0.2: icmp_req=1 ttl=64 time=1.97 ms
@@ -214,9 +214,9 @@ hosts and have them ping each other:
   --- 10.0.0.2 ping statistics ---
   4 packets transmitted, 4 received, 0% packet loss, time 3006ms
   rtt min/avg/max/mdev = 1.926/2.144/2.461/0.213 ms
-  ```
+  ~~~
 
-  ```
+  ~~~
   mininet> h2 ping h1
   PING 10.0.0.1 (10.0.0.1) 56(84) bytes of data.
   64 bytes from 10.0.0.1: icmp_req=1 ttl=64 time=1.98 ms
@@ -226,7 +226,7 @@ hosts and have them ping each other:
   --- 10.0.0.1 ping statistics ---
   3 packets transmitted, 3 received, 0% packet loss, time 2005ms
   rtt min/avg/max/mdev = 1.983/2.280/2.453/0.214 ms
-  ```
+  ~~~
 
   Pinging should always succeed ("0% packet loss"). In addition, if
   your controller calls `printf` in its packet-in function, you will
@@ -277,11 +277,11 @@ For this part, continue building on the naive repeater you wrote above. Build on
 Your task is to write a `switch_connected` handler in your program,
 using the following as a template:
 
-```ocaml
+~~~ ocaml
 let switch_connected (sw : switchId) feats : unit =
   Printf.printf "Switch %Ld connected.\n%!" sw;
   send_flow_mod sw 1l (add_flow priority pattern action_list)
-```
+~~~
 
 This function uses `send_flow_mod` to add a new rule to
 the flow table. Your task is to fill in `priority`, `pattern`, and
@@ -306,22 +306,22 @@ receive any packets itself.
 
 - In a separate terminal, start Mininet:
 
-  ```
+  ~~~
   $ sudo mn --controller=remote --topo=single,4 --mac
-  ```
+  ~~~
 
 - Build and start the controller:
 
-  ```shell
+  ~~~ shell
   $ make Repeater.d.byte
   $ ./Repeater.d.byte
-  ```
+  ~~~
 
 - From the Mininet prompt, try a ping:
 
-  ```
+  ~~~
   mininet> h1 ping h2
-  ```
+  ~~~
 
   The pings should succeed, but the controller won't receive any
   packets (keep a `printf` in the `packet_in` function to observe
@@ -341,15 +341,15 @@ function is necessary. We'll try to create such a situation artificially:
 
 - In mininet, send a stream of high-frequency pings:
 
-  ```
+  ~~~
   mininet> h1 ping -i 0.001 h2
-  ```
+  ~~~
 
 - Launch the repeater again:
 
-  ```
+  ~~~
   $ ./Repeater.d.byte
-  ```
+  ~~~
 
 It is very likely that a few packets will get sent to the controller,
 and here's why.  When you launch the controller and the switch

@@ -23,16 +23,16 @@ action.
 ### Packet Modifications
 
 In general, packet modifications are written as follows:
-```
+~~~
 field pre-value -> post-value
-```
+~~~
 When executing such an action, the switch tests the <code>field</code>
 to determine whether it holds the <code>pre-value</code>.  If it does,
 then the field is rewritten to the <code>post-value</code>.  If it
 does not, then the packet is dropped.  For instance,
-```
+~~~
 tcpDstPort 5022 -> 22
-```
+~~~
 rewrites the <code>tcpDstPort</code> of packets from 5022 to 22.
 
 ### Sequential Composition
@@ -49,22 +49,22 @@ to each intermediate packet <code>pi</code>, returning some number of
 final result packets.
 
 As a simple first example, consider
-```
+~~~
 tcpDstPort 5022 -> 22; fwd(1)
-```
+~~~
 the first action produces a packet with <code>tcpDstPort</code> equal to
 22 in the same place it started.  The second action takes that intermediate
 result and produces a new packet at port 1.  Now consider the following
 variation:
-```
+~~~
 fwd(1); tcpDstPort 5022 -> 22
-```
+~~~
 It is semantically equivalent to the first.  The <code>fwd</code>
 action creates a new packet at port 1 and the modification changes the
 <code>tcpDstPort</code> afterwards.  More interesting still,
-```
+~~~
 all; tcpDstPort 5022 -> 22
-```
+~~~
 moves the packet to <code>all</code> ports (except the one it came in on)
 and rewrites all of them.
 
@@ -86,7 +86,7 @@ to be essential in combination with other features of NetCore.
 ### And Finally, the Port Mapper
 
 Now, the port translation program:
-```
+~~~
 let mapper =
   if inPort = 1 && tcpDstPort = 5022 then
     tcpDstPort 5022 -> 22
@@ -100,7 +100,7 @@ let routing =
 
 let forwarder =
   mapper; routing
-```
+~~~
 The <code>mapper</code> component rewrites the destination port in one
 direction and the source port in the other, if those ports
 take on the given values entering the switch.  Notice how we
@@ -118,25 +118,25 @@ Testing the Port Mapper
 
 You will find the mapper in <code>Port_Map.nc</code>.  Start it up
 with frenetic.
-```
+~~~
 $ frenetic Port_Map.nc
-```
+~~~
 Then start mininet in the default topology, and
 simulate an SSH process listening on port 22 on host <code>h2</code>:
-```
+~~~
 $ sudo mn --controller=remote
 mininet> h2 iperf -s -p 22 &
-```
+~~~
 You can connect to <code>h2</code> (IP address 10.0.0.2)
 from <code>h1</code> by establishing a connection to port 5022
 using the command below.  (The <code>-t</code> option specifies
 the time window for sending traffic.)
 The mapper will translate port numbers for you.
-```
+~~~
 mininet> h1 iperf -c 10.0.0.2 -p 5022 -t 0.0001
-```
+~~~
 You shoud see a trace like the following:
-```
+~~~
 ------------------------------------------------------------
 Client connecting to 10.0.0.2, TCP port 5022
 TCP window size: 22.9 KByte (default)
@@ -144,11 +144,11 @@ TCP window size: 22.9 KByte (default)
 [  3] local 10.0.0.1 port 52273 connected with 10.0.0.2 port 5022
 [ ID] Interval       Transfer     Bandwidth
 [  3]  0.0- 0.0 sec   128 KBytes   149 Mbits/sec
-```
+~~~
 You can also test that the network still allows ping traffic:
-```
+~~~
 mininet> h1 ping -c 1 h2
-```
+~~~
 
 Composing Queries
 -----------------
@@ -178,14 +178,14 @@ input packet and forwards to both A and B.
 With this in mind, let's modify the port mapper to inspect the packets both
 before and after the rewriting.  We can leave the mapper component unchanged
 and add monitoring to the forwarder.
-```
+~~~
 ...
 let before = if inPort = 1 then monitorPackets("BEFORE")
 let after = if inPort = 1 then monitorPackets("AFTER")
 
 let forwarder =
   (before + mapper); (all + after)
-```
+~~~
 Above, we used a
 <code>if</code>-<code>then</code> statement (no else) to limit the packets
 that reach the monitoring policy to only those packets satisfying
@@ -198,10 +198,10 @@ packets).
 This new policy can be found in <code>Port_Map_Monitor1.nc</code>.
 Test it as above using iperf, but this time watch the output in the
 controller window.  You should see lines similar to the following being printed:
-```
+~~~
 [BEFORE] packet dlSrc=4a:f7:98:81:78:0d,dlDst=d6:7c:1e:d6:e3:0b,nwSrc=10.0.0.1,nwDst=10.0.0.2,tpSrc=52923;tpDst=5022 on switch 1 port 1
 [AFTER] packet dlSrc=4a:f7:98:81:78:0d,dlDst=d6:7c:1e:d6:e3:0b,nwSrc=10.0.0.1,nwDst=10.0.0.2,tpSrc=52923;tpDst=22 on switch 1 port 1
-```
+~~~
 You will notice <code>tpDst=5022</code> in lines marked
 <code>BEFORE</code> and <code>tpDst=22</code> in lines marked
 <code>AFTER</code>.
@@ -226,9 +226,9 @@ issuing a longer iperf request
 (adjust the timing parameter <code>-t seconds</code>).  Watch the load
 printed in the controller terminal.
 The following command runs iperf for <code>20</code> seconds.
-```
+~~~
 mininet> h1 iperf -c 10.0.0.2 -p 5022 -t 20
-```
+~~~
 
 Under the Hood
 --------------
@@ -238,22 +238,22 @@ programs, but it all gets compiled to OpenFlow rules in the end.  To get a feel
 for how the compiler works, let's take another look at a NetCore version of the
 efficient firewall from the [OxFirewall](03-OxFirewall.md) chapter, altering it
 slightly to block SSH rather than ICMP traffic:
-```
+~~~
 let firewall = if !(tcpDstPort = 22) then all in
 monitorTable(1, firewall)
-```
+~~~
 
 We added a table query to show the flow table that NetCore produces for the
 firewall.  Now, fire up the firewall
 ([Ox_Firewall.nc](netcore-tutorial-code/Ox_Firewall.nc)).  You should see the
 following output:
-```
+~~~
 $ frenetic netcore-tutorial-code/Ox_Firewall.nc
 Flow table at switch 1 is:
  {dlTyp = ip, nwProto = tcp, tpDst = 22} => []
  {*} => [Output AllPorts]
  {*} => [Output AllPorts]
-```
+~~~
 
 As you can see from the latter two rules, NetCore is less efficient
 (in terms of switch rule space used) than a
@@ -261,21 +261,21 @@ human programmer.  (But not for long, we hope!)  Nevertheless, this should look
 very similar to the flow table you programmed.
 
 Now, let's add a query to monitor traffic for <code>h1</code>:
-```
+~~~
 let firewall = if !(tcpDstPort = 22) then all in
 let monitor = if srcIP = 10.0.0.1 then monitorLoad(10, "From H1") in
 monitorTable(1, firewall + monitor)
-```
+~~~
 
 The flow table should look something like this:
-```
+~~~
 $ frenetic netcore-tutorial-code/Ox_Firewall_Monitor.nc
 Flow table at switch 1 is:
  {dlTyp = ip, nwSrc = 10.0.0.1, nwProto = tcp, tpDst = 22} => []
  {dlTyp = ip, nwProto = tcp, tpDst = 22} => []
  {dlTyp = ip, nwSrc = 10.0.0.1} => [Output AllPorts]
  {*} => [Output AllPorts]
-```
+~~~
 
 Let's break it down, rule by rule:
 * **Rule 1**: drop SSH traffic from <code>h1</code>.
@@ -317,9 +317,9 @@ and one host attached to each switch:
 ![Simple linear topology.][topo_2]
 
 You can start such a network when you boot up mininet:
-```
+~~~
 $ sudo mn --controller=remote --topo=linear,3
-```
+~~~
 Your goals are to implement a policy that performs the following
 actions:
   - broadcast all arp packets to all hosts
@@ -339,25 +339,25 @@ individual components, assemble them using the appropriate
 composition operators.
 
 To test your policy, fire up mininet with the linear 3-switch topology:
-```
+~~~
 $ sudo mn --controller=remote --topo=linear,3
-```
+~~~
 Then start your <code>Multi_Switch.nc</code> program:
-```
+~~~
 $ frenetic tut3.nc
-```
+~~~
 In mininet, start a web server on host h3:
-```
+~~~
 mininet> h3 python -m SimpleHTTPServer 80 . &
-```
+~~~
 Check that you can fetch content from the server at h3 from h1:
-```
+~~~
 mininet> h1 wget -O - h3
-```
+~~~
 Make sure h3's web server is inaccessible from from h2:
-```
+~~~
 mininet> h2 wget -O - h3
-```
+~~~
 You can find a solution in <code>Sol_Multi_Switch.nc</code>.
 
 ## Next chapter: [Dynamic NetCore][Ch8]

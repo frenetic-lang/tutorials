@@ -33,15 +33,15 @@ You will work with the following network topology:
 
 The figure shows 2 private hosts and a public host all connected with a single switch. You can create this topology easily with Mininet:
 
-```
+~~~
 $ sudo mn --controller=remote --topo=single,3 --mac --arp
-```
+~~~
 #### Programming Task
 
 You should use the template below to get started. Save it in a file called `Nat1.ml` and
 place it in the directory `~/src/frenetic/ox-tutorial-workspace/Nat1.ml`.
 
-```ocaml
+~~~ ocaml
 (* ~/src/frenetic/ox-tutorial-workspace/Nat1.ml *)
 
 open OxPlatform
@@ -86,7 +86,7 @@ end
 
 module Controller = OxStart.Make (MyApplication)
 
-```
+~~~
 
 #### Compiling and Testing
 
@@ -95,64 +95,64 @@ and addresses are translated correctly.
 
  * Start Mininet:
 
-  ```shell
+  ~~~ shell
   $ sudo mn --controller=remote --topo=single,3 --mac --arp
-  ```
+  ~~~
 
  * In a separate terminal window, build and launch the controller:
 
-  ```shell
+  ~~~ shell
   $ make Nat1.d.byte
   $ ./Nat1.d.byte
-  ```
+  ~~~
 
   We will be using a topology that consists of two internal hosts and one external host
   connected by a switch.
 
  * In Mininet, start new terminals for `h1`, `h2`, and `h3`:
 
-  ```
+  ~~~
   mininet> xterm h1 h2 h3
-  ```
+  ~~~
 
  * In the terminal for `h3`, add static entries into the arp table and start a fortune
    server.
 
-  ```
+  ~~~
   # arp -v -s [public IP address] [public MAC address]
   # while true; do fortune | nc -l 80; done
-  ```
+  ~~~
 The first command adds a static entry into the arp table that binds your public MAC
 address to your public IP address.
 
 * In the terminal for `h1`, fetch a fortune from `h3`.
 
-  ```
+  ~~~
   # curl 10.0.0.3:80
-   ```
+   ~~~
 You should’ve received a fortune. Now try to fetch a fortune on the `h2` terminal.
 
 * In the terminal for the controller, check to see that your IP addresses are translating
 correctly.
 
-  ```
+  ~~~
   Outgoing flow packetIn{
    total_len=74 port=1 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
    nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)
 
   Translating Private IP:167772161 to Public IP:167772259.
-   ```
+   ~~~
 * Incoming packets should look similar to this:
 
-  ```
+  ~~~
   Non TCP or incoming flow packetIn{
    total_len=74 port=3 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:03,dlDst=00:00:00:00:00:099,
    nwSrc=10.0.0.3,nwDst=10.0.0.99,tpSrc=80;tpDst=42635 (buffered at 257)
    }
   Found a mapping in the hashtable!
-  ```
+  ~~~
 Notice how this packet matches the outgoing flow packet above.
 
 ### PAT - The Port Address Translating Function
@@ -184,22 +184,22 @@ Compile and test your controller the same way that you did before.
 * In the terminal for the controller, check to see that your IP addresses and port
   numbers are translating correctly.
 
-  ```
+  ~~~
   Outgoing flow packetIn{
    total_len=74 port=1 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
    nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)
    }
   Translating Private IP:167772161:42635 to Public IP:167772259:5000.
-  ```
+  ~~~
 
 * Incoming packets should look similar to this:
 
-  ```
+  ~~~
   Non TCP or incoming flow packetIn{
    total_len=74 port=3 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:03,dlDst=00:00:00:00:00:099,
    nwSrc=10.0.0.3,nwDst=10.0.0.99,tpSrc=80;tpDst=5000 (buffered at 257)
    }
   Found a mapping in the hashtable!
-  ```
+  ~~~

@@ -20,11 +20,11 @@ To do so, you need to parse the packet received. Ox includes a packet
 parsing library that supports some common packet formats, including ICMP.
 You can use it to parse packets as follows:
 
-```ocaml
+~~~ ocaml
 let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
   let pk = parse_payload pktIn.input_payload in
   ...
-```
+~~~
 Applying `parse_payload` parses the packet into a series of nested
 frames. The easiest way to examine packet headers is to then use the
 [header accessor functions] in the packet library.
@@ -39,7 +39,7 @@ is 0x800 (`Packet.dlTyp pk = 0x800`) and the protocol number for ICMP is 1
 You can use the following template, which only requires you to fill
 in the `is_icmp_packet` function.
 
-```ocaml
+~~~ ocaml
 open OpenFlow0x01_Core
 open OxPlatform
 
@@ -61,30 +61,30 @@ module MyApplication = struct
 end
 
 module Controller = OxStart.Make (MyApplication)
-```
+~~~
 
 ### Building and Testing Your Firewall
 
 - Build and launch the controller:
 
-  ```shell
+  ~~~ shell
   $ make Firewall.d.byte
   $ ./Firewall.d.byte
-  ```
+  ~~~
 
 - In a separate terminal window, start Mininet using the same
   parameters you've used before:
 
-  ```
+  ~~~
   $ sudo mn --controller=remote --topo=single,4 --mac --arp
-  ```
+  ~~~
 
 - Test to ensure that pings fail within Mininet:
 
-  ```
+  ~~~
   mininet> h1 ping -c 1 h2
   mininet> h2 ping -c 1 h1
-  ```
+  ~~~
 
   These command should fail, printing `100.0% packet loss`.
 
@@ -118,22 +118,22 @@ packetIn{
 
   * In Mininet, start new terminals for `h1` and `h2`:
 
-    ```
+    ~~~
     mininet> xterm h1 h2
-    ```
+    ~~~
 
   * In the terminal for `h1` start a local "fortune server" (a server
     that returns insightful fortunes to those who query it):
 
-    ```
+    ~~~
     # while true; do fortune | nc -l 80; done
-    ```
+    ~~~
 
   * In the terminal for `h2` fetch a fortune from `h1`:
 
-    ```
+    ~~~
     # curl 10.0.0.1:80
-    ```
+    ~~~
 
     This command should succeed.
 
@@ -147,12 +147,12 @@ Fill in the `switch_connected` event handler. You need to install two
 entries into the flow table: one for ICMP traffic and the other for
 all other traffic. Use the following template:
 
-```ocaml
+~~~ ocaml
 let switch_connected (sw : switchId) feats : unit =
   Printf.printf "Switch %Ld connected.\n%!" sw;
   send_flow_mod sw 0l (add_flow priority1 pattern1 actions1);
   send_flow_mod sw 0l (add_flow priority2 pattern2 actions2)
-```
+~~~
 
 You have to determine the priorities, patterns, and actions in the
 handler above. You might want to revisit the description of flow
