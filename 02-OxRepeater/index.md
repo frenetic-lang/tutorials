@@ -1,6 +1,6 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Ox Repeater
 ---
 
 Chapter 2: Repeater
@@ -43,6 +43,7 @@ For example, consider the following flow table:
 </tr>
 <tr>
   <td>20</td><td>ICMP</td><td>forward 2</td><td>0</td>
+</tr>
 </table>
 
 We can understand the table by interpreting the patterns and actions
@@ -239,17 +240,17 @@ Shut down the controller properly with `Ctrl+C` and Mininet with `Ctrl+D`.
 This repeater is functionally correct, but laughably inefficient.
 
 <blockquote>
+
 <p><b>Aside:</b>  For the most part, we will be using simple topologies in this tutorial.
-However, if you ever want to know more information about the topology mininet is currently running, you can type
-<p>
+However, if you ever want to know more information about the topology mininet is currently running, you can type</p>
+
 <pre>
 mininet> net
 </pre>
 
 <p>
-In this example, you should see the following.
+In this example, you should see the following.</p>
 
-<p>
 <pre>
 c0
 s1 lo:  s1-eth1:h1-eth0 s1-eth2:h2-eth0
@@ -265,7 +266,7 @@ Likewise, switch 1 port 2 (<code>s1-eth2</code>) is connected to
 host <code>h2</code>. If there was more than one switch in the network, we would
 see additional lines prefixed by the switch identifier, one line
 per switch.  Lines 3 and 4 describe the hosts <code>h1</code>
-and <code>h2</code>.
+and <code>h2</code>.</p>
 </blockquote>
 
 ### Exercise 2: An Efficient Repeater
@@ -367,9 +368,6 @@ In the interval between these two messages, the flow table is empty,
 thus packets get diverted to the controller. More generally, whenever
 the switch is configured for the first time, or re-configured to
 implement a policy change, you may see packets at the controller.
-
-## Next chapter: [Ox Firewall][Ch3]
-
 
 [Ch2]: /02-OxRepeater
 [Ch3]: /03-OxFirewall

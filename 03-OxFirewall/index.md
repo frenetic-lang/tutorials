@@ -1,6 +1,6 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Ox Firewall
 ---
 
 Chapter 3: Firewall
@@ -176,8 +176,6 @@ tables in [Chapter 2][Ch2]. Here is a quick refresher:
 Build and test the efficient firewall in exactly the same way you
 tested the firewall function. In addition, you shouldn't observe
 packets at the controller.
-
-## Next chapter: [Ox Monitor][Ch4]
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 

@@ -1,6 +1,6 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Introduction to Frenetic
 ---
 
 Chapter 7: Introducing Frenetic

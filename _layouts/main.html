@@ -48,6 +48,32 @@
 
     {{ content }}
 
+    {% comment %}
+    Insert next chapter link automatically.
+    {% endcomment %}
+
+    {% for item in site.data.toc %}
+
+      {% assign ix = forloop.index|minus:1 %}
+
+      {% if item.name == page.title and forloop.last == false %}
+        {% assign next = ix | plus:1 %}
+        <p><b>
+        Next Chapter: <a href="{{ site.data.toc[next].path }}">
+        {{ site.data.toc[next].name }}</a>
+        </b></p>
+      {% endif %}
+
+      {% if item.name == page.title and forloop.first == false %}
+        {% assign prev = ix | minus:1 %}
+        <p><b>
+        Previous Chapter: <a href="{{ site.data.toc[prev].path }}">
+        {{ site.data.toc[prev].name }}</a>
+        </b></p>
+      {% endif %}
+
+    {% endfor %}
+
     </div><!-- /.container -->
 
 

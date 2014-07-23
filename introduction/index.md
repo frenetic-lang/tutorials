@@ -3,8 +3,6 @@ layout: main
 title: Frenetic Tutorial
 ---
 
-{{ site.data.toc[1].name }}
-
 Getting Started
 ---------------
 
@@ -112,7 +110,6 @@ Handy References
   controllers. We will tell you exactly what Mininet commands to use,
   so you don't really need to read this.
 
-## Next chapter: [Ox Repeater][Ch2]
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 

@@ -1,6 +1,6 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Ox Learning
 ---
 
 Chapter 5: Learning Switch
@@ -232,8 +232,6 @@ arrive on the controller.
 #### Compiling and Testing your Efficient Learning Switch
 
 You should build and test your learning switch as before.
-
-## Next chapter: [Network Address Translator][Ch6]
 
 
 [Ch6]: 06-OxNat

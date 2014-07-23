@@ -1,6 +1,6 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Network Address Translation with Ox
 ---
 
 Chapter 6: Network Address Translator
@@ -206,7 +206,3 @@ Compile and test your controller the same way that you did before.
    }
   Found a mapping in the hashtable!
   ```
-
-## Next chapter: [Frenetic Introduction][Ch7]
-
-[Ch7]: 07-Frenetic-Introduction

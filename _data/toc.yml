@@ -1,4 +1,12 @@
-- name: Introduction
+- name: Frenetic Tutorial
   path: /introduction
-- name: OxRepeater
+- name: Ox Repeater
   path: /02-OxRepeater
+- name: Ox Firewall
+  path: /03-OxFirewall
+- name: Ox Learning
+  path: /05-OxLearning
+- name: Network Address Translation with Ox
+  path: /06-OxNat
+- name: Introduction to Frenetic
+  path: /07-Frenetic-Introduction
