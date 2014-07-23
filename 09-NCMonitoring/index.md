@@ -1,10 +1,7 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Monitoring with Frenetic
 ---
-
-Chapter 9: Monitoring with Frenetic
-==================================
 
 In [Chapter 4](04-OxMonitor), you wrote an Ox controller that measured the volume of HTTP traffic on the network. You first wrote the _packet_in_
 function to count all HTTP traffic on the controller. To count packets efficiently, you had to:

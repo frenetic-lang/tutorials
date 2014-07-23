@@ -1,10 +1,7 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Frenetic Wrap-up
 ---
-
-Frenetic Wrap-up
-=================
 
 In this tutorial, you learned to program software-defined networks
 using Ox and FreneticDSL:

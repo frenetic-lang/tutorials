@@ -3,9 +3,6 @@ layout: main
 title: Ox Repeater
 ---
 
-Chapter 2: Repeater
-====================
-
 ### Introduction to OpenFlow
 
 In a basic software-defined networking (SDN), all switches connect to a centralized controller

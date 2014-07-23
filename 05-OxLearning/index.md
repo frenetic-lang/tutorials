@@ -1,10 +1,8 @@
 ---
 layout: main
-title: Ox Learning
+title: Learning Switch with Ox
 ---
 
-Chapter 5: Learning Switch
-==========================
 
 In this exercise, you will build an Ethernet learning switch that learns the
 location of each host.  As with previous exercises, you will begin by writing

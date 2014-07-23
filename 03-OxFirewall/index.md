@@ -3,9 +3,6 @@ layout: main
 title: Ox Firewall
 ---
 
-Chapter 3: Firewall
-===================
-
 In this chapter, you will compose your repeater with a simple firewall
 that blocks ICMP traffic. As a result, the `ping` command will no
 longer work on hosts. But, you will still be able to run other

@@ -3,8 +3,6 @@ layout: main
 title: Introduction to Frenetic
 ---
 
-Chapter 7: Introducing Frenetic
-==============================
 
 You've learned how to write controllers with OpenFlow. We've shown
 you a simple, two step recipe to implement policies:

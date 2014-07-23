@@ -3,9 +3,6 @@ layout: main
 title: Network Address Translation with Ox
 ---
 
-Chapter 6: Network Address Translator
-==========================
-
 In this exercise, you will build a Network Address Translator (NAT) by first writing and
 testing a translator function that first translates IP addresses and then extending
 it so that it translates port numbers as well.

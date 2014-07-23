@@ -1,10 +1,7 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Traffic Monitoring
 ---
-
-Chapter 4: Traffic Monitoring
-=============================
 
 In this exercise, you will write a controller that measures the volume
 of Web traffic on a network. To implement monitoring efficiently, you
