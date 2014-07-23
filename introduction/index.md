@@ -22,7 +22,7 @@ In this tutorial, you will learn to program software-defined networks (SDNs)
 using OpenFlow and Frenetic. The tutorial is
 divided into two sections:
 
-* **Ox:** Chapters 2 &mdash; 5 introduce the nuts and bolts of
+* **Ox:** The first set of chapters introduce the nuts and bolts of
 programming an OpenFlow-based SDN. In these chapters, we use *Ox*, a
 simple platform for writing OpenFlow controllers in OCaml. Apart from
 managing the socket connections and serialization, Ox gives you direct
@@ -33,17 +33,34 @@ Ox is loosely based on platforms such as
 [NOX](http://www.noxrepo.org/nox/about-nox/). The concepts and techniques
 you learn in this tutorial are applicable to those platforms too.
 
-[[2 Ox Repeater][Ch2]] [[3 Ox Firewall][Ch3]] [[4 Ox Monitor][Ch4]]
-[[5 Ox Learning][Ch5]]
+{% comment %}
+Outer paragraph disables markdown processing. Without it, each link is rendered
+as a separate paragraph.
+{% endcomment %}
 
-* **Frenetic:** Chapters 6 &mdash; 8 teach you how to program SDNs
+<p>
+{% for item in site.data.toc %}
+{% if item.group == "ox" %}
+{% assign ix = forloop.index|minus:1 %}
+[<a href="{{ site.data.toc[ix].path }}">{{ site.data.toc[ix].name }}</a>]
+{% endif %}
+{% endfor %}
+</p>
+
+* **Frenetic:** The next set of chapters teach you how to program SDNs
   using the _Frenetic_ domain-specific programming language
   (FreneticDSL). You will see that FreneticDSL provides high-level
   abstractions and rich, compositional features that make SDN
   programming much easier.
 
-[[6 Frenetic Introduction][Ch6]] [[7 Frenetic Firewall][Ch7]] [[8
-Multiple Switches][Ch8]] [[9 Frenetic Monitoring][Ch9]]
+<p>
+{% for item in site.data.toc %}
+{% if item.group == "frenetic" %}
+{% assign ix = forloop.index|minus:1 %}
+[<a href="{{ site.data.toc[ix].path }}">{{ site.data.toc[ix].name }}</a>]
+{% endif %}
+{% endfor %}
+</p>
 
 ### Frenetic
 
@@ -122,12 +139,3 @@ Handy References
 [Match]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Match.html
 
 [Packet]: http://frenetic-lang.github.io/frenetic/docs/Packet.html
-
-[Ch2]: 02-OxRepeater
-[Ch3]: 03-OxFirewall
-[Ch4]: 04-OxMonitor
-[Ch5]: 05-OxLearning
-[Ch6]: 06-Frenetic-Introduction
-[Ch7]: 07-NCFirewall
-[Ch8]: 08-NCMultiSwitch
-[Ch9]: 09-NCMonitoring

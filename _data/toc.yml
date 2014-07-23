@@ -2,13 +2,31 @@
   path: ../introduction
 - name: Ox Repeater
   path: ../02-OxRepeater
+  group: ox
 - name: Ox Firewall
   path: ../03-OxFirewall
+  group: ox
 - name: Traffic Monitoring
   path: ../04-OxMonitor
+  group: ox
 - name: Learning Switch with Ox
   path: ../05-OxLearning
+  group: ox
 - name: Network Address Translation with Ox
   path: ../06-OxNat
+  group: ox
 - name: Introduction to Frenetic
   path: ../07-Frenetic-Introduction
+  group: frenetic
+- name: Firewall Redux
+  path: ../08-NCFirewall
+  group: frenetic
+- name: Multi-Switch Programming (at last!)
+  path: ../08-NCMultiSwitch
+  group: frenetic
+- name: Monitoring with Frenetic
+  path: ../09-NCMonitoring
+  group: frenetic
+- name: Frenetic Wrap-up
+  path: ../10-WrapUp
+  group: frenetic
