@@ -32,4 +32,4 @@ Have fun!
 
 ![Frenetic.][frenetic_logo]
 
-[frenetic_logo]: images/frenetic-logo.png "Frenetic"
+[frenetic_logo]: ../images/frenetic-logo.png "Frenetic"

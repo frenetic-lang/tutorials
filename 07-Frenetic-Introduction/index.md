@@ -120,6 +120,6 @@ which drops all packets on the floor.
 
 [Ch7]: 07-NCFirewall
 
-[topo_1]: images/topo_1.png "Default Mininet topology."
-[topo_2]: images/topo_2.png "Simple linear topology."
-[topo_3]: images/topo_3.png "Simple tree topology."
+[topo_1]: ../images/topo_1.png "Default Mininet topology."
+[topo_2]: ../images/topo_2.png "Simple linear topology."
+[topo_3]: ../images/topo_3.png "Simple tree topology."

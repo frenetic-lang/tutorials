@@ -15,7 +15,7 @@ how to turn your firewall into an easy-to-reuse component that can be applied to
 
 You are going to program the following network of four hosts and one switch:
 
-![image](images/topo-single-4.png)
+![image](../images/topo-single-4.png)
 
 The host with MAC address `00:00:00:00:00:0n` is connected to port `n`. Mininet has builtin support for building single-switch topologies:
 

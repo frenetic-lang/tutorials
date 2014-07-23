@@ -10,7 +10,7 @@ In this chapter, you'll finally work with a multi-switch network. First, you'll 
 
 You will work with the following tree topology:
 
-![image](images/topo-tree-2-2.png)
+![image](../images/topo-tree-2-2.png)
 
 The figure labels hosts, switches, and port numbers. You can create this topology easily with Mininet:
 

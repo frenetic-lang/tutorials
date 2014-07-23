@@ -10,10 +10,10 @@ possible.
 A Port Mapping Policy
 ----------------------
 
-Our goal in this subsection will be to adapt the simple repeater 
+Our goal in this subsection will be to adapt the simple repeater
 from [Chapter 7](07-NetCoreIntroduction.md) so that instead of simply
 acting as a repeater, our switch does some packet rewriting.  More
-specifically, we will create a switch that maps connections initiated by host 
+specifically, we will create a switch that maps connections initiated by host
 <code>h1</code>
 and destined to TCP port 5022 to the standard SSH port 22.  To do
 so, we'll have to learn about several new NetCore features including
@@ -40,11 +40,11 @@ rewrites the <code>tcpDstPort</code> of packets from 5022 to 22.
 Now, policies can mix modification and forwarding actions, but we need a way to
 pipe the output of one policy in to the next.  For this, we use
 the *sequential composition* operator (<code>;</code>).  You should
-think of the sequential composition <code>P1; P2</code> as a kind 
+think of the sequential composition <code>P1; P2</code> as a kind
 of *function composition* that processes
 each packet using the function corresponding <code>P1</code> first, generating
-a multi-set of zero, one or more intermediate packets <code>{p1,...,pk}</code>, and 
-then applies the function corresponding to <code>P2</code> 
+a multi-set of zero, one or more intermediate packets <code>{p1,...,pk}</code>, and
+then applies the function corresponding to <code>P2</code>
 to each intermediate packet <code>pi</code>, returning some number of
 final result packets.
 
@@ -95,7 +95,7 @@ let mapper =
   else
     pass
 
-let routing = 
+let routing =
   all
 
 let forwarder =
@@ -104,7 +104,7 @@ let forwarder =
 The <code>mapper</code> component rewrites the destination port in one
 direction and the source port in the other, if those ports
 take on the given values entering the switch.  Notice how we
-used <code>pass</code> in the final <code>else</code> branch of the 
+used <code>pass</code> in the final <code>else</code> branch of the
 <code>mapper</code> policy to leave packets of all other kinds
 untouched.  This allows us to compose the mapper component
 with any routing component we choose.  In this case, <code>forwarder</code>
@@ -127,7 +127,7 @@ simulate an SSH process listening on port 22 on host <code>h2</code>:
 $ sudo mn --controller=remote
 mininet> h2 iperf -s -p 22 &
 ```
-You can connect to <code>h2</code> (IP address 10.0.0.2) 
+You can connect to <code>h2</code> (IP address 10.0.0.2)
 from <code>h1</code> by establishing a connection to port 5022
 using the command below.  (The <code>-t</code> option specifies
 the time window for sending traffic.)
@@ -186,7 +186,7 @@ let after = if inPort = 1 then monitorPackets("AFTER")
 let forwarder =
   (before + mapper); (all + after)
 ```
-Above, we used a 
+Above, we used a
 <code>if</code>-<code>then</code> statement (no else) to limit the packets
 that reach the monitoring policy to only those packets satisfying
 the <code>inPort = 1</code> predicate.  Otherwise, the monitor policy
@@ -196,14 +196,14 @@ branch in a conditional, packets not matching the conditional are dropped
 packets).
 
 This new policy can be found in <code>Port_Map_Monitor1.nc</code>.
-Test it as above using iperf, but this time watch the output in the 
+Test it as above using iperf, but this time watch the output in the
 controller window.  You should see lines similar to the following being printed:
 ```
 [BEFORE] packet dlSrc=4a:f7:98:81:78:0d,dlDst=d6:7c:1e:d6:e3:0b,nwSrc=10.0.0.1,nwDst=10.0.0.2,tpSrc=52923;tpDst=5022 on switch 1 port 1
 [AFTER] packet dlSrc=4a:f7:98:81:78:0d,dlDst=d6:7c:1e:d6:e3:0b,nwSrc=10.0.0.1,nwDst=10.0.0.2,tpSrc=52923;tpDst=22 on switch 1 port 1
 ```
 You will notice <code>tpDst=5022</code> in lines marked
-<code>BEFORE</code> and <code>tpDst=22</code> in lines marked 
+<code>BEFORE</code> and <code>tpDst=22</code> in lines marked
 <code>AFTER</code>.
 
 Monitoring Load
@@ -215,15 +215,15 @@ bytes it receives every <code>n</code> seconds.  Each output line from this
 query is prefixed by the
 string <code>label</code>, and we can restrict the packets monitored by
 <code>monitorLoad</code> using <code>if</code>-<code>then</code> clauses.
-Note that the implementation 
-of <code>monitorLoad</code> is far more efficient 
-than <code>monitorPackets</code> as the former does not send packets 
+Note that the implementation
+of <code>monitorLoad</code> is far more efficient
+than <code>monitorPackets</code> as the former does not send packets
 to the controller.
 
-<code>Port_Map_Monitor2.nc</code> contains a variation of the port mapper 
+<code>Port_Map_Monitor2.nc</code> contains a variation of the port mapper
 that monitors load instead of packets.  You can test it by
-issuing a longer iperf request 
-(adjust the timing parameter <code>-t seconds</code>).  Watch the load 
+issuing a longer iperf request
+(adjust the timing parameter <code>-t seconds</code>).  Watch the load
 printed in the controller terminal.
 The following command runs iperf for <code>20</code> seconds.
 ```
@@ -255,7 +255,7 @@ Flow table at switch 1 is:
  {*} => [Output AllPorts]
 ```
 
-As you can see from the latter two rules, NetCore is less efficient 
+As you can see from the latter two rules, NetCore is less efficient
 (in terms of switch rule space used) than a
 human programmer.  (But not for long, we hope!)  Nevertheless, this should look
 very similar to the flow table you programmed.
@@ -311,8 +311,8 @@ Programming Exercise: A Multi-Switch Network
 In this exercise, you will explore how to construct a policy for
 a multi-switch network using the composition operators discussed
 in this chapter.  You should also practice using queries to help
-debug your program.  The network under consideration has 3 switches, 
-and one host attached to each switch: 
+debug your program.  The network under consideration has 3 switches,
+and one host attached to each switch:
 
 ![Simple linear topology.][topo_2]
 
@@ -323,7 +323,7 @@ $ sudo mn --controller=remote --topo=linear,3
 Your goals are to implement a policy that performs the following
 actions:
   - broadcast all arp packets to all hosts
-  - route other packets to the correct host using their destination 
+  - route other packets to the correct host using their destination
 IP address.  Host h1 has IP address 10.0.0.1, host h2 has
 IP address 10.0.0.2 and host h3 has IP address 10.0.0.3.
   - prevent host h2 from contacting h3's web server by
@@ -365,7 +365,7 @@ You can find a solution in <code>Sol_Multi_Switch.nc</code>.
 
 [Ch8]: 08-DynamicNetCore.md
 
-[topo_1]: images/topo_1.png "Default Mininet topology."
-[topo_2]: images/topo_2.png "Simple linear topology."
-[topo_3]: images/topo_3.png "Simple tree topology."
-[parallel_composition]: images/parallel_composition.png "Parallel composition."
+[topo_1]: ../images/topo_1.png "Default Mininet topology."
+[topo_2]: ../images/topo_2.png "Simple linear topology."
+[topo_3]: ../images/topo_3.png "Simple tree topology."
+[parallel_composition]: ../images/parallel_composition.png "Parallel composition."

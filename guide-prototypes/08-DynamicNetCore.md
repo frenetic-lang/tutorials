@@ -7,25 +7,25 @@ topology events such as a switch coming up or going down.  In general,
 crafting a dynamic policy amounts to writing a program that generates a
 *stream* of static policies.  For instance, a new static policy can be generated
 each time a new switch comes on line or the load in the network reaches
-some threshold or a new connection is initiated.  
+some threshold or a new connection is initiated.
 
 NetCoreDSL makes it possible to experiment with simple dynamic
 policies by providing a small number of dynamic building blocks
 including a learning switch and a NAT box.  Intuitively, to create
-a dynamic policy, one writes an ordinary static policy that 
+a dynamic policy, one writes an ordinary static policy that
 includes a reference to a dynamic building block:
 
 ```
 let policy = ... static_component ... dynamic_component ...
 ```
-If the <code>dynamic_component</code> generates the following series of 
+If the <code>dynamic_component</code> generates the following series of
 policies as it executes:
 ```
 dynamic1
 
 dynamic2
 
-dynamic3 
+dynamic3
 
 ...
 ```
@@ -59,17 +59,17 @@ port, and rewrite the source IP and port to use the available port and
 the public IP. Responses to a previously established port are rewritten
 to use the private source port and IP.
 
-To use the built-in <code>nat</code> box, the programmer supplies it with 
-a desired public IP address (say, <code>10.0.0.254</code>) and invokes it 
+To use the built-in <code>nat</code> box, the programmer supplies it with
+a desired public IP address (say, <code>10.0.0.254</code>) and invokes it
 as follows.
 ```
 let translatePrivate, translatePublic = nat (publicIP = 10.0.0.254)
 in ...
 ```
-The expression above generates a pair of dynamic 
+The expression above generates a pair of dynamic
 components:  (1) <code>translatePrivate</code>, which
-rewrites requests travelling from inside to 
-outside, and (2) <code>translatePublic</code>, which rewrites requests 
+rewrites requests travelling from inside to
+outside, and (2) <code>translatePublic</code>, which rewrites requests
 travelling
 from outside back in.  These two components can be used within the
 policy following the keyword <code>in</code>.  The following
@@ -79,10 +79,10 @@ component that expects hosts attached to switch 1, port 1 to be
 "on the outside."
 ```
 let natter =
-  let translatePrivate, translatePublic = 
-    nat (publicIP = 10.0.0.254) 
+  let translatePrivate, translatePublic =
+    nat (publicIP = 10.0.0.254)
   in
-    if switch = 1 && inPort = 1 then 
+    if switch = 1 && inPort = 1 then
       (translatePrivate; if inPort = 1 then fwd(2) else pass)
   + if switch = 1 && inPort = 2 then
       (translatePublic; if inPort = 2 then fwd(1) else pass)
@@ -92,7 +92,7 @@ simple application.
 ```
 let app =
   if dlTyp = arp then all
-  else monitorPolicy(natter)  
+  else monitorPolicy(natter)
 ```
 This application handles arp separately.  It also uses a new feature,
 <code>monitorPolicy</code>, to print the series of static
@@ -105,7 +105,7 @@ follows.
 ```
 $ sudo mn  --controller=remote --mac
 ```
-Next, launch <code>Nat.nc</code>. 
+Next, launch <code>Nat.nc</code>.
 ```
 $ frenetic Nat.nc
 ```
@@ -122,7 +122,7 @@ The printed policy is identical to <code>natter</code>
 except that the dynamic components
 <code>translate_private</code> and <code>translate_public</code>
 have been replaced by the <code>controller</code> action.
-The <code>controller</code> action, as you might expect, directs 
+The <code>controller</code> action, as you might expect, directs
 packets to the controller for processing by a Frenetic handler,
 which decides, based on the packet received and its current state,
 what static NetCore policy to generate next.  NetCoreDSL programmers
@@ -131,7 +131,7 @@ without the ability to write general-purpose handler code --- a
 capability beyond the scope of this simple DSL), but it is used
 internally to support our dynamic applications.
 
-To see the <code>natter</code> in action, you will need to prime your arp cache 
+To see the <code>natter</code> in action, you will need to prime your arp cache
 on host h2 and start a simple web server running.
 ```
 mininet> h2 arp -s 10.0.0.254 00:00:00:00:00:01
@@ -194,6 +194,6 @@ NetCore rocks!  QED.
 
 [Ch9]: 09-WrapUp.md
 
-[topo_1]: images/topo_1.png "Default Mininet topology."
-[topo_2]: images/topo_2.png "Simple linear topology."
-[topo_3]: images/topo_3.png "Simple tree topology."
+[topo_1]: ../images/topo_1.png "Default Mininet topology."
+[topo_2]: ../images/topo_2.png "Simple linear topology."
+[topo_3]: ../images/topo_3.png "Simple tree topology."
