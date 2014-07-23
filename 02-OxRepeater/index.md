@@ -1,3 +1,8 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 Chapter 2: Repeater
 ====================
 
@@ -117,7 +122,7 @@ end
 module Controller = OxStart.Make (MyApplication)
 ```
 
-Within the body of `packet_in`, you need to use `send_packet_out`, 
+Within the body of `packet_in`, you need to use `send_packet_out`,
 which takes a list of actions (`apply_actions`) to apply to the packet:
 
 ```ocaml
@@ -135,7 +140,7 @@ every port (excluding the input port). This is easier than it
 sounds, because you can do it with just one OpenFlow action.
 
 Find the right action in the Ox manual (it is in the [OpenFlow_Core]
-module) and fill it in. 
+module) and fill it in.
 
 <h4 id="compiling">Compiling your Controller</h4>
 
@@ -176,7 +181,7 @@ hosts and have them ping each other:
 
   * `--mac` sets the hosts' mac addresses to 1, 2, 3, and 4 (instead
     of random numbers). This makes debugging a lot easier.
-    
+
   * `--arp` statically configures the ARP tables on all hosts, so you don't have to
     deal with ARP broadcast traffic.
 
@@ -197,7 +202,7 @@ hosts and have them ping each other:
   It should print `[Ox] Controller launching...`
   and then you should see switch 1 connecting to the controller:
   `[Ox] switch 1 connected`.
-  
+
 - From the Mininet prompt, you can make your hosts ping each other:
 
   ```
@@ -224,7 +229,7 @@ hosts and have them ping each other:
   3 packets transmitted, 3 received, 0% packet loss, time 2005ms
   rtt min/avg/max/mdev = 1.983/2.280/2.453/0.214 ms
   ```
-  
+
   Pinging should always succeed ("0% packet loss"). In addition, if
   your controller calls `printf` in its packet-in function, you will
   see the controller receiving all pings.
@@ -254,15 +259,15 @@ h2 h2-eth0:s1-eth2
 
 <p>
 Line 1 tells you there is a controller (<code>c0</code>) running.  Line 2
-describes the ports on switch <code>s1</code>.  In particular, 
+describes the ports on switch <code>s1</code>.  In particular,
 switch 1 port 1 (<code>s1-eth1</code>) is connected to host <code>h1</code>.
-Likewise, switch 1 port 2 (<code>s1-eth2</code>) is connected to 
+Likewise, switch 1 port 2 (<code>s1-eth2</code>) is connected to
 host <code>h2</code>. If there was more than one switch in the network, we would
 see additional lines prefixed by the switch identifier, one line
-per switch.  Lines 3 and 4 describe the hosts <code>h1</code> 
+per switch.  Lines 3 and 4 describe the hosts <code>h1</code>
 and <code>h2</code>.
 </blockquote>
-  
+
 ### Exercise 2: An Efficient Repeater
 
 Processing all packets at the controller is very inefficient.
@@ -366,13 +371,13 @@ implement a policy change, you may see packets at the controller.
 ## Next chapter: [Ox Firewall][Ch3]
 
 
-[Ch2]: 02-OxRepeater
-[Ch3]: 03-OxFirewall
-[Ch4]: 04-OxMonitor
-[Ch5]: 05-OxLearning
-[Ch6]: 06-NetCoreIntroduction
-[Ch7]: 07-NetCoreComposition
-[Ch8]: 08-DynamicNetCore
+[Ch2]: /02-OxRepeater
+[Ch3]: /03-OxFirewall
+[Ch4]: /04-OxMonitor
+[Ch5]: /05-OxLearning
+[Ch6]: /06-NetCoreIntroduction
+[Ch7]: /07-NetCoreComposition
+[Ch8]: /08-DynamicNetCore
 
 [OpenFlow_Core]: https://github.com/frenetic-lang/ocaml-openflow/blob/master/lib/OpenFlow0x04_Core.mli
 

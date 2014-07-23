@@ -1,3 +1,8 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 Chapter 9: Monitoring with Frenetic
 ==================================
 
@@ -36,7 +41,7 @@ $ cd Chapter9
 ```
 Proceed as follows:
 
-- Open up `Main.nc`.  There we have included `Sol_Firewall.nc` from Chapter 8 and copied in the forwarding solution we defined (you can replace our router with yours if you like).  
+- Open up `Main.nc`.  There we have included `Sol_Firewall.nc` from Chapter 8 and copied in the forwarding solution we defined (you can replace our router with yours if you like).
 - Fill in the definition of `monitoring` to create infrastructure for monitoring the web traffic sent by `h2`. More specifically, create a different string label for each of the other hosts ("H2->H1", "H2->H3", "H2->H4") and use `monitorLoad` to print the number of HTTP packets sent from `h2` to each of the other hosts separately.
 - Fill in the definition of `app` to compose your monitoring policy with `firewall` and `forwarding` definitions.
 
@@ -49,7 +54,7 @@ mininet> xterm h2
 ```
 - Set up a fortune server on host `h2` :
 ```
-$ while true; do fortune | nc -l 80; done 
+$ while true; do fortune | nc -l 80; done
 ```
 - Fetch fortunes from the other hosts.  For example:
 ```
@@ -61,7 +66,7 @@ During your experiments, you should should see the load between `h1` and `h2` es
 ## Monitoring Packets
 
 When debugging complex policies, it can be useful to peer in to the
-middle of the network.  If you need this kind of "printf"-style debugging support when implementing a policy, you may use 
+middle of the network.  If you need this kind of "printf"-style debugging support when implementing a policy, you may use
 the <code>monitorPackets(label)</code> policy, which sends every input packet it
 receives to the controller as opposed to forwarding it along a network data
 path (like the <code>fwd(port)</code> policy does).  At the controller, the
@@ -94,7 +99,7 @@ Flow table at switch 1 is:
  {*} => [Output AllPorts]
 ```
 
-As you can see from the latter two rules, Frenetic is less efficient 
+As you can see from the latter two rules, Frenetic is less efficient
 (in terms of switch rule space used) than a
 human programmer.  (But not for long, we hope!)  Nevertheless, this should look
 very similar to the flow table you programmed.

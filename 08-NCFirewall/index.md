@@ -1,15 +1,20 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 Chapter 8: Firewall Redux
 =========================
 
-In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured the flow table to implement the same function efficiently. 
-This single-line Frenetic program performs the same function: 
+In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured the flow table to implement the same function efficiently.
+This single-line Frenetic program performs the same function:
 
-`if nwProto = 1 then drop else all`. 
+`if nwProto = 1 then drop else all`.
 
-In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see 
+In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see
 how to turn your firewall into an easy-to-reuse component that can be applied to any other topology.
 
-## Topology 
+## Topology
 
 You are going to program the following network of four hosts and one switch:
 
@@ -36,7 +41,7 @@ let forwarding =
     ...
   else
     drop
-    
+
 monitorTable(1, forwarding)
 ```
 
@@ -146,7 +151,7 @@ else
 Wrap the forwarding policy you wrote above within a policy implementing the firewall.
 Assume standard numberings:
 
-- HTTP packets are on port 80 and 
+- HTTP packets are on port 80 and
 - ICMP packets are nwProto 1.
 
 > See `frenetic-tutorial-code/Sol_Chapter7_Forwarding.nc`, if you

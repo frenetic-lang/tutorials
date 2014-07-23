@@ -1,3 +1,8 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 # Chapter 8: Multi-Switch Programming (at last!)
 
 In this chapter, you'll finally work with a multi-switch network. First, you'll write and test a forwarding policy. Then, you'll use the re-use firewall you wrote in the last chapter and apply it to this network. In fact, you'll learn how package your firewall into a reusable module that you can compose with any other policy. You'll accomplish this using a key feature of Frenetic: _sequential composition_.
@@ -15,7 +20,7 @@ The figure labels hosts, switches, and port numbers. You can create this topolog
 $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 ```
 > `tree,2,2` creates a topology of height 2 and fanout 2.
-> 
+>
 > `--arp` populates host arp table so we don't have to
 > worry about broadcasting arp packets
 
@@ -116,7 +121,7 @@ Once you have a firewall policy and a forwarding policy to start from, continue 
 - Move the code for `firewall` function from `Chapter7.nc` in to `Chapter8/Firewall.nc`.
 
 - In `firewall`, you have (possibly several) occurrences of `forwarding` (i.e., the forwarding policy from Chapter 7).  Replace all occurrences of `forwarding` with `pass`.
-  
+
 - Edit `Forwarding.nc` to include `Firewall.nc` and compose the firewall and
   the forwarding policy:
 
@@ -127,7 +132,7 @@ Once you have a firewall policy and a forwarding policy to start from, continue 
 
   firewall; forwarding
   ```
-  
+
   You should test this policy just as you tested the firewall in
   [Chapter 7][Ch7].
 
@@ -137,7 +142,7 @@ Per the firewall, host `00:00:00:00:00:02` cannot send a packet to port `25` on 
 
 ### Extra Credit II
 
-Show that your firewall in `Firewall.nc` is truly reuseable.  Reimplement your solution in `Chapter7.nc` in a modular fashion using `Firewall.nc`. You may start with `Sol_Chapter7.nc` if you wish. 
+Show that your firewall in `Firewall.nc` is truly reuseable.  Reimplement your solution in `Chapter7.nc` in a modular fashion using `Firewall.nc`. You may start with `Sol_Chapter7.nc` if you wish.
 
 ## Next chapter: [Monitoring with Frenetic][Ch9]
 

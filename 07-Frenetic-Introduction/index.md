@@ -1,3 +1,8 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 Chapter 7: Introducing Frenetic
 ==============================
 
@@ -32,7 +37,7 @@ efficient repeater by adding rules to the switch flow table.  Recall that a
 repeater simply forwards incoming packets out all other ports.
 
 In this example, we will begin by considering a network with just one switch
-with two ports, numbered 1 and 2:  
+with two ports, numbered 1 and 2:
 
 ![Default Mininet topology.][topo_1]
 
@@ -61,7 +66,7 @@ OpenFlow-supported fields, such as the <code>srcIP</code>, <code>dstIP</code>
 or <code>dlTyp</code>.  Conditions can also be formed using conjunctions
 (<code>&&</code>), disjunctions (<code>||</code>) and negation (<code>!</code>)
 of other conditions.  See the [manual](A-NCManual) for the complete list of
-predicates. 
+predicates.
 
 The last line of the program uses <code>monitorTable(1,repeater)</code>, which
 will print the flow table generated for switch <code>1</code> from the
@@ -111,7 +116,7 @@ all ports on that switch except the port it arrived on.  Try testing
 that out too to see if you have done it correctly.
 
 The opposite of the <code>all</code> policy is the <code>drop</code> policy,
-which drops all packets on the floor.  
+which drops all packets on the floor.
 
 ## Next chapter: [Firewall Redux][Ch7]
 

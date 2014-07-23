@@ -1,3 +1,8 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 Chapter 5: Learning Switch
 ==========================
 
@@ -24,14 +29,14 @@ A learning switch has two logically distinct components:
   builds this table by inspecting the source ethernet address and inport
   of every packet at the switch.
 
-- The *routing module* uses this table in order to route incoming traffic: 
-  if the switch receives a packet for destination _X_ and the learning 
-  module has learned that _X_ is accessible through port _N_, then the 
-  routing module forwards the packet directly out port _N_. (If the table 
+- The *routing module* uses this table in order to route incoming traffic:
+  if the switch receives a packet for destination _X_ and the learning
+  module has learned that _X_ is accessible through port _N_, then the
+  routing module forwards the packet directly out port _N_. (If the table
   does not have an entry for _X_, it simply floods the packet.)
 
 Naturally, you will begin by writing a `packet_in` function that learns host
-locations. 
+locations.
 
 #### Programming Task
 
@@ -174,7 +179,7 @@ from `h2` to `h3`.  No traffic should reach `h1`.
     Together, these flags cause `tcpdump` to exit as soon as a packet arrives on port 80.
 
   * In the terminal for `h2`, start a local fortune server:
-  
+
     ```
     # while true; do fortune | nc -l 80; done
     ```
@@ -226,7 +231,7 @@ arrive on the controller.
 
 #### Compiling and Testing your Efficient Learning Switch
 
-You should build and test your learning switch as before. 
+You should build and test your learning switch as before.
 
 ## Next chapter: [Network Address Translator][Ch6]
 

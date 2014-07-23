@@ -1,3 +1,8 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 NetCore Manual
 ==============
 
@@ -36,7 +41,7 @@ Predicates:
 
 ```
 <apred> ::= ( <pred> )
-          | ! <apred> 
+          | ! <apred>
           | *
           | <none>
           | switch = <switch-id>

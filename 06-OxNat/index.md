@@ -1,7 +1,12 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 Chapter 6: Network Address Translator
 ==========================
 
-In this exercise, you will build a Network Address Translator (NAT) by first writing and 
+In this exercise, you will build a Network Address Translator (NAT) by first writing and
 testing a translator function that first translates IP addresses and then extending
 it so that it translates port numbers as well.
 
@@ -12,11 +17,11 @@ Before NAT was invented, all IP addresses were globally unique. NAT allows priva
 to be reused in multiple local area networks (LAN) by translating all private IP addresses in
 a LAN to one globally unique public IP address. NAT essentially does the following:
 
-* For packets received on private (internal) ports, NAT rewrites the private IP address 
+* For packets received on private (internal) ports, NAT rewrites the private IP address
 to the public IP address and installs rules to forward the packet to the public port.
-    * NAT will also store relevant information for each packet in a data structure, 
+    * NAT will also store relevant information for each packet in a data structure,
       such as a hashtable.
-* For packets received on the public (external) port, NAT checks to see if the TCP port 
+* For packets received on the public (external) port, NAT checks to see if the TCP port
   destination of the packet matches the TCP port source of any of the packets stored in
   the data structure.
     * If so, the public IP address of the packet is rewritten to the corresponding private
@@ -59,17 +64,17 @@ module MyApplication = struct
 
   let privateIP2 = 167772162l
 
-   let switch_connected (sw:switchId) feats : unit = 
+   let switch_connected (sw:switchId) feats : unit =
     Printf.printf "Switch Connected %Ld\n%!" sw
 
-  let packet_in (sw: switchId) (xid : xid) (pktIn : packetIn) : unit = 
+  let packet_in (sw: switchId) (xid : xid) (pktIn : packetIn) : unit =
     let pk = parse_payload pktIn.input_payload in
       (* If the packet is of type TCP and came in through port 1 or 2 *)
-      if (pktIn.port = 1 || pktIn.port = 2)  
-        && Packet.dlTyp pk = 0x800 
-        && Packet.nwProto pk = 0x06 
+      if (pktIn.port = 1 || pktIn.port = 2)
+        && Packet.dlTyp pk = 0x800
+        && Packet.nwProto pk = 0x06
       then
-	(* [FILL] Add packet info into hashtable and install rules to 
+	(* [FILL] Add packet info into hashtable and install rules to
            forward packet out of correct port *)
         ...
       else (* For packets arriving on port 3 *)
@@ -77,7 +82,7 @@ module MyApplication = struct
           Printf.printf "Non TCP or incoming flow %s \n" (packetIn_to_string pktIn);
           (* [FILL] Install reverse rules to forward packet back to correct host *)
           ...
-        with Not_found -> 
+        with Not_found ->
 	  (* [FILL] If no mapping is found in hashtable then drop the packet *)
           ...
 end
@@ -124,7 +129,7 @@ The first command adds a static entry into the arp table that binds your public 
 address to your public IP address.
 
 * In the terminal for `h1`, fetch a fortune from `h3`.
-  
+
   ```
   # curl 10.0.0.3:80
    ```
@@ -132,13 +137,13 @@ You should’ve received a fortune. Now try to fetch a fortune on the `h2` termi
 
 * In the terminal for the controller, check to see that your IP addresses are translating
 correctly.
-  
+
   ```
   Outgoing flow packetIn{
    total_len=74 port=1 reason=NoMatch
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
    nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)
-  
+
   Translating Private IP:167772161 to Public IP:167772259.
    ```
 * Incoming packets should look similar to this:
@@ -192,7 +197,7 @@ Compile and test your controller the same way that you did before.
   ```
 
 * Incoming packets should look similar to this:
- 
+
   ```
   Non TCP or incoming flow packetIn{
    total_len=74 port=3 reason=NoMatch

@@ -1,3 +1,8 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 Chapter 4: Traffic Monitoring
 =============================
 
@@ -45,7 +50,7 @@ module Stats = OpenFlow0x01_Stats
 module MyApplication = struct
 
   include OxStart.DefaultTutorialHandlers
-  
+
   (* [FILL] copy over the packet_in function from Firewall.ml
      verbatim, including any helper functions. *)
   let firewall_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
@@ -56,7 +61,7 @@ module MyApplication = struct
     false
 
   let num_http_packets = ref 0
-   
+
   let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     Printf.printf "%s\n%!" (packetIn_to_string pktIn);
     firewall_packet_in sw xid pktIn;
@@ -146,7 +151,7 @@ port 80 increments the counter (and that other traffic does not).
 
 
 - Finally, you should test that other traffic is neither blocked by
-  the firewall nor counted by your monitor. To do so, kill the fortune 
+  the firewall nor counted by your monitor. To do so, kill the fortune
   server running on `h1` and start a new fortune server on a non-standard
   port (e.g., 8080):
 
@@ -225,7 +230,7 @@ To do so, you can use the following function:
 ```ocaml
 let rec periodic_stats_request sw interval xid pat =
   let callback () =
-    Printf.printf "Sending stats request to %Ld\n%!" sw; 
+    Printf.printf "Sending stats request to %Ld\n%!" sw;
     send_stats_request sw xid
       (Stats.AggregateRequest (pat, 0xff, None));
     periodic_stats_request sw interval xid pat in
@@ -257,7 +262,7 @@ responses from the switch and calculate the sum of the two
 counters. We've provided one below:
 
 ```ocaml
-let num_http_request_packets = ref 0L 
+let num_http_request_packets = ref 0L
 let num_http_response_packets = ref 0L
 
 let stats_reply (sw : switchId) (xid : xid) (stats : Stats.reply) : unit =

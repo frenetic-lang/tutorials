@@ -1,3 +1,8 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
 Chapter 3: Firewall
 ===================
 
@@ -88,7 +93,7 @@ module Controller = OxStart.Make (MyApplication)
 
 - On the controller terminal, you should see the controller receiving
   several ICMP echo requests, but no ICMP echo replies:
-  
+
   <pre>
 Switch 1 connected.
 packetIn{
@@ -186,13 +191,13 @@ packets at the controller.
 
 [Packet]: http://frenetic-lang.github.io/frenetic/docs/Packet.html
 
-[Ch2]: 02-OxRepeater
-[Ch3]: 03-OxFirewall
-[Ch4]: 04-OxMonitor
-[Ch5]: 05-OxLearning
-[Ch6]: 06-NetCoreIntroduction
-[Ch7]: 07-NetCoreComposition
-[Ch8]: 08-DynamicNetCore
+[Ch2]: /02-OxRepeater
+[Ch3]: /03-OxFirewall
+[Ch4]: /04-OxMonitor
+[Ch5]: /05-OxLearning
+[Ch6]: /06-NetCoreIntroduction
+[Ch7]: /07-NetCoreComposition
+[Ch8]: /08-DynamicNetCore
 
 [OpenFlow_Core]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html
 

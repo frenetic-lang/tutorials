@@ -1,3 +1,10 @@
+---
+layout: main
+title: Frenetic Tutorial
+---
+
+{{ site.data.toc[1].name }}
+
 Getting Started
 ---------------
 
@@ -21,7 +28,7 @@ simple platform for writing OpenFlow controllers in OCaml. Apart from
 managing the socket connections and serialization, Ox gives you direct
 access to the OpenFlow protocol.
 
-Ox is loosely based on platforms such as 
+Ox is loosely based on platforms such as
 [POX](https://openflow.stanford.edu/display/ONL/POX+Wiki) and
 [NOX](http://www.noxrepo.org/nox/about-nox/). The concepts and techniques
 you learn in this tutorial are applicable to those platforms too.
@@ -83,7 +90,7 @@ Handy References
 ----------------
 
 - [Ox Platform Reference](http://frenetic-lang.github.io/frenetic/docs/)
-  
+
   In the first part of this tutorial, you will write controllers using
   the Ox Controller platform.
 
