@@ -95,9 +95,7 @@ and addresses are translated correctly.
 
  * Start Mininet:
 
-   ~~~
-   $ sudo mn --controller=remote --topo=single,3 --mac --arp
-   ~~~
+       $ sudo mn --controller=remote --topo=single,3 --mac --arp
 
  * In a separate terminal window, build and launch the controller:
 
