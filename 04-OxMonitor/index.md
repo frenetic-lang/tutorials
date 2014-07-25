@@ -3,6 +3,8 @@ layout: main
 title: Traffic Monitoring
 ---
 
+Link to [example patterns].
+
 In this exercise, you will write a controller that measures the volume
 of Web traffic on a network. To implement monitoring efficiently, you
 will learn how to read the traffic [statistics] that OpenFlow switches
@@ -311,18 +313,4 @@ packets before the switch is fully initialized?
 [Ch7]: 07-NetCoreComposition
 [Ch8]: 08-DynamicNetCore
 
-[OpenFlow_Core]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html
-
-[send_stats_request]: https://github.com/frenetic-lang/ox/blob/master/lib/OxPlatform.mli#VALsend_stats_request
-
-[header accessor functions]: https://github.com/frenetic-lang/ocaml-packet/blob/master/lib/Packet.mli
-
-[send_flow_mod]: https://github.com/frenetic-lang/ox/blob/master/lib/OxPlatform.mli#VALsend_flow_mod
-
-[pattern]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html#TYPEpattern
-
-[match_all]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html#VALmatch_all
-
-[example patterns]: https://github.com/frenetic-lang/ocaml-openflow/blob/master/lib/OpenFlow0x01_Core.mli
-
-[header accessor functions]: https://github.com/frenetic-lang/ocaml-packet/blob/master/lib/Packet.mli
+{% include api.md %}
