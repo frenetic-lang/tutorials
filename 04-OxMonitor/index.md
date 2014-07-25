@@ -3,8 +3,6 @@ layout: main
 title: Traffic Monitoring
 ---
 
-Link to [example patterns].
-
 In this exercise, you will write a controller that measures the volume
 of Web traffic on a network. To implement monitoring efficiently, you
 will learn how to read the traffic [statistics] that OpenFlow switches
