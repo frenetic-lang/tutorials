@@ -99,39 +99,33 @@ and addresses are translated correctly.
 
  * In a separate terminal window, build and launch the controller:
 
-  ~~~ shell
-  $ make Nat1.d.byte
-  $ ./Nat1.d.byte
-  ~~~
+       $ make Nat1.d.byte
+       $ ./Nat1.d.byte
 
   We will be using a topology that consists of two internal hosts and one external host
   connected by a switch.
 
  * In Mininet, start new terminals for `h1`, `h2`, and `h3`:
 
-  ~~~
-  mininet> xterm h1 h2 h3
-  ~~~
+       mininet> xterm h1 h2 h3
 
  * In the terminal for `h3`, add static entries into the arp table and start a fortune
    server.
 
-  ~~~
-  # arp -v -s [public IP address] [public MAC address]
-  # while true; do fortune | nc -l 80; done
-  ~~~
-The first command adds a static entry into the arp table that binds your public MAC
-address to your public IP address.
+       # arp -v -s [public IP address] [public MAC address]
+       # while true; do fortune | nc -l 80; done
+  
+   The first command adds a static entry into the arp table that binds your public MAC
+   address to your public IP address.
 
 * In the terminal for `h1`, fetch a fortune from `h3`.
 
-  ~~~
-  # curl 10.0.0.3:80
-   ~~~
-You should’ve received a fortune. Now try to fetch a fortune on the `h2` terminal.
+      # curl 10.0.0.3:80
+
+  You should’ve received a fortune. Now try to fetch a fortune on the `h2` terminal.
 
 * In the terminal for the controller, check to see that your IP addresses are translating
-correctly.
+  correctly.
 
   ~~~
   Outgoing flow packetIn{
@@ -140,7 +134,8 @@ correctly.
    nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)
 
   Translating Private IP:167772161 to Public IP:167772259.
-   ~~~
+  ~~~
+ 
 * Incoming packets should look similar to this:
 
   ~~~
@@ -151,7 +146,8 @@ correctly.
    }
   Found a mapping in the hashtable!
   ~~~
-Notice how this packet matches the outgoing flow packet above.
+  
+  Notice how this packet matches the outgoing flow packet above.
 
 ### PAT - The Port Address Translating Function
 
