@@ -287,7 +287,6 @@ You should be able to build and test the extended monitor as before.
 Did you spot the bug? What happens if the controller receives HTTP
 packets before the switch is fully initialized?
 
-## Next chapter: [Ox Learning Switch][Ch5]
 
 [statistics]: https://github.com/frenetic-lang/ocaml-openflow/blob/master/lib/OpenFlow0x01_Stats.mli
 
