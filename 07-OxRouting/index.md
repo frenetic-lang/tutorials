@@ -10,14 +10,15 @@ modern networks.
 ### The Shortest Path Forwarding Function
 
 This application will accomplish the following:
- * It will calculate the all the shortest paths from a source host to every other host in the topology.
-       * It will do this for every host in the network.
- * While the paths are being calculated, it will create forwarding rules for every switch. As you recall from
- previous chapters, each rule contains an action and a pattern to match the packet on
-       * For the pattern, we will only need to match on the destination host's MAC address
-       * For the action, we will need to know which port on the switch to forward the packet out of
- * Once a switch is connected, it will install the rule to forward the packet from the switch to the next
-   node in the path
+
+* It will calculate the all the shortest paths from a source host to every other host in the topology
+    * It will do this for every host in the network.
+* While the paths are being calculated, it will create forwarding rules for every switch. As you recall from
+previous chapters, each rule contains an action and a pattern to match the packet on 
+    * For the pattern, we will only need to match on the destination host's MAC address
+    * For the action, we will need to know which port on the switch to forward the packet out of
+* Once a switch is connected, it will install the rule to forward the packet from the switch to the next
+node in the path
 
 You will be using functions from Network.ml [insert link] and Network_Common.ml [insert link] in the
  ocaml-topology repository [insert link].
@@ -84,15 +85,15 @@ place it in the directory `~/src/frenetic/ox-tutorial-workspace/Routing.ml`.
 
 Your tasks:
 
- * To calculate the shortest paths, you will use the function UnitPath.all_shortest_paths from Network.ml which will 
- return a hashtable mapping a node to its predecessor in the path. 
-      * You will calculate these paths for every host in the network 
- * To create the rules, you will need to use the function Topology.vertex_to_label to get the information associated with 
- each node such as the switch id for switches and MAC address for hosts. Also, you might need to use the functions 
- Topology.find_edge and Topology.edge_src to get the edge between two nodes or to get the source node at the end of 
- the edge 
- * Finally, you would need to install the rule associated with each switch as it becomes connected
- * Packets that reached the controller should be dropped
+* To calculate the shortest paths, you will use the function UnitPath.all_shortest_paths from Network.ml which will 
+return a hashtable mapping a node to its predecessor in the path. 
+    * You will calculate these paths for every host in the network 
+* To create the rules, you will need to use the function Topology.vertex_to_label to get the information associated with 
+each node such as the switch id for switches and MAC address for hosts. Also, you might need to use the functions 
+Topology.find_edge and Topology.edge_src to get the edge between two nodes or to get the source node at the end of 
+the edge 
+* Finally, you would need to install the rule associated with each switch as it becomes connected
+* Packets that reached the controller should be dropped
 
 You may find that breaking down each task into several helper functions will assist you in debugging and organizing
 your code.
