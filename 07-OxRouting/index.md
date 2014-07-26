@@ -126,17 +126,17 @@ your code.
  * You should receive an output similar to this:
 
 
-      NXST_FLOW reply (xid=0x4):
-       cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
-      priority=100,dl_dst=00:00:00:00:00:01 actions=output:2
-       cookie=0x0, duration=90.133s, table=0, n_packets=8, n_bytes=784, idle_age=85, 
-      priority=100,dl_dst=00:00:00:00:00:05 actions=output:1
-       cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
-      priority=100,dl_dst=00:00:00:00:00:02 actions=output:2
-       cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
-      priority=100,dl_dst=00:00:00:00:00:04 actions=output:3
-       cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
-      priority=100,dl_dst=00:00:00:00:00:03 actions=output:3
+       NXST_FLOW reply (xid=0x4):
+        cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
+       priority=100,dl_dst=00:00:00:00:00:01 actions=output:2
+        cookie=0x0, duration=90.133s, table=0, n_packets=8, n_bytes=784, idle_age=85, 
+       priority=100,dl_dst=00:00:00:00:00:05 actions=output:1
+        cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
+       priority=100,dl_dst=00:00:00:00:00:02 actions=output:2
+        cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
+       priority=100,dl_dst=00:00:00:00:00:04 actions=output:3
+        cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
+       priority=100,dl_dst=00:00:00:00:00:03 actions=output:3
 
  Check to see that the packets are being forwarded out of the correct port based on
  their MAC address destination. You can dump the flows on all switches to ensure that
