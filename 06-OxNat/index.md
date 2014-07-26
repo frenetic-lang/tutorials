@@ -198,7 +198,3 @@ Compile and test your controller the same way that you did before.
   Found a mapping in the hashtable!
   ~~~
 
-## Next chapter: [Ox Shortest Path Forwarding][Ch7]
-
-[Ch7]: 07-OxRouting
-
