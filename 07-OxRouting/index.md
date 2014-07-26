@@ -40,7 +40,7 @@ This application should work with any network topology represented as a Topology
 You should use the template below to get started. Save it in a file called  `Routing.ml` and
 place it in the directory `~/src/frenetic/ox-tutorial-workspace/Routing.ml`.
 
- ~~~ocaml
+~~~ ocaml
  open OxPlatform
  open OpenFlow0x01
  open OpenFlow0x01_Core
@@ -80,7 +80,7 @@ place it in the directory `~/src/frenetic/ox-tutorial-workspace/Routing.ml`.
  end
   
  module Controller = OxStart.Make (MyApplication)
- ~~~
+~~~
 
 Your tasks:
 
@@ -101,38 +101,31 @@ your code.
 #### Compiling and Testing
 
  * Build and launch the controller:
-
- ~~~shell
- $ make Routing.d.byte
- $ ./Routing.d.byte
- ~~~
+ 
+       $ make Routing.d.byte
+       $ ./Routing.d.byte
+ 
 
  Launching the controller should produce a Mininet python script `topology.py` which you will use to start Mininet.
 
  * Start Mininet in a separate terminal window:
 
- ~~~shell
- $ sudo mn --custom topology.py
- ~~~
-
+       $ sudo mn --custom topology.py
+ 
  * First, test all-pairs connectivity:
 
- ~~~
- mininet> pingall
- ~~~
+       mininet> pingall
 
  You should see that 0% of the packets have been dropped.
 
   
  * Dump flows on switch 1:
 
- ~~~
- mininet> sh ovs-ofctl dump-flows s1
- ~~~
+       mininet> sh ovs-ofctl dump-flows s1
 
  * You should receive an output similar to this:
 
- ~~~
+~~~
  NXST_FLOW reply (xid=0x4):
   cookie=0x0, duration=90.133s, table=0, n_packets=6, n_bytes=588, idle_age=85, 
  priority=100,dl_dst=00:00:00:00:00:01 actions=output:2
