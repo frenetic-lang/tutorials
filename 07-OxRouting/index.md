@@ -112,7 +112,7 @@ your code.
  * Start Mininet in a separate terminal window:
 
  ~~~shell
- $ sudo mn â€”custom topology.py
+ $ sudo mn --custom topology.py
  ~~~
 
  * First, test all-pairs connectivity:
@@ -123,7 +123,8 @@ your code.
 
  You should see that 0% of the packets have been dropped.
 
-* Dump flows on switch 1:
+  
+ * Dump flows on switch 1:
 
  ~~~
  mininet> sh ovs-ofctl dump-flows s1
