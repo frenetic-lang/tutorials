@@ -26,3 +26,12 @@
 [Match]: http://frenetic-lang.github.io/api//openflow/#OpenFlow0x01.Match
 
 [Packet]:http://frenetic-lang.github.io/api//packet/#Packet
+
+[Network module]: http://frenetic-lang.github.io/api//topology/#Network                       
+
+[Network_Common module]: http://frenetic-lang.github.io/api//topology/#Network_Common
+
+[ocaml-topology repository]: http://frenetic-lang.github.io/api//topology/
+
+
+
