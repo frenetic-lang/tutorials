@@ -11,7 +11,7 @@ dummy:
 all: $(patsubst %.ml,%.d.byte,$(wildcard *.ml))
 
 %.d.byte: .force
-	$(OCAMLBUILD) -cflag -ppopt -cflag -lwt-debug $@
+	$(OCAMLBUILD) $@
 
 clean:
 	$(OCAMLBUILD) -clean
