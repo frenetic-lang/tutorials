@@ -20,8 +20,8 @@ previous chapters, each rule contains an action and a pattern to match the packe
 * Once a switch is connected, it will install the rule to forward the packet from the switch to the next
 node in the path
 
-You will be using functions from Network.ml [insert link] and Network_Common.ml [insert link] in the
- ocaml-topology repository [insert link].
+You will be using functions from the [Network module] and [Network_Common module] in the
+ [ocaml-topology repository].
 
 This application should work with any network topology represented as a Topology object from Network_Common.
 
@@ -73,7 +73,6 @@ place it in the directory `~/src/frenetic/ox-tutorial-workspace/Routing.ml`.
    let switch_connected (sw: switchId) (feats : SwitchFeatures.t) : unit = 
      ()
     
-
    (* [FILL] drop all packets that reach the controller *)
    let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
      ()
@@ -150,3 +149,6 @@ your code.
  Check to see that the packets are being forwarded out of the correct port based on
  their MAC address destination. You can dump the flows on all switches to ensure that
  packets are being forwarded along the shortest paths. 
+ 
+{% include api.md %}
+ 
