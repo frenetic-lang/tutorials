@@ -15,6 +15,9 @@
 - name: Network Address Translation with Ox
   path: ../06-OxNat
   group: ox
+- name: Shortest Path Forwarding with Ox
+  path: ../07-OxRouting
+  group: ox
 - name: Introduction to Frenetic
   path: ../07-Frenetic-Introduction
   group: frenetic
