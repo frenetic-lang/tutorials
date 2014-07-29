@@ -94,14 +94,14 @@ first place.
 Background Material
 -------------------
 
-The chapters on OpenFlow programming with Ox involve a little bit of
-OCaml programming. We only use a tiny fragment of the language and do
-provide lots of example code. But, some familiarity with OCaml syntax
-will be very helpful. We recommend reading these two brief tutorials:
+To write Frenetic and Ox programs, you'll need to know a little bit of OCaml
+programming. We only use a small fragment of the language and provide lots
+of example code.
 
-1. [OCaml Basics](http://ocaml.org/tutorials/basics.html), and
-
-2. [The Structure of OCaml Programs](http://ocaml.org/tutorials/structure_of_ocaml_programs.html).
+[Real World OCaml] is a pragmatic introduction to OCaml. The full text of the
+book is available online. If you skim Chapters 1--8, you'll have enough
+background to do the Ox tutorial. Frenetic uses the Async library, which is
+covered in Chapter 18.
 
 Handy References
 ----------------
@@ -127,6 +127,7 @@ Handy References
   controllers. We will tell you exactly what Mininet commands to use,
   so you don't really need to read this.
 
+[Real World OCaml]: https://realworldocaml.org
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 
