@@ -1,90 +1,87 @@
 ---
 layout: main
-title: Introduction to Frenetic
+title: NetKAT Repeater
 ---
 
+So far, we've seen how to implement OpenFlow controllers using the Ox
+platform. Most of the controllers we've built follow a simple,
+two-step recipe:
 
-You've learned how to write controllers with OpenFlow. We've shown
-you a simple, two step recipe to implement policies:
+* Write a `packet_in` handler that implements the desired
+  packet-processing policy.
 
-* You can easily write a _packet-in_ function to have the controller
-  implement any policy, though it may be a very inefficient
-  implementation.
+* Use `flow__mod` and `stats_request` messages to use the hardware
+  flow tables and counters available on switches to implement the same
+  policy efficiently.
 
-* You can then use flow tables and statistics to program switches to
-  implement the same policy efficiently.
+In the next few chapters, we will explore a different approach:
+express policies using a high-level, domain-specific programming
+language, and let a compiler and run-time system handle the details
+related to configuring hardware flow tables on switches (as well as
+sending requests for statistics, accumulating replies, etc.)
 
-In the following chapters, we introduce a new way to program SDN policies.
-You write policy-functions in a little language we call **FreneticDSL**.
-The Frenetic compiler will then synthesize the flow tables needed to
-implement your policy-function efficiently. (It also
-sends statistics requests, accumulates replies, manages
-switch connections, and more.)
-
-The templates and solutions for this part of the tutorial are in
-the `frenetic-tutorial-code` directory:
-
-~~~
-$ cd guide/frenetic-tutorial-code
-~~~
-
-### Example 1: A Naive Repeater (Redux)
-
-In the [OxRepeater](02-OxRepeater) chapter, you learned how to program an
-efficient repeater by adding rules to the switch flow table.  Recall that a
-repeater simply forwards incoming packets out all other ports.
-
-In this example, we will begin by considering a network with just one switch
-with two ports, numbered 1 and 2:
-
-![Default Mininet topology.][topo_1]
-
-Our first goal will be to program a
-switch-specific repeater that forwards traffic arriving at port 1 out port 2,
-and vice versa.  The following Frenetic policy accomplishes that task.
+The templates for this part of the tutorial are in the
+`netkat-tutorial-workspace` directory, and the solutions are in
+`netkat-tutorial-solutions`.
 
 ~~~
+$ cd tutorials/netkat-tutorial-solutions
+~~~
+
+### Example 1: A Repeater (Redux)
+
+In the [OxRepeater](OxRepeater) chapter, we wrote an efficient
+repeater that installs forwarding rules in the switch flow table.
+Recall that a repeater simply forwards incoming packets out all other
+ports. To simplify the example, suppose that the topology consists of
+a single switch with four ports, numbered 1 through 4:
+
+![Repeater](../images/repeater.png)
+
+The following program implements a repeater in NetKAT:
+~~~
+open Core.Std
+open Async.Std
+
 (* a simple repeater *)
+let repeater : NetKAT_Types.policy = 
+  <:netkat< 
+    if port = 1l then port := 2l + port := 3l + port := 4l
+    else if port = 2l then port := 1l + port := 3l + port := 4l
+    else if port = 3l then port := 1l + port := 2l + port := 4l
+    else if port = 4l then port := 1l + port := 2l + port := 3l
+    else drop
+  >>
 
-let repeater =
-  if inPort = 1 then fwd(2)
-  else fwd(1) in
-monitorTable(1, repeater)
+let _ = 
+  Async_NetKAT_Controller.start (create_static repeater) ();
+  never_returns (Scheduler.go ())
 ~~~
 
-As in OCaml, Frenetic comments are placed within <code>(*</code> and
-<code>*)</code> (and comments may be nested). The <code>let</code> keyword
-introduces a new policy, which we have chosen to call <code>repeater</code>.
-An <code>if</code>-<code>then</code>-<code>else</code> statement determines
-whether to forward a packet out port 1 or port 2, depending on the packet's
-<code>inPort</code> field.  In addition to testing the packet's
-<code>inPort</code>, if statement predicates can refer to the
-<code>switch</code> at which a packet arrives, as well as any of the
-OpenFlow-supported fields, such as the <code>srcIP</code>, <code>dstIP</code>
-or <code>dlTyp</code>.  Conditions can also be formed using conjunctions
-(<code>&&</code>), disjunctions (<code>||</code>) and negation (<code>!</code>)
-of other conditions.  See the [manual](A-NCManual) for the complete list of
-predicates.
-
-The last line of the program uses <code>monitorTable(1,repeater)</code>, which
-will print the flow table generated for switch <code>1</code> from the
-<code>repeater</code> policy.  It is equivalent to <code>repeater</code>, but
-with the side effect of printing the flow table.  Now, when you run the
-example, take a look at the flow table that the Frenetic compiler creates for
-you and compare it to your flow table rules from the Ox tutorial.
+This main part of this code uses a Camlp4 quotation,
+<code><:netkat<... >></code> to switch into NetKAT syntax. The
+embedded NetKAT program uses a cascade of nested conditionals
+(<code>if ... then ... else ...</code>) to match packets on each port
+(<code>port = 1l</code>) and forward them out on all other ports
+(<code>port := 2l + port := 3l + port := 4l</code>) except the one the
+packet came in on. The last two lines of code are boilerplate. They
+start a controller that configures the switch with a static NetKAT
+policy, and also start the scheduler for the Async concurrency
+library.
 
 #### Run the Example
 
-Within the <code>frenetic-tutorial-code</code> directory, you should
-find the repeater policy in <code>Repeater.nc</code>.  To start the
-repeater controller, just type:
+To run the repeater, type the code above into a file
+<code>Repeater.ml</code> within the
+<code>netkat-tutorial-workspace</code> directory. Then compile and
+start the repeater controller using the following commands.
 ~~~
-$ frenetic Repeater.nc
+$ ../freneticbuild Repeater.native 
+$ ./Repeater.native
 ~~~
-Now, in a separate terminal, start up mininet with the default, single
-switch topology.
+Next, in a separate terminal, start up mininet.
 ~~~
-$ sudo mn --controller=remote
+$ sudo mn --controller=remote --topology=single,4 --mac --arp
 ~~~
 
 #### Test the Example
@@ -102,24 +99,31 @@ PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.216/0.216/0.216/0.000 ms
 ~~~
-Ping <code>h1</code> from <code>h2</code> as well.
-Once you are convinced the repeater works,
-try replacing the given repeater with an even simpler one:
-~~~
-let repeater = all in
-monitorTable(1, repeater)
-~~~
-The <code>all</code> policy forwards any packet arriving at a switch out
-all ports on that switch except the port it arrived on.  Try testing
-that out too to see if you have done it correctly.
+Try pinging <code>h1</code> from <code>h2</code> as well.
 
-The opposite of the <code>all</code> policy is the <code>drop</code> policy,
-which drops all packets on the floor.
+### Example 2: Using Anti-Quotation
+
+In many programs it is useful to escape from a quotation back into
+OCaml. We can do this using Camlp4 anti-quotations,
+<code>$...$</code>. As an example, here is an equivalent version of
+the repeater written using anti-quotation:
+
+~~~
+(* a simple repeater *)
+let all_ports : int32 list = [1l; 2l; 3l; 4l]
+
+let flood (n:int32) : NetKAT_Types.policy = 
+  List.fold_left
+    (fun pol m -> if n = m then pol else <:netkat<$pol$ + port := $m$>>)
+    <:netkat<drop>> all_ports
+
+let repeater : NetKAT_Types.policy = 
+  List.fold_right
+    (fun m pol -> <:netkat<if port = $m$ then $flood m$ else $pol$>>)
+    all_ports <:netkat<drop>>
+>>
+~~~
 
 ## Next chapter: [Firewall Redux][Ch7]
 
 [Ch7]: 07-NCFirewall
-
-[topo_1]: ../images/topo_1.png "Default Mininet topology."
-[topo_2]: ../images/topo_2.png "Simple linear topology."
-[topo_3]: ../images/topo_3.png "Simple tree topology."

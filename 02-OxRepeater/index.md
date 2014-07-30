@@ -97,9 +97,9 @@ and switches. So, you do need both implementations.
 
 ### Exercise 1: A Naive Repeater
 
-In this part, you will write a repeater that processes all packets at the controller.
-Therefore, this repeater only needs to process `packet_in` messages. You should
-use the template below.
+In this part, you will write a repeater that processes all packets at
+the controller.  Therefore, this repeater only needs to process
+`packet_in` messages. You should use the template below.
 
 Save it in a file called `Repeater.ml` and place it in the directory
 `~/src/frenetic/ox-tutorial-workspace/Repeater.ml`.

@@ -3,111 +3,183 @@ layout: main
 title: Firewall Redux
 ---
 
-In [Chapter 3](03-OxFirewall), you wrote a firewall that blocks ICMP traffic using OpenFlow and Ox. You did this in two steps: first, you wrote a _packet_in_ function and then configured the flow table to implement the same function efficiently.
-This single-line Frenetic program performs the same function:
+In [Chapter 3](03-OxFirewall), we write a firewall that blocks ICMP
+traffic using OpenFlow and Ox. Even though this policy is extremely
+simple, the implementation was somewhat involved, as we had to both
+write a `packet_in` handler and also use `flow_mod` messages to
+configure the switch. 
 
-`if nwProto = 1 then drop else all`.
+#Exercise 1: Naive Firewall
 
-In this chapter, you'll implement a more interesting firewall policy. This time, you will still use a trivial, one-switch topology. But, in the next chapter, you'll see
-how to turn your firewall into an easy-to-reuse component that can be applied to any other topology.
-
-## Topology
-
-You are going to program the following network of four hosts and one switch:
-
-![image](../images/topo-single-4.png)
-
-The host with MAC address `00:00:00:00:00:0n` is connected to port `n`. Mininet has builtin support for building single-switch topologies:
+We can implement the same policy in NetKAT as follows:
 
 ~~~
-$ sudo mn --controller=remote --topo=single,4 --mac --arp
+open Core.Std
+open Async.Std
+
+let firewall : NetKAT_Types.policy = 
+  <:netkat< 
+    if ipProto = 0x01 then drop else $Repeater.repeater$
+  >>
+
+let _ = 
+  Async_NetKAT_Controller.start (create_static repeater) ();
+  never_returns (Scheduler.go ())
 ~~~
 
-### Exercise 1: Forwarding
+There are two things to note about this program. First, rather than
+having to write separate `packet_in` and `switch_connected` handlers,
+the NetKAT program consists of a simple declarative specification of
+the desired packet-processing functionality. The compiler and run-time
+system take care of generating the handlers and low-level forwarding
+rules needed to implement it. Second, the NetKAT program is modular:
+we use a conditional to wrap the `repeater` policy from the last
+chapter. The ability to combine policies in a compositional way is one
+of the key benefits of NetKAT's language-based approach to network
+programming.
 
-Write a forwarding policy for this network. Use `monitorTable` to examine the flow table that the compiler generates. Try a few `ping`s between hosts.
-
-As you've seen, Frenetic supports ordinary `if`-`then`-`else` expressions.
-So, you can implement the forwarding policy as follows:
-
-~~~
-let forwarding =
-  if dlDst=00:00:00:00:00:01 then
-     fwd(1)
-  else if (* destination is 2, forward out port 2, etc. *)
-    ...
-  else
-    drop
-
-monitorTable(1, forwarding)
-~~~
-
-Fill in the rest of the policy by editing `frenetic-tutorial-code/Chapter7.nc`.
+Type this policy into a file `Firewall.ml` in the
+`netkat-tutorial-workspace` directory.
 
 #### Testing
 
-Launch Frenetic in one terminal:
-
+To test your code, compile the firewall and start the controller in
+one terminal,
 ~~~
-$ frenetic Chapter7.nc
+$ ../freneticbuild Firewall.native
+$ ./Firewall.native
 ~~~
-
-And Mininet in another:
-
+and Mininet in another:
 ~~~
 $ sudo mn --controller=remote --topo=single,4 --mac --arp
 ~~~
-
-Using Mininet, ensure that you can ping between all hosts:
-
+Using Mininet, check that you can ping between all hosts:
 ~~~
 mininet> pingall
 ~~~
 
-## Firewall Policy
+### Exercise 1: Basic Firewall
 
-Now that basic connectivity works, you should enforce the access control (firewall) policy written in the table below:
+To gain further experience with NetKAT, let's implement a more
+sophisticated firewall policy that uses point-to-forwarding rather
+than naive flooding. As we saw in the last chapter, NetKAT supports
+conditional expressions, so we can implement the forwarding policy by
+simply matching on destination IP addresses and then forwarding out
+the corresponding port. Recall that the topology has a single switch
+with four hosts.
+
+![Repeater](../images/repeater.png)
+
+The hosts have IP addresses 10.0.0.1 through 10.0.0.4 and are
+connected to ports 1 through 4 respetively.
+
+~~~
+let forwarding : NetKAT_Types.policy =
+  <:netkat<
+    if ipDst = 10.0.0.1 then port := 1
+    else if (* destination is 10.0.0.2, forward out port 2, etc. *)
+      ...
+    else drop
+  >>
+~~~
+
+Type this policy into a file `Firewall2.ml` in the
+`netkat-tutorial-workspace` directory.
+
+### Testing 
+
+- Build and launch the controller:
+
+  ~~~ shell
+  $ ../freneticbuild Firewall2.native
+  $ ./Firewall2.native
+  ~~~
+
+- Start Mininet using the same parameters you've used before:
+
+  ~~~
+  $ sudo mn --controller=remote --topo=single,4 --mac --arp
+  ~~~
+
+- Test that pings fail within Mininet:
+
+  ~~~
+  mininet> h1 ping -c 1 h2
+  mininet> h2 ping -c 1 h1
+  ~~~
+
+  These commands should fail, printing `100.0% packet loss`.
+
+- Although ICMP is blocked, other traffic, such as Web traffic should
+  be unaffected. To ensure that this is the case, try to run a Web server
+  on one host and a client on another.
+
+  * In Mininet, start new terminals for `h1` and `h2`:
+
+    ~~~
+    mininet> xterm h1 h2
+    ~~~
+
+  * In the terminal for `h1` start a local "fortune server" (a server
+    that returns insightful fortunes to those who query it):
+
+    ~~~
+    # while true; do fortune | nc -l 80; done
+    ~~~
+
+  * In the terminal for `h2` fetch a fortune from `h1`:
+
+    ~~~
+    # curl 10.0.0.1:80
+    ~~~
+
+    This command should succeed.
+
+## Exercise 3: Advanced Firewall
+
+Now that basic connectivity works, let's extend the example further to
+enforce a more interesting access control policy:
 
 <table>
 <tr>
   <th style="visibility: hidden"></th>
   <th style="visibility: hidden"></th>
-  <th colspan="4">Dst MAC address</th>
+  <th colspan="4">Dst IP Address</th>
 </tr>
 <tr>
   <th style="visibility: hidden"></th>
   <th style="visibility: hidden"></th>
-  <th>00:00:00:00:00:01</th>
-  <th>00:00:00:00:00:02</th>
-  <th>00:00:00:00:00:03</th>
-  <th>00:00:00:00:00:04</th>
+  <th>10.0.0.1</th>
+  <th>10.0.0.2</th>
+  <th>10.0.0.3</th>
+  <th>10.0.0.4</th>
 </tr>
 <tr>
   <th rowspan="5" style="-webkit-transform:rotate(270deg)" >
-    Src MAC<br>address
+    Src IP Address<br>address
   </th>
-  <th>00:00:00:00:00:01</th>
+  <th>10.0.0.1</th>
   <td>Deny All</td>
   <td>HTTP</td>
   <td>Deny All</td>
   <td>Deny All</td>
 </tr>
 <tr>
-  <th>00:00:00:00:00:02</th>
+  <th>10.0.0.2</th>
   <td>HTTP</td>
   <td>Deny All</td>
   <td>Deny All</td>
   <td>Deny All</td>
 </tr>
 <tr>
-  <th>00:00:00:00:00:03</th>
+  <th>10.0.0.3</th>
   <td>Deny All</td>
   <td>Deny All</td>
   <td>Deny All</td>
   <td>ICMP</td>
 </tr>
 <tr>
-  <th>00:00:00:00:00:04</th>
+  <th>10.0.0.4</th>
   <td>Deny All</td>
   <td>Deny All</td>
   <td>ICMP</td>
@@ -115,88 +187,60 @@ Now that basic connectivity works, you should enforce the access control (firewa
 </tr>
 </table>
 
-Each cell in this table has a list of allowed protocols for connections between
-clients (rows) and servers (columns). For example, consider this entry in the table:
-
+Each cell in this table has a list of allowed protocols for
+connections between the hosts in rows and columns. For example, the
+cell
 
 <table>
 <tr>
   <th></th>
-  <th>00:00:00:00:00:01</th>
+  <th>10.0.0.1</th>
 </tr>
 <tr>
-  <th>00:00:00:00:00:02</th>
+  <th>10.0.0.2</th>
   <td>HTTP</td>
 </tr>
 </table>
 
-This cell indicates that (only) HTTP connections (port 80) are allowed between client
-`00:00:00:00:00:02` and the server `00:00:00:00:00:01`. To realize this policy in Frenetic, you need to allow packets from the client to port 80 on the server *and* from port 80 on the server to the client:
+indicates that (only) HTTP connections (port 80) are allowed between
+hotss `10.0.0.2` and `10.0.0.1`. To realize this policy in NetKAT, you
+need to allow packets from the first host to port 80 on second  *and*
+from port 80 on the second back to the first: 
 
 ~~~
-if (dlSrc = 00:00:00:00:00:02 && dlDst = 00:00:00:00:00:01 && tcpDstPort = 80) ||
-   (dlSrc = 00:00:00:00:00:01 && dlDst = 00:00:00:00:00:02 && tcpSrcPort = 80)
-then
-  forwarding
-else
-  drop
+let firewall : NetKAT_Types.policy = 
+  <:netkat<
+   if (ipSrc = 10.0.0.2 && ipDst = 10.0.0.1 && tcpDst = 80) ||
+      (ipSrc = 10.0.0.1 && ipDst = 10.0.0.2 && tcpSrc = 80)
+   then
+     forwarding
+   else
+     drop
 ~~~
 
-
-### Exercise 2: Firewall + Forwarding
-
-Wrap the forwarding policy you wrote above within a policy implementing the firewall.
-Assume standard numberings:
-
-- HTTP packets are on port 80 and
-- ICMP packets are nwProto 1.
-
-> See `frenetic-tutorial-code/Sol_Chapter7_Forwarding.nc`, if you
-> did not finish the previous task.
-
-Your edited file will probably have the following structure:
-
-~~~
-let forwarding = (* from part 1, above *)
-
-let firewall =
-  if (* traffic is allowed *) then
-    forwarding
-  ...
-  else
-    drop
-
-firewall
-~~~
-
-While you could write the policy by enumerating each allowed flow, consider
-using `if`-`then`-`else` and boolean expressions (`p1 && p2`, `p1 || p2`, and `!p`) to write a compact and legible policy.
-
-#### Testing
-
-Launch Frenetic in one terminal:
-
-~~~
-$ frenetic Chapter7.nc
-~~~
-
-And Mininet in another, then open a terminal on each host:
-
-~~~
-$ sudo mn --controller=remote --topo=single,4 --mac --arp
-mininet> xterm h1 h2 h3 h4
-~~~
-
-Instead of trying a comprehensive test, just test a few points of the access control policy. For example, if you run _fortune_ on port 80 on `h1`:
+Type this policy into a file `Firewall3.ml` in the
+`netkat-tutorial-workspace` directory and test it in Mininet. Note
+that due to the access control policy, it probably makes sense to test
+a few points of the access control policy. For example, if you run
+_fortune_ on port 80 on `h1`,
 
 ~~~
 ## Run on h1's terminal
 $ while true; do fortune | nc -l 80; done
 ~~~
 
-Then, running `curl 10.0.0.1:80` should succeed from `h2`, but fail from `h3`.
+running `curl 10.0.0.1:80` should succeed from `h2`, but fail from `h3`.
 
 Similarly, pinging `h3` should succeed from `h4`, but fail from `h1`.
+
+#### Exercise 4: Compact Firewall
+
+One way to express a firewall policy is to enumerate each allowed flow
+using conditionals. However, using NetKAT's predicates (`p1 && p2`,
+`p1 || p2`, and `!p`) is is often possible to write a more compact and
+legible policy. Revise your advanced firewall this policy, putting the
+result in a file `Firewall4.ml` in the `netkat-tutorial-workspace`
+directory and test it in Mininet.
 
 ## Next chapter: [Multi-switch Programming][Ch8]
 
