@@ -37,35 +37,31 @@ a single switch with four ports, numbered 1 through 4:
 ![Repeater](../images/repeater.png)
 
 The following program implements a repeater in NetKAT:
-~~~
-open Core.Std
-open Async.Std
+
+~~~ ocaml
+open NetKAT.Std
 
 (* a simple repeater *)
-let repeater : NetKAT_Types.policy = 
-  <:netkat< 
-    if port = 1l then port := 2l + port := 3l + port := 4l
-    else if port = 2l then port := 1l + port := 3l + port := 4l
-    else if port = 3l then port := 1l + port := 2l + port := 4l
-    else if port = 4l then port := 1l + port := 2l + port := 3l
+let repeater : policy =
+  <:netkat<
+    if port = 1 then port := 2 + port := 3 + port := 4
+    else if port = 2 then port := 1 + port := 3 + port := 4
+    else if port = 3 then port := 1 + port := 2 + port := 4
+    else if port = 4 then port := 1 + port := 2 + port := 3
     else drop
   >>
 
-let _ = 
-  Async_NetKAT_Controller.start (create_static repeater) ();
-  never_returns (Scheduler.go ())
+let _ = run_static repeater
 ~~~
 
 This main part of this code uses a Camlp4 quotation,
 <code><:netkat<... >></code> to switch into NetKAT syntax. The
 embedded NetKAT program uses a cascade of nested conditionals
 (<code>if ... then ... else ...</code>) to match packets on each port
-(<code>port = 1l</code>) and forward them out on all other ports
-(<code>port := 2l + port := 3l + port := 4l</code>) except the one the
-packet came in on. The last two lines of code are boilerplate. They
-start a controller that configures the switch with a static NetKAT
-policy, and also start the scheduler for the Async concurrency
-library.
+(<code>port = 1</code>) and forward them out on all other ports
+(<code>port := 2 + port := 3 + port := 4</code>) except the one the
+packet came in on. The last line starts a controller that configures
+the switch with a static NetKAT policy.
 
 #### Run the Example
 
@@ -74,7 +70,7 @@ To run the repeater, type the code above into a file
 <code>netkat-tutorial-workspace</code> directory. Then compile and
 start the repeater controller using the following commands.
 ~~~
-$ ../freneticbuild Repeater.native 
+$ netkatbuild Repeater.native
 $ ./Repeater.native
 ~~~
 Next, in a separate terminal, start up mininet.
@@ -85,10 +81,13 @@ $ sudo mn --controller=remote --topology=single,4 --mac --arp
 #### Test the Example
 
 At the mininet prompt, test your repeater program by pinging <code>h2</code> from <code>h1</code>:
+
 ~~~
 mininet> h1 ping -c 1 h2
 ~~~
+
 You should see a trace like this one:
+
 ~~~
 PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
 64 bytes from 10.0.0.2: icmp_req=1 ttl=64 time=0.216 ms
@@ -97,31 +96,29 @@ PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.216/0.216/0.216/0.000 ms
 ~~~
+
 Try pinging <code>h1</code> from <code>h2</code> as well.
 
-### Example 2: Using Anti-Quotation
+### Example 2: Referring to OCaml variables
 
-In many programs it is useful to escape from a quotation back into
-OCaml. We can do this using Camlp4 anti-quotations,
-<code>$...$</code>. As an example, here is an equivalent version of
-the repeater written using anti-quotation:
+In many programs it is useful to refer to an OCaml variable. We can do this by
+writing `$x`, where `x` is the name of an OCaml variable. As an example, here is
+an equivalent, but more concise version of the repeater:
 
 ~~~
-(* a simple repeater *)
-let all_ports : int32 list = [1l; 2l; 3l; 4l]
+open NetKAT.Std
 
-let flood (n:int32) : NetKAT_Types.policy = 
+(* a simple repeater *)
+let all_ports : int list = [1; 2; 3; 4]
+
+let flood (n : int) : policy =
   List.fold_left
-    (fun pol m -> if n = m then pol else <:netkat<$pol$ + port := $m$>>)
+    (fun pol m -> if n = m then pol else <:netkat<$pol + port := $m>>)
     <:netkat<drop>> all_ports
 
-let repeater : NetKAT_Types.policy = 
+let repeater : policy =
   List.fold_right
-    (fun m pol -> <:netkat<if port = $m$ then $flood m$ else $pol$>>)
+    (fun m pol -> <:netkat<let p = flood m in if port = $m then $p else $pol>>)
     all_ports <:netkat<drop>>
 >>
 ~~~
-
-## Next chapter: [Firewall Redux][Ch7]
-
-[Ch7]: 07-NCFirewall

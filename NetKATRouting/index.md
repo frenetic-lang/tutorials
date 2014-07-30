@@ -1,12 +1,16 @@
 ---
 layout: main
-title: Multi-Switch Programming (at last!)
+title: Routing with NetKAT
 ---
 
-In this chapter, you'll finally work with a multi-switch network. First, you'll write and test a forwarding policy. Then, you'll use the re-use firewall you wrote in the last chapter and apply it to this network. In fact, you'll learn how package your firewall into a reusable module that you can compose with any other policy. You'll accomplish this using a key feature of Frenetic: _sequential composition_.
+In this chapter, we'll use NetKAT to route traffic in a three-switch network.
+First, you'll write and test a forwarding policy. Then, you'll use the re-use
+firewall you wrote in the last chapter and apply it to this network. In fact,
+you'll learn how package your firewall into a reusable module that you can
+compose with any other policy. You'll accomplish this using a key feature of
+NetKAT: _sequential composition_.
 
 ## Topology
-
 
 You will work with the following tree topology:
 
@@ -29,7 +33,7 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 Using Frenetic, write a forwarding policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch forwarding policy, you can use the `switch = n` predicate as follows:
 
 ~~~
-let forwarding =
+<:netkat<
   if switch = 1 then
     (* Policy for Switch 1 *)
     ...
@@ -41,8 +45,7 @@ let forwarding =
     ...
   else
     drop
-
-forwarding
+>>
 ~~~
 
 Change in to the chapter8 directory:
@@ -142,8 +145,4 @@ Per the firewall, host `00:00:00:00:00:02` cannot send a packet to port `25` on 
 
 Show that your firewall in `Firewall.nc` is truly reuseable.  Reimplement your solution in `Chapter7.nc` in a modular fashion using `Firewall.nc`. You may start with `Sol_Chapter7.nc` if you wish.
 
-## Next chapter: [Monitoring with Frenetic][Ch9]
-
-[Ch9]: 09-NCMonitoring
-[Ch7]: 07-NCFirewall
-
+{% include api.md %}

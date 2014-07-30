@@ -18,17 +18,17 @@
 - name: Shortest Path Routing with Ox
   path: ../OxRouting
   group: ox
-- name: Repeater with NetKAT 
+- name: NetKAT Repeater
   path: ../NetKATRepeater
   group: frenetic
 - name: Firewall with NetKAT
   path: ../NetKATFirewall
   group: frenetic
-- name: Traffic Monitoring with Frenetic
+- name: Monitoring Traffic with NetKAT
   path: ../NetKATMonitoring
   group: frenetic
-- name: Shortest-Path Routing with NetKAT
-  path: ../NetKAT Routing
+- name: Routing with NetKAT
+  path: ../NetKATRouting
   group: frenetic
 - name: Conclusion
   path: ../Conclusion
