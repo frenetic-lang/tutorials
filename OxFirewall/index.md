@@ -1,6 +1,6 @@
 ---
 layout: main
-title: Ox Firewall
+title: Firewall with Ox
 ---
 
 In this chapter, you will compose your repeater with a simple firewall
