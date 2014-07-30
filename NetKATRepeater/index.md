@@ -30,9 +30,9 @@ $ cd tutorials/netkat-tutorial-solutions
 
 In the [OxRepeater](OxRepeater) chapter, we wrote an efficient
 repeater that installs forwarding rules in the switch flow table.
-Recall that a repeater simply forwards incoming packets out all other
-ports. To simplify the example, suppose that the topology consists of
-a single switch with four ports, numbered 1 through 4:
+Recall that a repeater simply outputs packets out all ports, except
+the one that the packet came in on. Suppose that the topology consists
+of a single switch with four ports, numbered 1 through 4:
 
 ![Repeater](../images/repeater.png)
 
@@ -80,13 +80,14 @@ $ sudo mn --controller=remote --topology=single,4 --mac --arp
 
 #### Test the Example
 
-At the mininet prompt, test your repeater program by pinging <code>h2</code> from <code>h1</code>:
+At the mininet prompt, test your repeater program by pinging <code>h2</code> 
+from <code>h1</code>:
 
 ~~~
 mininet> h1 ping -c 1 h2
 ~~~
 
-You should see a trace like this one:
+You should see output similar to the following:
 
 ~~~
 PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
@@ -101,11 +102,15 @@ Try pinging <code>h1</code> from <code>h2</code> as well.
 
 ### Example 2: Referring to OCaml variables
 
-In many programs it is useful to refer to an OCaml variable. We can do this by
-writing `$x`, where `x` is the name of an OCaml variable. As an example, here is
-an equivalent, but more concise version of the repeater:
+In many programs it is useful to refer to an OCaml variable. We can do
+this by writing `$x`, where `x` is the name of an OCaml variable. As
+an example, here is an equivalent, but more concise version of the
+repeater that uses list-processing functions to build up the NetKAT
+policy. This program would be easier to maintain, for example, if we
+wanted to implement repeaters on switches with different numbers of
+ports.
 
-~~~
+~~~ ocaml
 open NetKAT.Std
 
 (* a simple repeater *)
