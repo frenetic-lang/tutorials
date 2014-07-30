@@ -3,24 +3,12 @@ layout: main
 title: Frenetic Tutorial
 ---
 
-Getting Started
----------------
-
-This is a hands-on tutorial with several programming exercises.
-We strongly recomend using the tutorial VM we've prepared that has
-all the software that you need pre-installed. You can get the tutorial
-VM from the following link:
-
-https://github.com/frenetic-lang/frenetic/releases/frenetic-1.0.1
-
-TODO(arjun): Update this link.
-
 Introduction
 ------------
 
-In this tutorial, you will learn some of the basic ideas being
-software-defined networking (SDN) programming with OpenFlow and
-Frenetic. The tutorial is divided into two sections:
+This tutorial presents some of the basic ideas being software-defined
+networking (SDN) programming with OpenFlow and Frenetic. It is divided
+into two sections:
 
 * **Ox:** The first few chapters introduce the nuts and bolts of
 programming a SDN switches using *Ox*, a simple platform for writing
@@ -54,6 +42,18 @@ learn in this tutorial are applicable to those platforms too.
 {% endif %}
 {% endfor %}
 </ul>
+
+Software Environment
+--------------------
+
+This is a hands-on tutorial with several programming exercises.  We
+recommend using the virtual machine we've prepared that has all the
+necessary software that you need pre-installed. You can get the
+tutorial VM from the following link:
+
+https://github.com/frenetic-lang/frenetic/releases/frenetic-1.0.1
+
+TODO(arjun): Update this link.
 
 References
 ----------
