@@ -26,7 +26,13 @@ prioritized rules. Each rule has several components:
 
 As an example, consider the following flow table:
 
-<table border=1>
+Priority | Pattern | Actions | Packet Counter | Byte Counter 
+------------------------------------------------------------
+50       | ICMP    |         | 2             | 50
+
+Or this flow table...
+
+<table>
 <tr>
   <th>Priority</th><th>Pattern</th><th>Action List</th> <th>Counter (bytes)</th>
 </tr>
