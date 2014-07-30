@@ -1,22 +1,17 @@
-open NetKAT_Types
-open Core.Std
-open Async.Std
-open Async_NetKAT
+open NetKAT.Std
 
-let forwarding : NetKAT_Types.policy = 
+let forwarding : policy =
   <:netkat<
-   if ipDst = 10.0.0.1 then port := 1
-   else if ipDst = 10.0.0.2 then port := 2
-   else if ipDst = 10.0.0.3 then port := 3
-   else if ipDst = 10.0.0.4 then port := 4
+   if ip4Dst = "10.0.0.1" then port := 1l
+   else if ip4Dst = "10.0.0.2" then port := 2l
+   else if ip4Dst = "10.0.0.3" then port := 3l
+   else if ip4Dst = "10.0.0.4" then port := 4l
    else drop
   >>
 
-let firewall : NetKAT_Types.policy = 
+let firewall : policy =
   <:netkat<
     if ipProto = 0x01 then drop else $forwarding$
   >>
 
-let _ = 
-  Async_NetKAT_Controller.start (create_static pol) ();
-  never_returns (Scheduler.go ())
+let _ = run_static firewall

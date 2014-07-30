@@ -1,13 +1,8 @@
-open NetKAT_Types
-open Core.Std
-open Async.Std
-open Async_NetKAT
+open NetKAT.Std
 
-let firewall : NetKAT_Types.policy = 
+let firewall : policy =
   <:netkat<
-    if ipProto = 0x01 then drop else $Sol_Repeater.repeater$
+    if ipProto = 0x01 then drop else $Sol_Repeater.pol$
   >>
 
-let _ = 
-  Async_NetKAT_Controller.start (create_static pol) ();
-  never_returns (Scheduler.go ())
+let _ = run_static firewall

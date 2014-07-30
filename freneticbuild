@@ -6,6 +6,7 @@ ocamlbuild \
   -use-ocamlfind \
   -classic-display \
   -syntax camlp4o \
+  -pkg ulex \
   -pkg core \
   -pkg async \
   -pkg netkat \
