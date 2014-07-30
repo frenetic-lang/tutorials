@@ -136,6 +136,7 @@ Type this policy into a file `Firewall2.ml` in the
 Now that basic connectivity works, let's extend the example further to
 enforce a more interesting access control policy:
 
+|----------+----------+----------+----------+----------|
 |:--------:|:-------:|:---------:|:--------:|:--------:|
 |          | 10.0.0.1 | 10.0.0.2 | 10.0.0.3 | 10.0.0.4 |
 | 10.0.0.1 | DENY    | HTTP      | DENY     | DENY     | 
