@@ -24,7 +24,7 @@ prioritized rules. Each rule has several components:
 - A pair of _counters_ that record the number and total size of all
   matching packets.
 
-As an example, consider the following flow table:
+For example, consider the following flow table:
 
 |----------+---------+--------------------+---------+-------|
 | Priority | Pattern | Actions            | Packets | Bytes | 
@@ -34,6 +34,8 @@ As an example, consider the following flow table:
 | 30       | UDP     | Controller         | 3       | 284   |
 | 20       | ICMP    | Output 2           | 0       | 0     |
 |----------+---------+--------------------+---------+-------|
+
+Read from top to bottom, these rules can be understood as follows:
 
 * The first and highest priority rule drops all Internet Control
   Message Protocol (ICMP) packets (because it has an empty action
@@ -46,46 +48,53 @@ As an example, consider the following flow table:
 * The next rule sends User Datagram Protocol (UDP) packets to the
   special controller port (see below). Because the controller runs an
   arbitrary program (an OCaml program, in Ox), we can implement
-  essentially any packet-processing function we like. For example, in
-  theory, we could implement deep-packet inspection using the
-  controller. However, processing packets on the controller is
-  typically much slower than processing packets on switches.
+  essentially any packet-processing function we like. 
 
 * The final rule outputs ICMP packets on port 2. However, since this
   rule is fully shadowed by the first rule, it is never used.
+
+Note that, in principle, we _could_ implement any function we like
+using the controller&mdash;e.g., deep packet inspection. But
+processing packets on the controller is typically orders of manitude
+slower compared to processing packets on switches. Hence, programmers
+typically install forwarding rules that handle the vast majority of
+all traffic, and make limited use of the `Controller` action.
 
 ## Warmup: Programming a Repeater
 
 ![Repeater](../images/repeater.png)
 
-As a warmup exercise, you will build a repeater. A repeater is a
-network device that forwards input packets out of all other ports.
+As a first exercise, let us build a simple repeater. A repeater is a
+network element that forwards all packets received as input on all of
+its other ports. We will build our repeater in two steps:
 
-You will build the repeater in two steps:
+- First, we will leave the flow table empty, so all packets are
+  diverted to the controller for processing. At the controller, we
+  will write a packet-processing function that implements the functionality we want. 
 
-- First, you will leave the flow table empty, so all packets are
-  diverted to the controller for processing. At the controller, you can
-  use general programming techniques to express any policy you desire.
+- Then, after completing and testing the packet-processing function
+  implemented using the controller, we will install rules to the flow
+  table of the switch that implement the same function.
 
-- After you complete and test the controller's packet-processing function,
-  you will add rules to the flow table to implement the packet-processing
-  function on the switch itself.
-
-This two-step exercise may seem contrived for a simple repeater. But, we
-will quickly escalate to programs that are tricky to implement
-efficiently. For these programs, the first naive implementation will
-serve as a reference implementation to help you determine if your
-efficient implementation is correct. We will also witness some corner
-cases where it is necessary to process packets on both the controller
-and switches. So, you do need both implementations.
+This two-step exercise may seem contrived for a simple repeater. But,
+we will quickly escalate to programs where the interaction between
+controller and switches gets tricky. For these programs, the first
+naive implementation will serve as a reference implementation to help
+determine if the more efficient implementation is correct. We will
+also see that there are sometimes corner cases where it is necessary
+to process packets on both the controller and switches. So, in
+practice, one typically does need both implementations.
 
 ### Exercise 1: A Naive Repeater
 
 In this part, you will write a repeater that processes all packets at
-the controller.  Therefore, this repeater only needs to process
-`packet_in` messages. You should use the template below.
+the controller. By default, when an OpenFlow switch does not contain
+any rules, it diverts all packets to the controller in a `packet_in`
+message. Therefore, this repeater only needs to provide a `packet_in`
+handler. We have provided some starter code in a template below.
 
-Save it in a file called `Repeater.ml` and place it in the directory
+Fill in the body of this function and save it in a file called
+`Repeater.ml` within the directory
 `~/src/frenetic/ox-tutorial-workspace/Repeater.ml`.
 
 ~~~ ocaml
@@ -104,8 +113,8 @@ end
 module Controller = OxStart.Make (MyApplication)
 ~~~
 
-Within the body of `packet_in`, you need to use `send_packet_out`,
-which takes a list of actions (`apply_actions`) to apply to the packet:
+You will need to use the `send_packet_out` command, which takes a list
+of actions (`apply_actions`) to apply to the packet:
 
 ~~~ ocaml
 let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
@@ -117,29 +126,24 @@ let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
   }
 ~~~
 
-You need to fill in the list of actions to send the packet out of
-every port (excluding the input port). This is easier than it
-sounds, because you can do it with just one OpenFlow action.
-
-Find the right action in the Ox manual (it is in the [OpenFlow_Core]
-module) and fill it in.
+The list of actions we want is one that will send the packet out all
+ports excluding the input port. This is easier than it may sound,
+because OpenFlow includes a single primitive that provides exactly
+this functionality. Find the right action in the Ox manual (it is in
+the [OpenFlow_Core] module) and fill it in.
 
 <h4 id="compiling">Compiling your Controller</h4>
 
 To build your controller, run the following command:
 
 ~~~
-$ make Repeater.d.byte
+$ oxbuild Repeater.native
 ~~~
 
-> The file extension indicates that it is a bytecode, debug build.  You
-> can use `make foo.d.byte` to compile any `foo.ml` file in this
-> directory.
-
-If compilation succeeds, you should see output akin to this:
+Assuming compilation succeeds, you will see output like to this:
 
 ~~~
-ocamlbuild -use-ocamlfind Repeater1.d.byte
+ocamlbuild -use-ocamlfind Repeater.native
 Finished, 4 targets (4 cached) in 00:00:00.
 ~~~
 
@@ -162,30 +166,30 @@ hosts and have them ping each other:
   * `topo=single,4` creates a network with one switch and four hosts.
 
   * `--mac` sets the hosts' mac addresses to 1, 2, 3, and 4 (instead
-    of random numbers). This makes debugging a lot easier.
+    of random numbers) which makes debugging much easier.
 
-  * `--arp` statically configures the ARP tables on all hosts, so you don't have to
-    deal with ARP broadcast traffic.
+  * `--arp` statically configures the ARP tables on all hosts, so we
+    don't have to deal with ARP broadcast traffic.
 
-  * `--controller=remote` directs the switches to connect to your controller
-    (instead of using a default, built-in controller).
+  * `--controller=remote` directs the switches to connect to our
+    controller (instead of a default, built-in controller).
 
-- After Mininet launches, it will print the network topology and then drop you into the
-  Mininet prompt:
+- After Mininet launches, it will print the network topology and then
+  drop you into the Mininet command-line interface:
 
   `mininet>`
 
 - Start your controller back in the original terminal:
 
   ~~~
-  $ ./Repeater.d.byte
+  $ ./Repeater.native
   ~~~
 
-  It should print `[Ox] Controller launching...`
-  and then you should see switch 1 connecting to the controller:
-  `[Ox] switch 1 connected`.
+  It should print `[Ox] Controller launching...` and then you should
+  see switch 1 connecting to the controller: `[Ox] switch 1
+  connected`.
 
-- From the Mininet prompt, you can make your hosts ping each other:
+- From the Mininet prompt, ping from one host to another:
 
   ~~~
   mininet> h1 ping h2
@@ -214,16 +218,16 @@ hosts and have them ping each other:
 
   Pinging should always succeed ("0% packet loss"). In addition, if
   your controller calls `printf` in its packet-in function, you will
-  see the controller receiving all pings.
+  see the controller receiving all ping packets.
 
-Shut down the controller properly with `Ctrl+C` and Mininet with `Ctrl+D`.
-
-This repeater is functionally correct, but laughably inefficient.
+Shut down the controller properly with `Ctrl+C` and Mininet with
+`Ctrl+D`.
 
 <blockquote>
 
-<p><b>Aside:</b>  For the most part, we will be using simple topologies in this tutorial.
-However, if you ever want to know more information about the topology mininet is currently running, you can type</p>
+<p><b>Aside:</b> For the most part, we will be using simple topologies
+in this tutorial. However, if you ever want to know more information
+about the topology mininet is currently running, you can type</p>
 
 <pre>
 mininet> net
@@ -234,32 +238,37 @@ In this example, you should see the following.</p>
 
 <pre>
 c0
-s1 lo:  s1-eth1:h1-eth0 s1-eth2:h2-eth0
+s1 lo:  s1-eth1:h1-eth0 s1-eth2:h2-eth0 s1-eth3:h3-eth0 s1-eth4:h4-eth0
 h1 h1-eth0:s1-eth1
 h2 h2-eth0:s1-eth2
+h3 h3-eth0:s1-eth3
+h4 h4-eth0:s1-eth4
 </pre>
 
-<p>
-Line 1 tells you there is a controller (<code>c0</code>) running.  Line 2
-describes the ports on switch <code>s1</code>.  In particular,
-switch 1 port 1 (<code>s1-eth1</code>) is connected to host <code>h1</code>.
-Likewise, switch 1 port 2 (<code>s1-eth2</code>) is connected to
-host <code>h2</code>. If there was more than one switch in the network, we would
-see additional lines prefixed by the switch identifier, one line
-per switch.  Lines 3 and 4 describe the hosts <code>h1</code>
-and <code>h2</code>.</p>
+<p>The first line indicates there is a controller (<code>c0</code>)
+running. The second line lists the ports on switch <code>s1</code>:
+port 1 (<code>s1-eth1</code>) is connected to host <code>h1</code>,
+port 2 (<code>s1-eth2</code>) is connected to host <code>h2</code>,and
+so on. If there was more than one switch in the network, we would see
+additional lines prefixed by the switch identifier, one line per
+switch. The remaining lines describe the hosts <code>h1</code> through
+<code>h4</code>.</p> 
 </blockquote>
 
 ### Exercise 2: An Efficient Repeater
 
-Processing all packets at the controller is very inefficient.
-You will now add rules to the switch's flow table to have the switch
-process packets itself.
+Processing all packets at the controller works, in a sense, but is
+inefficient. Next let's install forwarding rules in the flow table on
+the switch so that it processes packets itself.
 
-For this part, continue building on the naive repeater you wrote above. Build on `ox-tutorial-solutions/Repeater1.ml` if necessary.
+For this part, we will continue building on the naive repeater from
+above. A solution can be found in
+`ox-tutorial-solutions/Sol_Repeater.ml` if necessary.
 
-Your task is to write a `switch_connected` handler in your program,
-using the following as a template:
+In this exercise, we will add a `switch_connected` handler. This
+function is invoked when the switch first connects to the
+controller. Hence, we can use it to install forwarding rules in its
+forwarding table. Use the following code as a template.
 
 ~~~ ocaml
 let switch_connected (sw : switchId) feats : unit =
@@ -267,26 +276,26 @@ let switch_connected (sw : switchId) feats : unit =
   send_flow_mod sw 1l (add_flow priority pattern action_list)
 ~~~
 
-This function uses `send_flow_mod` to add a new rule to
-the flow table. Your task is to fill in `priority`, `pattern`, and
+The function `send_flow_mod` adds a new rule to the flow table of the
+switch. Your task is to fill in `priority`, `pattern`, and
 `action_list`.
 
 - `pattern` is an OpenFlow pattern for matching packets.  Since your
-   repeater matches all packets, you can simply use `match_all`.
-   (We cover patterns in detail later.)
+   repeater matches all packets, you can simply use `match_all`.  (We
+   will cover patterns in detail later in the tutorial.)
 
-- `priority` is a 16-bit priority for the rule. Since you just have one
-  rule, the priority you pick is not relevant.
+- `priority` is a 16-bit priority for the rule. Since you just have
+  one rule, the priority you pick is not relevant.
 
 - For `action_list`, you must apply the same actions you did in your
-  `packet_in` function. (If not, switch and controller will be
-  inconsistent.)
+  `packet_in` function (otherwise the switch and controller will
+  implement different functionality!)
 
 #### Building and Testing Your Controller
 
-You can build and test this extended repeater in exactly the same way
-you tested the last. However, during testing, the controller should not
-receive any packets itself.
+We can build and test this extended repeater in exactly the same way
+as before. But now, during testing, the controller should not receive
+any packets.
 
 - In a separate terminal, start Mininet:
 
@@ -297,8 +306,8 @@ receive any packets itself.
 - Build and start the controller:
 
   ~~~ shell
-  $ make Repeater.d.byte
-  $ ./Repeater.d.byte
+  $ oxbuild Repeater.native
+  $ ./Repeater.native
   ~~~
 
 - From the Mininet prompt, try a ping:
@@ -313,13 +322,14 @@ receive any packets itself.
 
 ### Why Keep the Controller Function?
 
-You now have two implementations of the repeater: the `packet_in`
+We now have two implementations of the repeater: the `packet_in`
 function on the controller and the flow table on the switch.  Since
-the switch is so much faster, why keep the `packet_in` function at
-all?
+the switch is so much faster, it is natural to wonder why we would
+want to keep the `packet_in` function at all!
 
 It turns out that there are still situations where the `packet_in`
-function is necessary. We'll try to create such a situation artificially:
+function is necessary. We'll try to create such a situation
+artificially:
 
 - Shutdown the repeater (`Ctrl+C`)
 
@@ -332,12 +342,12 @@ function is necessary. We'll try to create such a situation artificially:
 - Launch the repeater again:
 
   ~~~
-  $ ./Repeater.d.byte
+  $ ./Repeater.native
   ~~~
 
-It is very likely that a few packets will get sent to the controller,
-and here's why.  When you launch the controller and the switch
-re-connects, your controller sends two messages:
+It is very likely that a few packets will get sent to the controller
+because when we launch the controller and the switch re-connects, the
+controller sends two messages:
 
 - First, Ox automatically sends a message to _delete all flows_.
   In general, we don't know the state of the flow table when a switch
@@ -345,17 +355,11 @@ re-connects, your controller sends two messages:
 
 - Next, Ox sends the _add flow_ message that you wrote.
 
-In the interval between these two messages, the flow table is empty,
-thus packets get diverted to the controller. More generally, whenever
-the switch is configured for the first time, or re-configured to
-implement a policy change, you may see packets at the controller.
-
-[Ch2]: /02-OxRepeater
-[Ch3]: /03-OxFirewall
-[Ch4]: /04-OxMonitor
-[Ch5]: /05-OxLearning
-[Ch6]: /06-NetCoreIntroduction
-[Ch7]: /07-NetCoreComposition
-[Ch8]: /08-DynamicNetCore
+In the intervening time between these two messages, the flow table is
+empty, thus some packets may get diverted to the controller. More
+generally, whenever the switch is configured for the first time, or
+re-configured to implement a policy change, we may see packets at the
+controller. Hence, the controller need both (redundant) definitions of
+the intended packet-processing functions.
 
 {% include api.md %}
