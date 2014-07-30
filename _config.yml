@@ -2,4 +2,4 @@ safe: true
 lsi: false
 pygments: true
 markdown: kramdown
-extensions ["tables"]
+extensions: ["tables"]
