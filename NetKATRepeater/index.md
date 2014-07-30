@@ -39,13 +39,14 @@ a single switch with four ports, numbered 1 through 4:
 ![Repeater](../images/repeater.png)
 
 The following program implements a repeater in NetKAT:
-~~~
+
+~~~ ocaml
 open Core.Std
 open Async.Std
 
 (* a simple repeater *)
-let repeater : NetKAT_Types.policy = 
-  <:netkat< 
+let repeater : NetKAT_Types.policy =
+  <:netkat<
     if port = 1l then port := 2l + port := 3l + port := 4l
     else if port = 2l then port := 1l + port := 3l + port := 4l
     else if port = 3l then port := 1l + port := 2l + port := 4l
@@ -53,7 +54,7 @@ let repeater : NetKAT_Types.policy =
     else drop
   >>
 
-let _ = 
+let _ =
   Async_NetKAT_Controller.start (create_static repeater) ();
   never_returns (Scheduler.go ())
 ~~~
@@ -76,7 +77,7 @@ To run the repeater, type the code above into a file
 <code>netkat-tutorial-workspace</code> directory. Then compile and
 start the repeater controller using the following commands.
 ~~~
-$ ../freneticbuild Repeater.native 
+$ ../freneticbuild Repeater.native
 $ ./Repeater.native
 ~~~
 Next, in a separate terminal, start up mininet.
@@ -112,12 +113,12 @@ the repeater written using anti-quotation:
 (* a simple repeater *)
 let all_ports : int32 list = [1l; 2l; 3l; 4l]
 
-let flood (n:int32) : NetKAT_Types.policy = 
+let flood (n:int32) : NetKAT_Types.policy =
   List.fold_left
     (fun pol m -> if n = m then pol else <:netkat<$pol$ + port := $m$>>)
     <:netkat<drop>> all_ports
 
-let repeater : NetKAT_Types.policy = 
+let repeater : NetKAT_Types.policy =
   List.fold_right
     (fun m pol -> <:netkat<if port = $m$ then $flood m$ else $pol$>>)
     all_ports <:netkat<drop>>
