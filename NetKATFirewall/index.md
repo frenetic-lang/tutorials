@@ -1,9 +1,9 @@
 ---
 layout: main
-title: Firewall Redux
+title: Firewall with NetKAT
 ---
 
-In [Chapter 3](03-OxFirewall), we write a firewall that blocks ICMP
+In an [earlier chapter](OxFirewall), we wrote a firewall that blocks ICMP
 traffic using OpenFlow and Ox. Even though this policy is extremely
 simple, the implementation was somewhat involved, as we had to both
 write a `packet_in` handler and also use `flow_mod` messages to
@@ -13,18 +13,15 @@ configure the switch.
 
 We can implement the same policy in NetKAT as follows:
 
-~~~
-open Core.Std
-open Async.Std
+~~~ ocaml
+open NetKAT.Std
 
-let firewall : NetKAT_Types.policy =
+let firewall : policy =
   <:netkat<
     if ipProto = 0x01 then drop else $Repeater.repeater
   >>
 
-let _ =
-  Async_NetKAT_Controller.start (create_static repeater) ();
-  never_returns (Scheduler.go ())
+let _ = run_static firewall
 ~~~
 
 There are two things to note about this program. First, rather than
@@ -46,7 +43,7 @@ Type this policy into a file `Firewall.ml` in the
 To test your code, compile the firewall and start the controller in
 one terminal,
 ~~~
-$ ../freneticbuild Firewall.native
+$ netkat-build Firewall.native
 $ ./Firewall.native
 ~~~
 and Mininet in another:
@@ -76,7 +73,7 @@ connected to ports 1 through 4 respetively.
 ~~~
 let forwarding : NetKAT_Types.policy =
   <:netkat<
-    if ipDst = 10.0.0.1 then port := 1
+    if ip4Dst = 10.0.0.1 then port := 1
     else if (* destination is 10.0.0.2, forward out port 2, etc. *)
       ...
     else drop
@@ -91,7 +88,7 @@ Type this policy into a file `Firewall2.ml` in the
 - Build and launch the controller:
 
   ~~~ shell
-  $ ../freneticbuild Firewall2.native
+  $ netkat-build Firewall2.native
   $ ./Firewall2.native
   ~~~
 
@@ -208,12 +205,12 @@ need to allow packets from the first host to port 80 on second  *and*
 from port 80 on the second back to the first:
 
 ~~~
-let firewall : NetKAT_Types.policy =
+let firewall : policy =
   <:netkat<
-   if (ipSrc = 10.0.0.2 && ipDst = 10.0.0.1 && tcpDst = 80) ||
-      (ipSrc = 10.0.0.1 && ipDst = 10.0.0.2 && tcpSrc = 80)
+   if (ip4Src = 10.0.0.2 && ip4Dst = 10.0.0.1 && tcpDstPort = 80) ||
+      (ip4Src = 10.0.0.1 && ip4Dst = 10.0.0.2 && tcpSrcPort = 80)
    then
-     forwarding
+     $forwarding
    else
      drop
 ~~~
@@ -242,8 +239,4 @@ legible policy. Revise your advanced firewall this policy, putting the
 result in a file `Firewall4.ml` in the `netkat-tutorial-workspace`
 directory and test it in Mininet.
 
-## Next chapter: [Multi-switch Programming][Ch8]
-
-[Ch8]: 08-NCMultiSwitch
-
-[Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
+{% include api.md %}
