@@ -41,15 +41,20 @@ Type this policy into a file `Firewall.ml` in the
 
 To test your code, compile the firewall and start the controller in
 one terminal,
+
 ~~~
 $ netkat-build Firewall.native
 $ ./Firewall.native
 ~~~
+
 and Mininet in another:
+
 ~~~
 $ sudo mn --controller=remote --topo=single,4 --mac --arp
 ~~~
+
 Using Mininet, check that you can ping between all hosts:
+
 ~~~
 mininet> pingall
 ~~~
