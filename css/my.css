@@ -5,4 +5,4 @@ body { padding-top: 40px; }
 }
 
 table { border-collapse: collapse; }
-table, td { padding: 5px; border : 1px solid black;  }
+table, th, td { padding: 5px; border : 1px solid black;  }
