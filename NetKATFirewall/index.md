@@ -7,7 +7,7 @@ In [Chapter 3](03-OxFirewall), we write a firewall that blocks ICMP
 traffic using OpenFlow and Ox. Even though this policy is extremely
 simple, the implementation was somewhat involved, as we had to both
 write a `packet_in` handler and also use `flow_mod` messages to
-configure the switch. 
+configure the switch.
 
 #Exercise 1: Naive Firewall
 
@@ -17,12 +17,12 @@ We can implement the same policy in NetKAT as follows:
 open Core.Std
 open Async.Std
 
-let firewall : NetKAT_Types.policy = 
-  <:netkat< 
-    if ipProto = 0x01 then drop else $Repeater.repeater$
+let firewall : NetKAT_Types.policy =
+  <:netkat<
+    if ipProto = 0x01 then drop else $Repeater.repeater
   >>
 
-let _ = 
+let _ =
   Async_NetKAT_Controller.start (create_static repeater) ();
   never_returns (Scheduler.go ())
 ~~~
@@ -86,7 +86,7 @@ let forwarding : NetKAT_Types.policy =
 Type this policy into a file `Firewall2.ml` in the
 `netkat-tutorial-workspace` directory.
 
-### Testing 
+### Testing
 
 - Build and launch the controller:
 
@@ -205,10 +205,10 @@ cell
 indicates that (only) HTTP connections (port 80) are allowed between
 hotss `10.0.0.2` and `10.0.0.1`. To realize this policy in NetKAT, you
 need to allow packets from the first host to port 80 on second  *and*
-from port 80 on the second back to the first: 
+from port 80 on the second back to the first:
 
 ~~~
-let firewall : NetKAT_Types.policy = 
+let firewall : NetKAT_Types.policy =
   <:netkat<
    if (ipSrc = 10.0.0.2 && ipDst = 10.0.0.1 && tcpDst = 80) ||
       (ipSrc = 10.0.0.1 && ipDst = 10.0.0.2 && tcpSrc = 80)

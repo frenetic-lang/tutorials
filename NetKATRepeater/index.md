@@ -101,12 +101,11 @@ rtt min/avg/max/mdev = 0.216/0.216/0.216/0.000 ms
 
 Try pinging <code>h1</code> from <code>h2</code> as well.
 
-### Example 2: Using Anti-Quotation
+### Example 2: Referring to OCaml variables
 
-In many programs it is useful to escape from a quotation back into
-OCaml. We can do this using Camlp4 anti-quotations,
-<code>$...$</code>. As an example, here is an equivalent version of
-the repeater written using anti-quotation:
+In many programs it is useful to refer to an OCaml variable. We can do this by
+writing `$x`, where `x` is the name of an OCaml variable. As an example, here is
+an equivalent, but more concise version of the repeater:
 
 ~~~
 open NetKAT.Std
@@ -116,12 +115,12 @@ let all_ports : int list = [1; 2; 3; 4]
 
 let flood (n : int) : policy =
   List.fold_left
-    (fun pol m -> if n = m then pol else <:netkat<$pol$ + port := $m$>>)
+    (fun pol m -> if n = m then pol else <:netkat<$pol$ + port := $m>>)
     <:netkat<drop>> all_ports
 
 let repeater : policy =
   List.fold_right
-    (fun m pol -> <:netkat<if port = $m$ then $flood m$ else $pol$>>)
+    (fun m pol -> <:netkat<let p = flood m in if port = $m then $p else $pol>>)
     all_ports <:netkat<drop>>
 >>
 ~~~
