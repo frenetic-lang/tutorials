@@ -46,14 +46,14 @@ learn in this tutorial are applicable to those platforms too.
   provides high-level abstractions and rich, compositional features
   that greatly simplifies SDN programming.
 
-<p>
+<ul>
 {% for item in site.data.toc %}
 {% if item.group == "frenetic" %}
 {% assign ix = forloop.index|minus:1 %}
 [<a href="{{ site.data.toc[ix].path }}">{{ site.data.toc[ix].name }}</a>]
 {% endif %}
 {% endfor %}
-</p>
+</li>
 
 Background Material
 -------------------
