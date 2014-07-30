@@ -4,20 +4,18 @@ title: NetKAT Repeater
 ---
 
 So far, we've seen how to implement OpenFlow controllers using the Ox
-platform. Most of the controllers we've built follow a simple,
-two-step recipe:
+platform. Most of the controllers we built followed a two-step recipe:
 
 * Write a `packet_in` handler that implements the desired
-  packet-processing policy.
+  packet-processing functionality.
 
-* Use `flow__mod` and `stats_request` messages to use the hardware
-  flow tables and counters available on switches to implement the same
-  policy efficiently.
+* Use `flow__mod` messages to configure the switch flow tables to
+  implement the same functionality efficiently.
 
-In the next few chapters, we will explore a different approach:
-express policies using a high-level, domain-specific programming
-language, and let a compiler and run-time system handle the details
-related to configuring hardware flow tables on switches (as well as
+In the next few chapters, we will explore a completely different
+approach: express policies using a high-level, domain-specific
+programming language, and let a compiler and run-time system handle
+the details related to configuring switch flow tables (as well as
 sending requests for statistics, accumulating replies, etc.)
 
 The templates for this part of the tutorial are in the
