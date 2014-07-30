@@ -26,12 +26,14 @@ prioritized rules. Each rule has several components:
 
 As an example, consider the following flow table:
 
+|----------+---------+--------------------+---------+-------|
 | Priority | Pattern | Actions            | Packets | Bytes | 
-|-----------------------------------------------------------|
+|:--------:|:-------:|:-------------------|:-------:|:-----:|
 | 50       | ICMP    |                    | 2       | 148   |
 | 40       | TCP     | Output 2, Output 5 | 5       | 1230  |
 | 30       | UDP     | Controller         | 3       | 284   |
 | 20       | ICMP    | Output 2           | 0       | 0     |
+|----------+---------+--------------------+---------+-------|
 
 * The first and highest priority rule drops all Internet Control
   Message Protocol (ICMP) packets (because it has an empty action
