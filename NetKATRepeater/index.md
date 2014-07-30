@@ -115,7 +115,7 @@ let all_ports : int list = [1; 2; 3; 4]
 
 let flood (n : int) : policy =
   List.fold_left
-    (fun pol m -> if n = m then pol else <:netkat<$pol$ + port := $m>>)
+    (fun pol m -> if n = m then pol else <:netkat<$pol + port := $m>>)
     <:netkat<drop>> all_ports
 
 let repeater : policy =

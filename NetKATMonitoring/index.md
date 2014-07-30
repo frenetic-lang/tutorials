@@ -145,9 +145,3 @@ As an aside, NetKAT policies are total functions: they always process every
 packet, even if that "processing" is simply to drop it.  Hence, NetKAT adds a
 final, catch-all rule to the flow table to drop packets that are not matched
 higher up.
-
-
-
-## Next chapter: [Tutorial Wrap-up][Ch10]
-
-[Ch10]: 10-WrapUp

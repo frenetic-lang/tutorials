@@ -1,17 +1,17 @@
 ---
 layout: main
-title: Frenetic Wrap-up
+title: Conclusion
 ---
 
 In this tutorial, you learned to program software-defined networks
-using Ox and FreneticDSL:
+using Ox and NetKAT:
 
   - *Ox* is our low-level platform for implementing OpenFlow controllers,
 developed in OCaml.  You saw how to use it to analyze packets on
 an SDN controller, install rules in the data plane and monitor traffic
 statistics.
 
-  - *Frenetic* is a high-level domain-specific language for specifying SDN
+  - *NetKAt* is a high-level domain-specific language for specifying SDN
 policies.  In just a few, simple lines of code, you could specify forwarding
 policy and queries for multi-switch networks in a modular, compositional
 fashion.  The Frenetic compiler (built using Ox, of course) compiled your
