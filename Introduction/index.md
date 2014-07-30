@@ -53,7 +53,7 @@ learn in this tutorial are applicable to those platforms too.
 [<a href="{{ site.data.toc[ix].path }}">{{ site.data.toc[ix].name }}</a>]
 {% endif %}
 {% endfor %}
-</li>
+</ul>
 
 Background Material
 -------------------
