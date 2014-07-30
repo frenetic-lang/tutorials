@@ -71,7 +71,7 @@ The hosts have IP addresses 10.0.0.1 through 10.0.0.4 and are
 connected to ports 1 through 4 respetively.
 
 ~~~
-let forwarding : NetKAT_Types.policy =
+let forwarding : policy =
   <:netkat<
     if ip4Dst = 10.0.0.1 then port := 1
     else if (* destination is 10.0.0.2, forward out port 2, etc. *)

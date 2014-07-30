@@ -24,7 +24,7 @@
 - name: Firewall with NetKAT
   path: ../NetKATFirewall
   group: frenetic
-- name: Traffic Monitoring with Frenetic
+- name: Monitoring Traffic with NetKAT
   path: ../NetKATMonitoring
   group: frenetic
 - name: Shortest-Path Routing with NetKAT
