@@ -9,7 +9,7 @@ extremely simple, the implementation was somewhat involved, as we had
 to both write a `packet_in` handler and also use `flow_mod` messages
 to configure the switch.
 
-### Exercise 1: Naive Firewall
+## Exercise 1: Naive Firewall
 
 We can implement the same policy in NetKAT as follows:
 
@@ -59,7 +59,7 @@ Using Mininet, check that you can ping between all hosts:
 mininet> pingall
 ~~~
 
-### Exercise 2: Basic Firewall
+## Exercise 2: Basic Firewall
 
 To gain further experience with NetKAT, let's implement a more
 sophisticated firewall policy that uses point-to-forwarding rather
@@ -181,7 +181,7 @@ the command `curl 10.0.0.1:80` should succeed from `h2`, but fail from
 `h3`. Similarly, pinging `h3` should succeed from `h4`, but fail from
 `h1`.
 
-#### Exercise 4: Compact Firewall
+## Exercise 4: Compact Firewall
 
 Above, we expressed the firewall policy is to enumerate each allowed
 flow using conditionals. However, using NetKAT's predicates (`p1 &&
