@@ -3,22 +3,22 @@ layout: main
 title: Firewall with Ox
 ---
 
-In this chapter, you will compose your repeater with a simple firewall
+In this chapter, we will compose our repeater with a simple firewall
 that blocks ICMP traffic. As a result, the `ping` command will no
-longer work on hosts. But, you will still be able to run other
-programs, such as Web servers.  You will first write the `packet_in`
-function for the firewall.  After you've tested it successfully,
-you'll configure the flow table to implement the firewall efficiently.
+longer work on hosts. But, the network will still carry other traffic,
+such as Web traffic. As before, we will first write the `packet_in`
+function for the firewall. Then, after we've tested it successfully,
+we'll configure the flow table to implement the same functionality
+more efficiently.
 
 ## The Firewall Function
 
-Unlike the repeater, which blindly forwards packets, the firewall's
-`packet_in` function needs to inspect packets' headers to determine if
-they should be dropped.
-
-To do so, you need to parse the packet received. Ox includes a packet
-parsing library that supports some common packet formats, including ICMP.
-You can use it to parse packets as follows:
+Unlike the repeater, which blindly forwards packets, the `packet_in`
+function for the firewall needs to inspect packets' headers to
+determine whether they should be dropped. To do this, it needs to
+parse the packet received. Ox includes a packet parsing library that
+supports some common packet formats, including ICMP.  You can use it
+to parse packets as follows:
 
 ~~~ ocaml
 let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
@@ -27,17 +27,13 @@ let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
 ~~~
 Applying `parse_payload` parses the packet into a series of nested
 frames. The easiest way to examine packet headers is to then use the
-[header accessor functions] in the packet library.
-
-You need to know that the
-frame type for IP packets
-is 0x800 (`Packet.dlTyp pk = 0x800`) and the protocol number for ICMP is 1
-(`Packet.nwProto pk = 1`).
+[header accessor functions] in the packet library. The frame type for
+IP packets is 0x800 (`Packet.dlTyp pk = 0x800`) and the protocol
+number for ICMP is 1 (`Packet.nwProto pk = 1`).
 
 ### Firewall Template
 
-You can use the following template, which only requires you to fill
-in the `is_icmp_packet` function.
+Fill in the `is_icmp_packet` function in the following template:
 
 ~~~ ocaml
 open OpenFlow0x01_Core
@@ -68,8 +64,8 @@ module Controller = OxStart.Make (MyApplication)
 - Build and launch the controller:
 
   ~~~ shell
-  $ make Firewall.d.byte
-  $ ./Firewall.d.byte
+  $ oxbuild Firewall.native
+  $ ./Firewall.native
   ~~~
 
 - In a separate terminal window, start Mininet using the same
@@ -115,7 +111,6 @@ packetIn{
   be unaffected. To ensure that this is the case, try to run a Web server
   on one host and a client on another.
 
-
   * In Mininet, start new terminals for `h1` and `h2`:
 
     ~~~
@@ -139,13 +134,11 @@ packetIn{
 
 ## An Efficient Firewall
 
-In this part, you will extend your implementation of the firewall
-function to also implement the firewall using flow tables.
-You can build on `ox-tutorial-workspace/Firewall2.ml` if necessary.
-
-Fill in the `switch_connected` event handler. You need to install two
-entries into the flow table: one for ICMP traffic and the other for
-all other traffic. Use the following template:
+Next, let us extend our implementation of the firewall function to use
+flow tables. To do this, we will add a `switch_connected` handler. We
+will need to install two entries into the flow table: one for ICMP
+traffic and the other for all other traffic. Use the following
+template:
 
 ~~~ ocaml
 let switch_connected (sw : switchId) feats : unit =
@@ -154,18 +147,18 @@ let switch_connected (sw : switchId) feats : unit =
   send_flow_mod sw 0l (add_flow priority2 pattern2 actions2)
 ~~~
 
-You have to determine the priorities, patterns, and actions in the
-handler above. You might want to revisit the description of flow
-tables in [Chapter 2][Ch2]. Here is a quick refresher:
+To determine the priorities, patterns, and actions in the handler
+above, it may be useful to revisit the description of flow tables in
+[Chapter 2][Ch2]. Here is a quick refresher:
 
-- *Priorities*: higher numbers mean higher priority.
+- *Priorities*: larger numbers mean higher priority.
 
-- *Action lists*: To drop traffic, you provide an empty list (`[]` in
-  OCaml) of actions.
+- *Action lists*: To drop traffic, use an empty list (`[]` in OCaml)
+  of actions.
 
 - *Patterns*: In the previous chapter, you used the builtin pattern
   `match_all`, which you may use again if needed. You will certainly
-  need to write a pattern to match ICMP packets. The Ox Manual has
+  need to write a pattern that matches ICMP packets. The Ox Manual has
   several [example patterns] to get you started.
 
 #### Building and Testing
@@ -185,13 +178,5 @@ packets at the controller.
 [Match]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Match.html
 
 [Packet]: http://frenetic-lang.github.io/frenetic/docs/Packet.html
-
-[Ch2]: /02-OxRepeater
-[Ch3]: /03-OxFirewall
-[Ch4]: /04-OxMonitor
-[Ch5]: /05-OxLearning
-[Ch6]: /06-NetCoreIntroduction
-[Ch7]: /07-NetCoreComposition
-[Ch8]: /08-DynamicNetCore
 
 {% include api.md %}
