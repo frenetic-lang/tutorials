@@ -55,17 +55,14 @@ learn in this tutorial are applicable to those platforms too.
 {% endfor %}
 </ul>
 
-Background Material
--------------------
+References
+----------
 
-To write NetKAT and Ox programs, it will be useful to be familiar with
-the OCaml language. [Real World OCaml] provides an excellent
-introduction to OCaml and is available online. However, the tutorial
-contains lots of examples, so we recommend just skimming Chapters 1--8
-and 18 and referring back to them as needed.
+- [Real World OCaml](https://realworldocaml.org)
 
-Useful References
------------------
+  To write Ox and NetKAT programs, it will be useful to be familiar
+  with the OCaml language. Chapters 1--8 and 18 should cover the
+  necessary background material.
 
 - [OpenFlow 1.0 Specification](http://www.openflow.org/documents/openflow-spec-v1.0.0.pdf)
 
