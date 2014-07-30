@@ -70,6 +70,14 @@ su frenetic -c "opam install -y frenetic ox"
 service openvswitch-controller stop
 update-rc.d openvswitch-controller disable
 
+# Download and install build scripts
+pushd /usr/local/bin
+wget https://raw.githubusercontent.com/frenetic-lang/tutorials/master/virtual-machine/scripts/ox-build
+wget https://raw.githubusercontent.com/frenetic-lang/tutorials/master/virtual-machine/scripts/netkat-build
+chmod a+x ox-build
+chmod a+x netkat-build
+popd
+
 # Zero free space
 cat /dev/zero > zero.fill; sync; sleep 1; sync; rm -f zero.fill
 shutdown -h now
