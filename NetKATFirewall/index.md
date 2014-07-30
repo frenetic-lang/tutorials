@@ -177,17 +177,17 @@ _fortune_ on port 80 on `h1`,
 $ while true; do fortune | nc -l 80; done
 ~~~
 
-running `curl 10.0.0.1:80` should succeed from `h2`, but fail from `h3`.
-
-Similarly, pinging `h3` should succeed from `h4`, but fail from `h1`.
+the command `curl 10.0.0.1:80` should succeed from `h2`, but fail from
+`h3`. Similarly, pinging `h3` should succeed from `h4`, but fail from
+`h1`.
 
 #### Exercise 4: Compact Firewall
 
-One way to express a firewall policy is to enumerate each allowed flow
-using conditionals. However, using NetKAT's predicates (`p1 && p2`,
-`p1 || p2`, and `!p`) is is often possible to write a more compact and
-legible policy. Revise your advanced firewall this policy, putting the
-result in a file `Firewall4.ml` in the `netkat-tutorial-workspace`
-directory and test it in Mininet.
+Above, we expressed the firewall policy is to enumerate each allowed
+flow using conditionals. However, using NetKAT's predicates (`p1 &&
+p2`, `p1 || p2`, and `!p`) is is often possible to write a more
+compact and legible policy. Revise your advanced firewall this policy,
+putting the result in a file `Firewall4.ml` in the
+`netkat-tutorial-workspace` directory and test it in Mininet.
 
 {% include api.md %}
