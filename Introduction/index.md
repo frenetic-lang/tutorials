@@ -32,19 +32,14 @@ platforms such as
 [NOX](http://www.noxrepo.org/nox/about-nox/), so the techniques you
 learn in this tutorial are applicable to those platforms too.
 
-{% comment %}
-Outer paragraph disables markdown processing. Without it, each link is
-rendered as a separate paragraph.
-{% endcomment %}
-
-<p>
+<span>
 {% for item in site.data.toc %}
 {% if item.group == "ox" %}
 {% assign ix = forloop.index|minus:1 %}
 [<a href="{{ site.data.toc[ix].path }}">{{ site.data.toc[ix].name }}</a>]
 {% endif %}
 {% endfor %}
-</p>
+</span>
 
 * **Frenetic:** The following chapters teach you how to program SDNs
   using the _NetKAT_ domain-specific programming language. NetKAT
