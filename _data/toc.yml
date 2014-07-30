@@ -1,35 +1,35 @@
 - name: Frenetic Tutorial
-  path: ../introduction
-- name: Ox Repeater
-  path: ../02-OxRepeater
+  path: ../Introduction
+- name: Repeater with Ox
+  path: ../OxRepeater
   group: ox
-- name: Ox Firewall
-  path: ../03-OxFirewall
+- name: Firewall with Ox
+  path: ../OxFirewall
   group: ox
-- name: Traffic Monitoring
-  path: ../04-OxMonitor
+- name: Traffic Monitoring with Ox
+  path: ../OxMonitor
   group: ox
 - name: Learning Switch with Ox
-  path: ../05-OxLearning
+  path: ../OxLearning
   group: ox
 - name: Network Address Translation with Ox
-  path: ../06-OxNat
+  path: ../OxNat
   group: ox
-- name: Shortest Path Forwarding with Ox
-  path: ../07-OxRouting
+- name: Shortest Path Routing with Ox
+  path: ../OxRouting
   group: ox
-- name: Introduction to Frenetic
-  path: ../07-Frenetic-Introduction
+- name: Repeater with NetKAT 
+  path: ../NetKATRepeater
   group: frenetic
-- name: Firewall Redux
-  path: ../08-NCFirewall
+- name: Firewall with NetKAT
+  path: ../NetKATFirewall
   group: frenetic
-- name: Multi-Switch Programming (at last!)
-  path: ../08-NCMultiSwitch
+- name: Traffic Monitoring with Frenetic
+  path: ../NetKATMonitoring
   group: frenetic
-- name: Monitoring with Frenetic
-  path: ../09-NCMonitoring
+- name: Shortest-Path Routing with NetKAT
+  path: ../NetKAT Routing
   group: frenetic
-- name: Frenetic Wrap-up
-  path: ../10-WrapUp
+- name: Conclusion
+  path: ../Conclusion
   group: frenetic
