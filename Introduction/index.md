@@ -18,24 +18,23 @@ TODO(arjun): Update this link.
 Introduction
 ------------
 
-In this tutorial, you will learn to program software-defined networks (SDNs)
-using OpenFlow and Frenetic. The tutorial is
-divided into two sections:
+In this tutorial, you will learn some of the basic ideas being
+software-defined networking (SDN) programming with OpenFlow and
+Frenetic. The tutorial is divided into two sections:
 
-* **Ox:** The first set of chapters introduce the nuts and bolts of
-programming an OpenFlow-based SDN. In these chapters, we use *Ox*, a
-simple platform for writing OpenFlow controllers in OCaml. Apart from
-managing the socket connections and serialization, Ox gives you direct
-access to the OpenFlow protocol.
-
-Ox is loosely based on platforms such as
+* **Ox:** The first few chapters introduce the nuts and bolts of
+programming a SDN switches using *Ox*, a simple platform for writing
+OpenFlow controllers in OCaml. Apart from a few constructs for
+managing socket connections and message serialization, Ox gives the
+programmer direct access to the OpenFlow protocol. Ox is inspired by
+platforms such as
 [POX](https://openflow.stanford.edu/display/ONL/POX+Wiki) and
-[NOX](http://www.noxrepo.org/nox/about-nox/). The concepts and techniques
-you learn in this tutorial are applicable to those platforms too.
+[NOX](http://www.noxrepo.org/nox/about-nox/), so the techniques you
+learn in this tutorial are applicable to those platforms too.
 
 {% comment %}
-Outer paragraph disables markdown processing. Without it, each link is rendered
-as a separate paragraph.
+Outer paragraph disables markdown processing. Without it, each link is
+rendered as a separate paragraph.
 {% endcomment %}
 
 <p>
@@ -47,11 +46,10 @@ as a separate paragraph.
 {% endfor %}
 </p>
 
-* **Frenetic:** The next set of chapters teach you how to program SDNs
-  using the _Frenetic_ domain-specific programming language
-  (FreneticDSL). You will see that FreneticDSL provides high-level
-  abstractions and rich, compositional features that make SDN
-  programming much easier.
+* **Frenetic:** The following chapters teach you how to program SDNs
+  using the _NetKAT_ domain-specific programming language. NetKAT
+  provides high-level abstractions and rich, compositional features
+  that greatly simplifies SDN programming.
 
 <p>
 {% for item in site.data.toc %}
@@ -62,81 +60,35 @@ as a separate paragraph.
 {% endfor %}
 </p>
 
-### Frenetic
-
-This tutorial should also be viewed as a stepping stone toward
-learning how to program in the more powerful *Frenetic* environment
-which allows you to write Frenetic program embedded in OCaml.
-Frenetic applications react to network events, such as topology
-changes and statistics queries.  For example:
-
-1. An event reaches the application.
-
-1. The application generates a new static network configuration and
-   sends it to the Frenetic run time.
-
-1. The Frenetic run time compiles it to OpenFlow and updates the
-   running network.
-
-Static network configurations are built using
-[FreneticLib](http://frenetic-lang.github.io/frenetic/docs/NetCore_Types.html),
-which has the same semantics as FreneticDSL, which is presented in this tutorial.
-Hence, a Frenetic program is really just a general-purpose
-OCaml program that reacts to network events and generates a stream of
-FreneticDSL policies.
-
-#### Why Frenetic?
-
-As an aside, you may find it interesting to read about [why we created
-Frenetic](http://frenetic-lang.org/publications/overview-ieeecoms13.pdf) in the
-first place.
-
 Background Material
 -------------------
 
-To write Frenetic and Ox programs, you'll need to know a little bit of OCaml
-programming. We only use a small fragment of the language and provide lots
-of example code.
+To write NetKAT and Ox programs, it will be useful to be familiar with
+the OCaml language. [Real World OCaml] provides an excellent
+introduction to OCaml and is available online. However, the tutorial
+contains lots of examples, so we recommend just skimming Chapters 1--8
+and 18 and referring back to them as needed.
 
-[Real World OCaml] is a pragmatic introduction to OCaml. The full text of the
-book is available online. If you skim Chapters 1--8, you'll have enough
-background to do the Ox tutorial. Frenetic uses the Async library, which is
-covered in Chapter 18.
-
-Handy References
-----------------
-
-- [Ox Platform Reference](http://frenetic-lang.github.io/frenetic/docs/)
-
-  In the first part of this tutorial, you will write controllers using
-  the Ox Controller platform.
+Useful References
+-----------------
 
 - [OpenFlow 1.0 Specification](http://www.openflow.org/documents/openflow-spec-v1.0.0.pdf)
 
-  The OpenFlow specification describes OpenFlow-conformant switches
-  and details the wire-format of the OpenFlow protocol. You'll find that
-  most of the Ox Platform Reference simply reflects the OpenFlow messages
-  and data types into OCaml.
+  This specification describes OpenFlow switches and configuration
+  protocol in detail. You'll find that most of the Ox Platform
+  Reference simply reflects the OpenFlow messages and data types into
+  OCaml. 
 
-  You don't need to read the OpenFlow specification to follow the
-  guide. But, you will need to do so to understand OpenFlow in depth.
+- [Mininet](http://mininet.org/)
 
-- [Mininet](http://mininet.org/walkthrough/)
+  This webpage describes Mininet, a system we will use to run
+  controllers on a simulated network of switches.
 
-  You will use the Mininet network simulator to run your
-  controllers. We will tell you exactly what Mininet commands to use,
-  so you don't really need to read this.
+- [OCaml APIs](http://frenetic-lang.github.io/api)
+
+  This web page provides documentation for the
+  [Ox](http://freneti-lang.github.io/api/ox) and
+  [NetKAT](http://frenetic-lang.github.io/api/frenetic) libraries, as
+  well as other supporting libraries used in this tutorial.
 
 [Real World OCaml]: https://realworldocaml.org
-
-[Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
-
-[PacketIn]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.PacketIn.html
-
-[PacketOut]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.PacketOut.html
-
-[OxPlatform]: http://frenetic-lang.github.io/frenetic/docs/Ox_Controller.OxPlatform.html
-
-[Match]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Match.html
-
-[Packet]: http://frenetic-lang.github.io/frenetic/docs/Packet.html
