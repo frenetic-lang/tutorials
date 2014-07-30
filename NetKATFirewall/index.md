@@ -3,13 +3,13 @@ layout: main
 title: Firewall with NetKAT
 ---
 
-In an [earlier chapter](OxFirewall), we wrote a firewall that blocks ICMP
-traffic using OpenFlow and Ox. Even though this policy is extremely
-simple, the implementation was somewhat involved, as we had to both
-write a `packet_in` handler and also use `flow_mod` messages to
-configure the switch.
+In an [earlier chapter](OxFirewall), we wrote a firewall that blocks
+ICMP traffic using OpenFlow and Ox. Even though this policy is
+extremely simple, the implementation was somewhat involved, as we had
+to both write a `packet_in` handler and also use `flow_mod` messages
+to configure the switch.
 
-#Exercise 1: Naive Firewall
+### Exercise 1: Naive Firewall
 
 We can implement the same policy in NetKAT as follows:
 
@@ -32,8 +32,7 @@ system take care of generating the handlers and low-level forwarding
 rules needed to implement it. Second, the NetKAT program is modular:
 we use a conditional to wrap the `repeater` policy from the last
 chapter. The ability to combine policies in a compositional way is one
-of the key benefits of NetKAT's language-based approach to network
-programming.
+of the key benefits of NetKAT's language-based approach.
 
 Type this policy into a file `Firewall.ml` in the
 `netkat-tutorial-workspace` directory.
@@ -55,7 +54,7 @@ Using Mininet, check that you can ping between all hosts:
 mininet> pingall
 ~~~
 
-### Exercise 1: Basic Firewall
+### Exercise 2: Basic Firewall
 
 To gain further experience with NetKAT, let's implement a more
 sophisticated firewall policy that uses point-to-forwarding rather
@@ -137,55 +136,16 @@ Type this policy into a file `Firewall2.ml` in the
 Now that basic connectivity works, let's extend the example further to
 enforce a more interesting access control policy:
 
-<table>
-<tr>
-  <th style="visibility: hidden"></th>
-  <th style="visibility: hidden"></th>
-  <th colspan="4">Dst IP Address</th>
-</tr>
-<tr>
-  <th style="visibility: hidden"></th>
-  <th style="visibility: hidden"></th>
-  <th>10.0.0.1</th>
-  <th>10.0.0.2</th>
-  <th>10.0.0.3</th>
-  <th>10.0.0.4</th>
-</tr>
-<tr>
-  <th rowspan="5" style="-webkit-transform:rotate(270deg)" >
-    Src IP Address<br>address
-  </th>
-  <th>10.0.0.1</th>
-  <td>Deny All</td>
-  <td>HTTP</td>
-  <td>Deny All</td>
-  <td>Deny All</td>
-</tr>
-<tr>
-  <th>10.0.0.2</th>
-  <td>HTTP</td>
-  <td>Deny All</td>
-  <td>Deny All</td>
-  <td>Deny All</td>
-</tr>
-<tr>
-  <th>10.0.0.3</th>
-  <td>Deny All</td>
-  <td>Deny All</td>
-  <td>Deny All</td>
-  <td>ICMP</td>
-</tr>
-<tr>
-  <th>10.0.0.4</th>
-  <td>Deny All</td>
-  <td>Deny All</td>
-  <td>ICMP</td>
-  <td>Deny All</td><br>
-</tr>
-</table>
+|:--------:|:-------:|:---------:|:--------:|:--------:|
+|          | 10.0.0.1 | 10.0.0.2 | 10.0.0.3 | 10.0.0.4 |
+| 10.0.0.1 | DENY    | HTTP      | DENY     | DENY     | 
+| 10.0.0.2 | HTTP    | DENY      | DENY     | DENY     | 
+| 10.0.0.3 | DENY    | DENY      | DENY     | ICMP     | 
+| 10.0.0.4 | DENY    | DENY      | ICMP     | DENY     | 
+|----------+----------+----------+----------+----------|
 
 Each cell in this table has a list of allowed protocols for
-connections between the hosts in rows and columns. For example, the
+communication between the hosts in rows and columns. For example, the
 cell
 
 <table>
@@ -201,7 +161,7 @@ cell
 
 indicates that (only) HTTP connections (port 80) are allowed between
 hotss `10.0.0.2` and `10.0.0.1`. To realize this policy in NetKAT, you
-need to allow packets from the first host to port 80 on second  *and*
+need to allow packets from the first host to port 80 on second *and*
 from port 80 on the second back to the first:
 
 ~~~
