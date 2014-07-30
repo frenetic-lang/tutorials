@@ -1,32 +1,32 @@
 ---
 layout: main
-title: Ox Repeater
+title: Repeater with Ox
 ---
 
-### Introduction to OpenFlow
+### OpenFlow Introduction
 
-In a basic software-defined networking (SDN), all switches connect to a centralized controller
-machine. The controller thus has a global view of the network and can
-program all switches to implement a unified, network-wide policy.
-To program a switch, the controller uses a standard protocol, such as
-OpenFlow.
+In software-defined network, all switches connect to a logically
+centralized controller. The controller maintains a global view of the
+network and programs the switches to implement a unified, network-wide
+policy. The controller and switches communicate using a standard
+protocol such as OpenFlow.
 
 A switch processes packets using a _flow table_, which is a list of
-prioritized rules.  Each rule has four components:
+prioritized rules. Each rule has several components:
 
-- A _pattern_ to match packets' headers,
+- A _pattern_ that matches packet header fields,
 
 - A _list of actions_ that is applied to matching packets,
 
-- A _priority_ that is used to choose between rules that have
+- A _priority_ that is used to disambiguate between rules with
   overlapping patterns, and
 
-- A _packet counter_ and a _byte counter_ that record the number
-  of packets and bytes that have matched the rule.
+- A pair of _counters_ that record the number and total size of all
+  matching packets.
 
-For example, consider the following flow table:
+As an example, consider the following flow table:
 
-<table>
+<table border=1>
 <tr>
   <th>Priority</th><th>Pattern</th><th>Action List</th> <th>Counter (bytes)</th>
 </tr>
@@ -43,32 +43,25 @@ For example, consider the following flow table:
 </tr>
 </table>
 
-We can understand the table by interpreting the patterns and actions
-in priority-order:
+* The first and highest priority rule drops all Internet Control
+  Message Protocol (ICMP) packets (because it has an empty action
+  list).
 
-1. The highest priority rule drops all Internet Control Message Protocol (ICMP) packets (because it has an
-   empty action list).
+* The next rule forwards Transmission Control Protocol (TCP) packets
+  out of ports 2 and 5 on the switch&mdash;i.e., it creates two copies
+  of each matching packet.
 
-2. The next rule sends Transmission Control Protocol (TCP) packets out of ports 2 and 5 (i.e., it
-   creates two copies).
+* The next rule sends User Datagram Protocol (UDP) packets to the
+  special controller port (see below). Because the controller runs an
+  arbitrary program (an OCaml program, in Ox), we can implement
+  essentially any packet-processing function we like. For example, in
+  theory, we could implement deep-packet inspection using the
+  controller. However, processing packets on the controller is
+  typically much slower than processing packets on
+  switches. 
 
-3. The next rule sends User Datagram Protocol (UDP) traffic to the special controller port (see
-   below).
-
-4. The final rule matches ICMP traffic. However, since this rule is
-   fully-shadowed by the first rule, it will never be reached. (Fully
-   shadowed rules can usually be safely eliminated.)
-
-The third rule is notable, because it _sends packets to the
-controller_. Since the controller runs an arbitrary program (an OCaml
-program, in our case), you can write essentially any packet-processing
-function you desire by sending packets to the controller.
-
-For example, you could &mdash; in theory &mdash; do deep-packet
-inspection by sending packets to the controller. Of course, this is
-much slower than processing packets on the switch itself. Therefore, a
-controller typically uses the flow table to implement the intended
-packet-processing function efficiently.
+* The final rule matches ICMP traffic. However, since this rule is
+  fully shadowed by the first rule, it is never used.
 
 ## Warmup: Programming a Repeater
 
