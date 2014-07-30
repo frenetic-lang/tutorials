@@ -5,10 +5,12 @@
 ocamlbuild \
   -use-ocamlfind \
   -classic-display \
+  -syntax camlp4o \
   -pkg core \
   -pkg async \
   -pkg netkat \
   -pkg netkat.async \
+  -pkg netkat.syntax \
   -tag thread \
   -tag debug \
   -tag annot \
