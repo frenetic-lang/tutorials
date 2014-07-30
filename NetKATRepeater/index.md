@@ -83,10 +83,13 @@ $ sudo mn --controller=remote --topology=single,4 --mac --arp
 #### Test the Example
 
 At the mininet prompt, test your repeater program by pinging <code>h2</code> from <code>h1</code>:
+
 ~~~
 mininet> h1 ping -c 1 h2
 ~~~
+
 You should see a trace like this one:
+
 ~~~
 PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
 64 bytes from 10.0.0.2: icmp_req=1 ttl=64 time=0.216 ms
@@ -95,6 +98,7 @@ PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.216/0.216/0.216/0.000 ms
 ~~~
+
 Try pinging <code>h1</code> from <code>h2</code> as well.
 
 ### Example 2: Using Anti-Quotation
