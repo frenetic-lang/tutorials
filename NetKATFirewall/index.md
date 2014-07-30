@@ -91,25 +91,24 @@ Type this policy into a file `Firewall2.ml` in the
 
 - Build and launch the controller:
 
-  ~~~ shell
-  $ netkat-build Firewall2.native
-  $ ./Firewall2.native
-  ~~~
+~~~ shell
+$ netkat-build Firewall2.native
+$ ./Firewall2.native
+~~~
 
 - Start Mininet using the same parameters you've used before:
 
-  ~~~
-  $ sudo mn --controller=remote --topo=single,4 --mac --arp
-  ~~~
+~~~
+$ sudo mn --controller=remote --topo=single,4 --mac --arp
+~~~
 
 - Test that pings fail within Mininet:
 
-  ~~~
-  mininet> h1 ping -c 1 h2
-  mininet> h2 ping -c 1 h1
-  ~~~
-
-  These commands should fail, printing `100.0% packet loss`.
+~~~
+mininet> h1 ping -c 1 h2
+mininet> h2 ping -c 1 h1
+~~~  
+These commands should fail, printing `100.0% packet loss`.
 
 - Although ICMP is blocked, other traffic, such as Web traffic should
   be unaffected. To ensure that this is the case, try to run a Web server
@@ -117,24 +116,24 @@ Type this policy into a file `Firewall2.ml` in the
 
   * In Mininet, start new terminals for `h1` and `h2`:
 
-    ~~~
-    mininet> xterm h1 h2
-    ~~~
+~~~
+mininet> xterm h1 h2
+~~~
 
   * In the terminal for `h1` start a local "fortune server" (a server
     that returns insightful fortunes to those who query it):
 
-    ~~~
-    # while true; do fortune | nc -l 80; done
-    ~~~
+~~~
+# while true; do fortune | nc -l 80; done
+~~~
 
   * In the terminal for `h2` fetch a fortune from `h1`:
 
-    ~~~
-    # curl 10.0.0.1:80
-    ~~~
+~~~
+# curl 10.0.0.1:80
+~~~
 
-    This command should succeed.
+   This command should succeed.
 
 ## Exercise 3: Advanced Firewall
 
