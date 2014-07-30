@@ -1,10 +1,7 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: Introduction
 ---
-
-Introduction
-------------
 
 This tutorial presents some of the basic ideas being software-defined
 networking (SDN) programming with OpenFlow and Frenetic. It is divided
