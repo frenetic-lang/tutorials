@@ -150,34 +150,20 @@ enforce a more interesting access control policy:
 |--------------+----------+-----------+----------+----------|
 
 Each cell in this table has a list of allowed protocols for
-communication between the hosts in rows and columns. For example, the
-cell
+communication between the source host in each row and destination host
+in each column. For example, the cell indexed by row 10.0.0.1 and
+column 10.0.0.2 contains HTTP, indicating that (only) HTTP (port 80)
+traffic is allowed from host `10.0.0.1` to `10.0.0.2`. To realize this
+policy in NetKAT, you need to allow packets from the first host to
+port 80 on second *and* from port 80 on the second back to the first:
 
-<table>
-<tr>
-  <th></th>
-  <th>10.0.0.1</th>
-</tr>
-<tr>
-  <th>10.0.0.2</th>
-  <td>HTTP</td>
-</tr>
-</table>
-
-indicates that (only) HTTP connections (port 80) are allowed between
-hotss `10.0.0.2` and `10.0.0.1`. To realize this policy in NetKAT, you
-need to allow packets from the first host to port 80 on second *and*
-from port 80 on the second back to the first:
-
-~~~
+~~~ ocaml
 let firewall : policy =
   <:netkat<
-   if (ip4Src = 10.0.0.2 && ip4Dst = 10.0.0.1 && tcpDstPort = 80) ||
-      (ip4Src = 10.0.0.1 && ip4Dst = 10.0.0.2 && tcpSrcPort = 80)
-   then
-     $forwarding
-   else
-     drop
+   if (ip4Src = 10.0.0.1 && ip4Dst = 10.0.0.2 && tcpSrcPort = 80 ||
+       ip4Src = 10.0.0.2 && ip4Dst = 10.0.0.1 && tcpDstPort = 80)
+   then $forwarding
+   else drop
 ~~~
 
 Type this policy into a file `Firewall3.ml` in the
