@@ -18,7 +18,7 @@
 - name: Shortest Path Routing with Ox
   path: ../OxRouting
   group: ox
-- name: Repeater with NetKAT 
+- name: NetKAT Repeater
   path: ../NetKATRepeater
   group: frenetic
 - name: Firewall with NetKAT
