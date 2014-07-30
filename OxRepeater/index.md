@@ -26,36 +26,20 @@ prioritized rules. Each rule has several components:
 
 As an example, consider the following flow table:
 
-| Priority | Pattern | Actions | Packet Counter | Byte Counter | 
-|--------------------------------------------------------------|
-| 50       | ICMP    |         | 2              | 50           |
-
-Nor this flow table...
-
-<table>
-<tr>
-  <th>Priority</th><th>Pattern</th><th>Action List</th> <th>Counter (bytes)</th>
-</tr>
-<tr>
-  <td>50</td><td>ICMP</td><td></td><td>50</td>
-</tr>
-  <td>40</td><td>TCP</td><td>forward 2, forward 5</td><td>700</td>
-</tr>
-<tr>
-  <td>30</td><td>UDP</td><td>controller</td><td>50</td>
-</tr>
-<tr>
-  <td>20</td><td>ICMP</td><td>forward 2</td><td>0</td>
-</tr>
-</table>
+| Priority | Pattern | Actions            | Packets | Bytes | 
+|-----------------------------------------------------------|
+| 50       | ICMP    |                    | 2       | 148   |
+| 40       | TCP     | Output 2, Output 5 | 5       | 1230  |
+| 30       | UDP     | Controller         | 3       | 284   |
+| 20       | ICMP    | Output 2           | 0       | 0     |
 
 * The first and highest priority rule drops all Internet Control
   Message Protocol (ICMP) packets (because it has an empty action
   list).
 
-* The next rule forwards Transmission Control Protocol (TCP) packets
+* The next rule outputs Transmission Control Protocol (TCP) packets
   out of ports 2 and 5 on the switch&mdash;i.e., it creates two copies
-  of each matching packet.
+  of each matching packet and forward them out those ports.
 
 * The next rule sends User Datagram Protocol (UDP) packets to the
   special controller port (see below). Because the controller runs an
@@ -63,11 +47,10 @@ Nor this flow table...
   essentially any packet-processing function we like. For example, in
   theory, we could implement deep-packet inspection using the
   controller. However, processing packets on the controller is
-  typically much slower than processing packets on
-  switches. 
+  typically much slower than processing packets on switches.
 
-* The final rule matches ICMP traffic. However, since this rule is
-  fully shadowed by the first rule, it is never used.
+* The final rule outputs ICMP packets on port 2. However, since this
+  rule is fully shadowed by the first rule, it is never used.
 
 ## Warmup: Programming a Repeater
 
