@@ -2,75 +2,44 @@ open Core.Std
 open Async.Std
 open NetKAT_Types
 open Async_NetKAT
+open NetKAT.Std
 
-module Log = Async_OpenFlow.Log
-let tags = [("netkat", "learning")]
+let known_hosts : (switchId * dlAddr, portId) Hashtbl.t = Hashtbl.Poly.create ()
 
-module SwitchMap = Map.Make(Int64)
-module MacMap = Map.Make(Int64)
+let learn (sw : switchId) (pt : portId) (pk : packet) : bool =
+  match Hashtbl.find known_hosts (sw, pk.dlSrc) with
+    | Some pt' when pt = pt' -> false
+    | _ -> Hashtbl.add known_hosts (sw, pk.dlSrc) pt; true
 
-let create () =
-  let state = ref SwitchMap.empty in
+let packet_out (sw : switchId) (pk : packet) : action =
+  match Hashtbl.find known_hosts (sw, pk.dlDst) with
+    | Some pt -> Output (Physical pt)
+    | None -> Output All
 
-  let learn switch_id port_id packet =
-    let ethSrc = packet.Packet.dlSrc in
-    let mac_map = SwitchMap.find_exn !state switch_id in
-    if MacMap.mem mac_map ethSrc then
-      false
-    else begin
-      Log.info ~tags "[learning] switch %Lu: learn %s => %Lu@%lu"
-        switch_id (Packet.string_of_mac ethSrc) switch_id port_id;
-      state := SwitchMap.add !state switch_id (MacMap.add mac_map ethSrc port_id);
-      true
-    end in
+let learning = Mod (Location (Pipe "learn"))
 
-  let forward switch_id packet : action =
-    let ethDst = packet.Packet.dlDst in
-    let mac_map = SwitchMap.find_exn !state switch_id in
-    let open SDN_Types in
-    match MacMap.find mac_map ethDst with
-      | None ->
-        Log.of_lazy ~tags ~level:`Info (lazy (Printf.sprintf
-          "[learning] switch %Lu: flood %s"
-              switch_id (Packet.to_string packet)));
-        Output(All)
-      | Some(p) ->
-        Log.of_lazy ~tags ~level:`Info (lazy (Printf.sprintf
-          "[learning] switch %Lu: port %lu %s"
-              switch_id p (Packet.to_string packet)));
-        Output(Physical p) in
-
-  let default = Mod(Location(Pipe "learn")) in
-
-  let gen_pol () =
-    let drop = Filter False in
-    SwitchMap.fold !state ~init:drop ~f:(fun ~key:switch_id ~data:mac_map acc ->
-      let known, unknown_pred = MacMap.fold mac_map ~init:(drop, True)
-        ~f:(fun ~key:mac ~data:port (k, u) ->
-          let k' = <:netkat<(filter (ethDst = $mac); port := $port) + $k>> in
-          let u' = <:nkpred< !(ethDst = $mac) >> in
-          (k', u')) in
+let routing () =
+  let rec f lst = match lst with
+    | [] -> learning
+    | ((sw, addr), pt) :: rest ->
+      let pol' = f rest in
       <:netkat<
-        filter switch = $switch_id; ($known + filter $unknown_pred; $default) +
-        $acc
-      >>) in
+        if switch = $sw && ethDst = $addr then port := $pt else $pol'
+      >> in
+  f (Hashtbl.to_alist known_hosts)
 
-  let handler t w () e = match e with
-    | SwitchUp(switch_id) ->
-      state := SwitchMap.add !state switch_id MacMap.empty;
-      return (Some(gen_pol ()))
-    | SwitchDown(switch_id) ->
-      state := SwitchMap.remove !state switch_id;
-      return (Some(gen_pol ()))
-    | PacketIn(_, switch_id, port_id, payload, _) ->
-      let packet = Packet.parse (SDN_Types.payload_bytes payload) in
-      let pol = if learn switch_id port_id packet then
-         Some(gen_pol ())
-      else
-         None in
-      let action = forward switch_id packet in
-      Pipe.write w (switch_id, (payload, Some(port_id), [action])) >>= fun _ ->
-      return pol
-    | _ -> return None in
+let handler t w () e = match e with
+  | PacketIn(_, switch_id, port_id, payload, _) ->
+    let packet = Packet.parse (SDN_Types.payload_bytes payload) in
+    let pol = if learn switch_id port_id packet then
+       Some (routing ())
+    else
+       None in
+    let action = packet_out switch_id packet in
+    Pipe.write w (switch_id, (payload, Some(port_id), [action])) >>= fun _ ->
+    return pol
+  | _ -> return None
 
-  create ~pipes:(PipeSet.singleton "learn") default handler
+let _ =
+  Async_NetKAT_Controller.start (create ~pipes:(PipeSet.singleton "learn") learning handler) ();
+  never_returns (Scheduler.go ())
