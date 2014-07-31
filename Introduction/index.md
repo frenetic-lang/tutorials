@@ -46,11 +46,7 @@ Software Environment
 This is a hands-on tutorial with several programming exercises.  We
 recommend using the virtual machine we've prepared that has all the
 necessary software that you need pre-installed. You can get the
-tutorial VM from the following link:
-
-https://github.com/frenetic-lang/frenetic/releases/frenetic-1.0.1
-
-TODO(arjun): Update this link.
+tutorial VM from the following link: [Frenetic Tutorial VM](http://storage.googleapis.com/arjun-umass-disks/Frenetic-Tutorial.ova).
 
 References
 ----------
