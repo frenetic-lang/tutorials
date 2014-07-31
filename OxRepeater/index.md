@@ -298,9 +298,9 @@ any packets.
 
 - In a separate terminal, start Mininet:
 
-  ```
+  ~~~
   $ sudo mn --controller=remote --topo=single,4 --mac
-  ```
+  ~~~
 
 - Build and start the controller:
 
