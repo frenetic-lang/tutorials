@@ -64,24 +64,24 @@ module Controller = OxStart.Make (MyApplication)
 
 - Build and launch the controller:
 
-  ~~~ shell
-  $ oxbuild Firewall.native
-  $ ./Firewall.native
-  ~~~
+~~~ shell
+$ oxbuild Firewall.d.byte
+$ ./Firewall.d.byte
+~~~
 
 - In a separate terminal window, start Mininet using the same
   parameters you've used before:
 
-  ~~~
-  $ sudo mn --controller=remote --topo=single,4 --mac --arp
-  ~~~
+~~~
+$ sudo mn --controller=remote --topo=single,4 --mac --arp
+~~~
 
 - Test to ensure that pings fail within Mininet:
 
-  ~~~
-  mininet> h1 ping -c 1 h2
-  mininet> h2 ping -c 1 h1
-  ~~~
+~~~
+mininet> h1 ping -c 1 h2
+mininet> h2 ping -c 1 h1
+~~~
 
   These command should fail, printing `100.0% packet loss`.
 
