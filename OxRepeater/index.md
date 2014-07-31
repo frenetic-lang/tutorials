@@ -298,16 +298,16 @@ any packets.
 
 - In a separate terminal, start Mininet:
 
-   ~~~
-   $ sudo mn --controller=remote --topo=single,4 --mac
-   ~~~
+  ~~~
+  $ sudo mn --controller=remote --topo=single,4 --mac
+  ~~~
 
 - Build and start the controller:
 
-   ~~~ shell
-   $ oxbuild Repeater.native
-   $ ./Repeater.native
-   ~~~
+  ~~~ shell
+  $ ox-build Repeater.d.byte
+  $ ./Repeater.d.byte
+  ~~~
 
 - From the Mininet prompt, try a ping:
 
