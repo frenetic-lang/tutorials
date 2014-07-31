@@ -59,7 +59,14 @@ let handler t w () e = match e with
     return pol
   | _ -> return None
 
+let firewall = 
+  create_static
+    <:netkat< if ethType = 0x800 && ipProto = 0x01 then drop else id>>
+
+let learning = create ~pipes:(PipeSet.singleton "learn") (policy ()) handler
+
+let app = seq firewall learning
+
 let _ =
-  Async_NetKAT_Controller.start 
-    (create ~pipes:(PipeSet.singleton "learn") (policy ()) handler) ();
+  Async_NetKAT_Controller.start app ();
   never_returns (Scheduler.go ())
