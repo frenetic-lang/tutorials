@@ -25,6 +25,7 @@ let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
   let pk = parse_payload pktIn.input_payload in
   ...
 ~~~
+
 Applying `parse_payload` parses the packet into a series of nested
 frames. The easiest way to examine packet headers is to then use the
 [header accessor functions] in the packet library. The frame type for
@@ -87,7 +88,7 @@ module Controller = OxStart.Make (MyApplication)
 - On the controller terminal, you should see the controller receiving
   several ICMP echo requests, but no ICMP echo replies:
 
-  <pre>
+~~~
 Switch 1 connected.
 packetIn{
   total_len=98 port=1 reason=NoMatch
@@ -102,7 +103,7 @@ packetIn{
   payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,<b>ICMP echo request</b> (buffered at 279)
 }
 ...
-  </pre>
+~~~
 
   This indicates that the controller sees the ping request and drops it,
   thus no host ever sends a reply.
@@ -113,22 +114,22 @@ packetIn{
 
   * In Mininet, start new terminals for `h1` and `h2`:
 
-    ~~~
-    mininet> xterm h1 h2
-    ~~~
+~~~
+mininet> xterm h1 h2
+~~~
 
   * In the terminal for `h1` start a local "fortune server" (a server
     that returns insightful fortunes to those who query it):
 
-    ~~~
-    # while true; do fortune | nc -l 80; done
-    ~~~
+~~~
+# while true; do fortune | nc -l 80; done
+~~~
 
   * In the terminal for `h2` fetch a fortune from `h1`:
 
-    ~~~
-    # curl 10.0.0.1:80
-    ~~~
+~~~
+# curl 10.0.0.1:80
+~~~
 
     This command should succeed.
 
@@ -149,34 +150,12 @@ let switch_connected (sw : switchId) feats : unit =
 
 To determine the priorities, patterns, and actions in the handler
 above, it may be useful to revisit the description of flow tables in
-[Chapter 2][Ch2]. Here is a quick refresher:
-
-- *Priorities*: larger numbers mean higher priority.
-
-- *Action lists*: To drop traffic, use an empty list (`[]` in OCaml)
-  of actions.
-
-- *Patterns*: In the previous chapter, you used the builtin pattern
-  `match_all`, which you may use again if needed. You will certainly
-  need to write a pattern that matches ICMP packets. The Ox Manual has
-  several [example patterns] to get you started.
+the last chapter.
 
 #### Building and Testing
 
 Build and test the efficient firewall in exactly the same way you
 tested the firewall function. In addition, you shouldn't observe
 packets at the controller.
-
-[Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
-
-[PacketIn]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.PacketIn.html
-
-[PacketOut]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.PacketOut.html
-
-[Ox Platform]: http://frenetic-lang.github.io/frenetic/docs/Ox_Controller.OxPlatform.html
-
-[Match]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Match.html
-
-[Packet]: http://frenetic-lang.github.io/frenetic/docs/Packet.html
 
 {% include api.md %}
