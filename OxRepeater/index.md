@@ -157,9 +157,9 @@ hosts and have them ping each other:
 
 - Start Mininet in a separate terminal window:
 
-~~~
-$ sudo mn --controller=remote --topo=single,4 --mac --arp
-~~~
+  ~~~
+  $ sudo mn --controller=remote --topo=single,4 --mac --arp
+  ~~~
 
   A brief explanation of the flags:
 
