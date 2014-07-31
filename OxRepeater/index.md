@@ -27,7 +27,7 @@ prioritized rules. Each rule has several components:
 For example, consider the following flow table:
 
 |----------+---------+--------------------+---------+-------|
-| Priority | Pattern | Actions            | Packets | Bytes | 
+| Priority | Pattern | Actions            | Packets | Bytes |
 |:--------:|:-------:|:-------------------|:-------:|:-----:|
 | 50       | ICMP    |                    | 2       | 148   |
 | 40       | TCP     | Output 2, Output 5 | 5       | 1230  |
@@ -48,7 +48,7 @@ Read from top to bottom, these rules can be understood as follows:
 * The next rule sends User Datagram Protocol (UDP) packets to the
   special controller port (see below). Because the controller runs an
   arbitrary program (an OCaml program, in Ox), we can implement
-  essentially any packet-processing function we like. 
+  essentially any packet-processing function we like.
 
 * The final rule outputs ICMP packets on port 2. However, since this
   rule is fully shadowed by the first rule, it is never used.
@@ -70,7 +70,7 @@ its other ports. We will build our repeater in two steps:
 
 - First, we will leave the flow table empty, so all packets are
   diverted to the controller for processing. At the controller, we
-  will write a packet-processing function that implements the functionality we want. 
+  will write a packet-processing function that implements the functionality we want.
 
 - Then, after completing and testing the packet-processing function
   implemented using the controller, we will install rules to the flow
@@ -87,6 +87,8 @@ practice, one typically does need both implementations.
 
 ### Exercise 1: A Naive Repeater
 
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Firewall1.ml)**
+
 In this part, you will write a repeater that processes all packets at
 the controller. By default, when an OpenFlow switch does not contain
 any rules, it diverts all packets to the controller in a `packet_in`
@@ -94,11 +96,9 @@ message. Therefore, this repeater only needs to provide a `packet_in`
 handler. We have provided some starter code in a template below.
 
 Fill in the body of this function and save it in a file called
-`Repeater.ml` within the directory
-`~/src/frenetic/ox-tutorial-workspace/Repeater.ml`.
+`Repeater.ml`.
 
 ~~~ ocaml
-(* ~/src/frenetic/ox-tutorial-workspace/Repeater.ml *)
 open OxPlatform
 open OpenFlow0x01_Core
 
@@ -137,13 +137,13 @@ the [OpenFlow_Core] module) and fill it in.
 To build your controller, run the following command:
 
 ~~~
-$ oxbuild Repeater.native
+$ ox-build Repeater.d.byte
 ~~~
 
 Assuming compilation succeeds, you will see output like to this:
 
 ~~~
-ocamlbuild -use-ocamlfind Repeater.native
+ocamlbuild -use-ocamlfind Repeater.d.byte
 Finished, 4 targets (4 cached) in 00:00:00.
 ~~~
 
@@ -182,7 +182,7 @@ hosts and have them ping each other:
 - Start your controller back in the original terminal:
 
   ~~~
-  $ ./Repeater.native
+  $ ./Repeater.d.byte
   ~~~
 
   It should print `[Ox] Controller launching...` and then you should
@@ -252,20 +252,19 @@ port 2 (<code>s1-eth2</code>) is connected to host <code>h2</code>,and
 so on. If there was more than one switch in the network, we would see
 additional lines prefixed by the switch identifier, one line per
 switch. The remaining lines describe the hosts <code>h1</code> through
-<code>h4</code>.</p> 
+<code>h4</code>.</p>
 </blockquote>
 
 ### Exercise 2: An Efficient Repeater
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Firewall2.ml)**
 
 Processing all packets at the controller works, in a sense, but is
 inefficient. Next let's install forwarding rules in the flow table on
 the switch so that it processes packets itself.
 
 For this part, we will continue building on the naive repeater from
-above. A solution can be found in
-`ox-tutorial-solutions/Sol_Repeater.ml` if necessary.
-
-In this exercise, we will add a `switch_connected` handler. This
+above. We will add a `switch_connected` handler. This
 function is invoked when the switch first connects to the
 controller. Hence, we can use it to install forwarding rules in its
 forwarding table. Use the following code as a template.
@@ -342,7 +341,7 @@ artificially:
 - Launch the repeater again:
 
   ~~~
-  $ ./Repeater.native
+  $ ./Repeater.d.byte
   ~~~
 
 It is very likely that a few packets will get sent to the controller
