@@ -177,7 +177,9 @@ $ sudo mn --controller=remote --topo=single,4 --mac --arp
 - After Mininet launches, it will print the network topology and then
   drop you into the Mininet command-line interface:
 
-  `mininet>`
+~~~
+mininet>
+~~~
 
 - Start your controller back in the original terminal:
 
