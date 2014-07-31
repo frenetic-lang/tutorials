@@ -87,7 +87,7 @@ practice, one typically does need both implementations.
 
 ### Exercise 1: A Naive Repeater
 
-**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Firewall1.ml)**
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Repeater1.ml)**
 
 In this part, you will write a repeater that processes all packets at
 the controller. By default, when an OpenFlow switch does not contain
@@ -255,7 +255,7 @@ switch. The remaining lines describe the hosts <code>h1</code> through
 
 ### Exercise 2: An Efficient Repeater
 
-**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Firewall2.ml)**
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Repeater2.ml)**
 
 Processing all packets at the controller works, in a sense, but is
 inefficient. Next let's install forwarding rules in the flow table on
