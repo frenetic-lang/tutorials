@@ -255,8 +255,6 @@ switch. The remaining lines describe the hosts <code>h1</code> through
 
 ### Exercise 2: An Efficient Repeater
 
-**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Repeater2.ml)**
-
 Processing all packets at the controller works, in a sense, but is
 inefficient. Next let's install forwarding rules in the flow table on
 the switch so that it processes packets itself.

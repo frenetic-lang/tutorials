@@ -11,7 +11,9 @@ function for the firewall. Then, after we've tested it successfully,
 we'll configure the flow table to implement the same functionality
 more efficiently.
 
-## The Firewall Function
+## Exercise 1: The Firewall Function
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Firewall1.ml)**
 
 Unlike the repeater, which blindly forwards packets, the `packet_in`
 function for the firewall needs to inspect packets' headers to
@@ -133,7 +135,9 @@ mininet> xterm h1 h2
 
     This command should succeed.
 
-## An Efficient Firewall
+## Exercise 2: An Efficient Firewall
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Firewall2.ml)**
 
 Next, let us extend our implementation of the firewall function to use
 flow tables. To do this, we will add a `switch_connected` handler. We
