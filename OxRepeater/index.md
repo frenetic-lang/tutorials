@@ -157,9 +157,9 @@ hosts and have them ping each other:
 
 - Start Mininet in a separate terminal window:
 
-  ~~~
-  $ sudo mn --controller=remote --topo=single,4 --mac --arp
-  ~~~
+   ~~~
+   $ sudo mn --controller=remote --topo=single,4 --mac --arp
+   ~~~
 
   A brief explanation of the flags:
 
@@ -298,16 +298,16 @@ any packets.
 
 - In a separate terminal, start Mininet:
 
-  ~~~
-  $ sudo mn --controller=remote --topo=single,4 --mac
-  ~~~
+   ~~~
+   $ sudo mn --controller=remote --topo=single,4 --mac
+   ~~~
 
 - Build and start the controller:
 
-  ~~~ shell
-  $ oxbuild Repeater.native
-  $ ./Repeater.native
-  ~~~
+   ~~~ shell
+   $ oxbuild Repeater.native
+   $ ./Repeater.native
+   ~~~
 
 - From the Mininet prompt, try a ping:
 
