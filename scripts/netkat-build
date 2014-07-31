@@ -16,4 +16,5 @@ ocamlbuild \
   -tag annot \
   -tag bin_annot \
   -tag short_paths \
+  -cflags "-w -40" \
   $@

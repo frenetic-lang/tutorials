@@ -1,17 +1,17 @@
 open NetKAT.Std
 
-(* From NetKATRepeater.ml *)
-let connect (m : Int32.t) (n : Int32.t) =
+let repeater : policy =
   <:netkat<
-    filter (port = $m); port := $n +
-    filter (port = $n); port := $m
+    if port = 1 then port := 2 + port := 3 + port := 4
+    else if port = 2 then port := 1 + port := 3 + port := 4
+    else if port = 3 then port := 1 + port := 2 + port := 4
+    else if port = 4 then port := 1 + port := 2 + port := 3
+    else drop
   >>
-
-let forwarding = connect 1l 2l
 
 let firewall : policy =
   <:netkat<
-    if ipProto = 0x01 then drop else $forwarding
+    if ethType = 0x800 && ipProto = 0x01 then drop else $repeater
   >>
 
 let _ = run_static firewall

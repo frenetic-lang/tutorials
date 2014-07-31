@@ -1,11 +1,12 @@
 open NetKAT.Std
 
-let connect (m : Int32.t) (n : Int32.t) =
+let repeater : policy =
   <:netkat<
-    filter (port = $m); port := $n +
-    filter (port = $n); port := $m
+    if port = 1 then port := 2 + port := 3 + port := 4
+    else if port = 2 then port := 1 + port := 3 + port := 4
+    else if port = 3 then port := 1 + port := 2 + port := 4
+    else if port = 4 then port := 1 + port := 2 + port := 3
+    else drop
   >>
 
-let pol = connect 1l 2l
-
-let _ = run_static pol
+let _ = run_static repeater

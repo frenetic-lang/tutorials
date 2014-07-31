@@ -14,9 +14,7 @@ module MyApplication = struct
     send_packet_out sw 0l
       { output_payload = pk.input_payload;
         port_id = None;
-        apply_actions = [Output AllPorts]
-      }
-
+        apply_actions = [Output AllPorts] }
 end
 
 module Controller = OxStart.Make (MyApplication)

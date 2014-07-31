@@ -5,10 +5,10 @@ module MyApplication = struct
 
   include OxStart.DefaultTutorialHandlers
 
-  let match_icmp = { match_all with
-    dlTyp = Some 0x800;
-    nwProto = Some 1
-  }
+  let match_icmp = 
+    { match_all with
+      dlTyp = Some 0x800;
+      nwProto = Some 1 }
 
   let switch_connected (sw : switchId) _ : unit =
     Printf.printf "Switch %Ld connected.\n%!" sw;
@@ -25,15 +25,12 @@ module MyApplication = struct
       send_packet_out sw 0l
         { output_payload = pktIn.input_payload;
           port_id = None;
-          apply_actions = []
-        }
+          apply_actions = [] }
     else 
       send_packet_out sw 0l
         { output_payload = pktIn.input_payload;
           port_id = None;
-          apply_actions = [Output AllPorts]
-        }
-
+          apply_actions = [Output AllPorts] }
 end
 
 module Controller = OxStart.Make (MyApplication)
