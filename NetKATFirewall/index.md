@@ -15,10 +15,11 @@ We can implement the same policy in NetKAT as follows:
 
 ~~~ ocaml
 open NetKAT.Std
+open RepeaterPolicy
 
 let firewall : policy =
   <:netkat<
-    if ipProto = 0x01 then drop else $Repeater.repeater
+    if ipProto = 0x01 && ethType = 0x800 then drop else $pol
   >>
 
 let _ = run_static firewall
@@ -30,7 +31,7 @@ the NetKAT program consists of a simple declarative specification of
 the desired packet-processing functionality. The compiler and run-time
 system take care of generating the handlers and low-level forwarding
 rules needed to implement it. Second, the NetKAT program is modular:
-we use a conditional to wrap the `repeater` policy from the last
+we use a conditional to wrap the repeater policy from the last
 chapter. The ability to combine policies in a compositional way is one
 of the key benefits of NetKAT's language-based approach.
 
@@ -53,10 +54,20 @@ and Mininet in another:
 $ sudo mn --controller=remote --topo=single,4 --mac --arp
 ~~~
 
-Using Mininet, check that you can ping between all hosts:
+Using Mininet, check that pinging fails between all hosts:
 
 ~~~
-mininet> pingall
+mininet> h1 ping h2
+
+--- 10.0.0.2 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1008ms
+~~~
+
+~~~
+mininet> h2 ping h1
+
+--- 10.0.0.1 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 999ms
 ~~~
 
 ## Exercise 2: Basic Firewall
@@ -75,6 +86,8 @@ The hosts have IP addresses 10.0.0.1 through 10.0.0.4 and are
 connected to ports 1 through 4 respetively.
 
 ~~~
+open NetKAT.Std
+
 let forwarding : policy =
   <:netkat<
     if ip4Dst = 10.0.0.1 then port := 1
@@ -84,7 +97,24 @@ let forwarding : policy =
   >>
 ~~~
 
-Type this policy into a file `Firewall2.ml` in the
+Type this policy into a file `Forwarding.ml` in the
+`netkat-tutorial-workspace` directory.
+
+We want our firewall policy to wrap this forwarding policy:
+
+~~~
+open NetKAT.Std
+open Forwarding
+
+let firewall : policy =
+  <:netkat<
+    if (* FILL condition for ICMP packets *) then drop else (filter ethType = 0x800; $forwarding)
+  >>
+
+let _ = run_static firewall
+~~~
+
+Save this policy into a file `Firewall2.ml` in the
 `netkat-tutorial-workspace` directory.
 
 ### Testing
@@ -158,6 +188,9 @@ policy in NetKAT, you need to allow packets from the first host to
 port 80 on second *and* from port 80 on the second back to the first:
 
 ~~~ ocaml
+open NetKAT.Std
+open Forwarding
+
 let firewall : policy =
   <:netkat<
    if (ip4Src = 10.0.0.1 && ip4Dst = 10.0.0.2 && tcpSrcPort = 80 ||
@@ -165,6 +198,9 @@ let firewall : policy =
    then $forwarding
    else drop
 ~~~
+
+Then you should modify the firewall to only allow ICMP traffic between
+hosts `10.0.0.3` and `10.0.0.4`.
 
 Type this policy into a file `Firewall3.ml` in the
 `netkat-tutorial-workspace` directory and test it in Mininet. Note
