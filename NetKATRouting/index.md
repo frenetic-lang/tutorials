@@ -122,13 +122,12 @@ Once you have a firewall policy and a routing policy to start from, continue as 
 - Edit `Routing.ml` to include `Firewall.ml` and compose the firewall and
   the forwarding policy:
 
-  ~~~
-  open "Firewall.ml"
+      open "Firewall.ml"
 
-  let forwarding = ...
+      let forwarding = ...
 
-  let _ = run_static <:netkat< $firewall; $forwarding >>
-  ~~~
+      let _ = run_static <:netkat< $firewall; $forwarding >>
+  
 
   You should test this policy just as you tested the firewall in the previous chapter.
  
