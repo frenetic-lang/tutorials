@@ -30,7 +30,7 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 
 ### Exercise 1: Forwarding
 
-Using Frenetic, write a forwarding policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch forwarding policy, you can use the `switch = n` predicate as follows:
+Using NetKAT, write a forwarding policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch forwarding policy, you can use the `switch = n` predicate as follows:
 
 ~~~
 <:netkat<
@@ -48,18 +48,15 @@ Using Frenetic, write a forwarding policy that connects all hosts to each other.
 >>
 ~~~
 
-Change in to the chapter8 directory:
-~~~
-$ cd Chapter8
-~~~
-Here, you'll find the template above in `frenetic-tutorial-code/Chapter8/Forwarding.nc`. Fill it in.
+Save this in a file called `Routing.ml` and save it in the `netkat-tutorial-workspace` folder.
 
 #### Testing
 
-Launch Frenetic in a terminal by invoking `Forwarding.nc`:
+Compile and start the controller:
 
 ~~~
-$ frenetic Forwarding.nc
+$ netkat-build Routing.d.byte
+$ ./Routing.d.byte
 ~~~
 
 Then launch Mininet in another:
@@ -78,21 +75,22 @@ mininet> pingall
 Now that basic connectivity works, your goal is to apply exactly the same access control policy you built in the
 last chapter to this new network. Unfortunately, you cannot simply reuse the firewall in its current form, since it has baked-in the forwarding policy for the one-switch network.
 
-Your policy from [Chapter 7][Ch7] probably has this shape:
+Your firewall policy from the previous chapter probably has the following form: 
 
 ~~~
-let forwarding = (* forwarding for 1 switch only *)
+open NetKAT.Std
+open Forwarding
 
 let firewall =
   if (* traffic allowed *) then
-    forwarding
+    $forwarding
   else
     drop
 
-firewall
+let _ = run_static firewall
 ~~~
 
-To truly separate the forwarding policy from the firewall policy, you will use Frenetic's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
+To truly separate the forwarding policy from the firewall policy, you will use NetKAT's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
 and run them in sequence:
 
 ~~~
@@ -103,46 +101,41 @@ This form of composition is akin to pipes in Unix. You can think of `P; Q` as a 
 
 You've probably used _grep_ and pipes in Linux to filter lines of text. You can similarly use sequential composition to filter packets:
 
-`firewall; forwarding`
+`$firewall; $forwarding`
 
-For this to work, you do need to make one small change to `firewall`:  replace all occurrences of `forwarding` with  the special action `pass`. The `pass` action is the identity function on packets. When you use `pass` in a policy, you don't forward it out of a port, but simply leave it unchanged to be processed by the next policy in a sequence.
-Hopefully, it is evident that if your firewall only applies `pass` and `drop`, then it becomes truly topology-independent.
+For this to work, you do need to make one small change to your firewall policy:  replace all occurrences of `$forwarding` with  the special action `id`. The `id` action is the identity function on packets. When you use `id` in a policy, you don't forward it out of a port, but simply leave it unchanged to be processed by the next policy in a sequence.
+Hopefully, it is evident that if your firewall only applies `id` and `drop`, then it becomes truly topology-independent.
 
 ### Exercise 2: Abstracting the Firewall
 
-In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.nc` and edit it to just `pass` and `drop` packets.  Then you will build a multi-module policy that involves `Firewall.nc`, `Forwarding.nc` and `Main.nc`.
+In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.ml` and edit it to just `id` and `drop` packets. Also, remove `let _ = run_static firewall` at the bottom. Then you will build a multi-module policy that involves `Firewall.ml` and `Routing.ml`.
 
-> If you didn't finish Chapter 8, use
-> `frenetic-tutorial-code/Sol_Chapter7_Firewall.nc`.
-> If you didn't finish the forwarding policy above, see
-> `frenetic-tutorial-code/Chapter8/Sol_Forwarding.nc`.
+> If you didn't finish the firewall policy, use
+> `netkat-tutorial-solutions/Sol_Firewall1.ml`.
+> If you didn't finish the first routing policy above, see
+> `netkat-tutorial-solutions/Sol_Routing.ml`.
 
-Once you have a firewall policy and a forwarding policy to start from, continue as follows.
+Once you have a firewall policy and a routing policy to start from, continue as follows.
 
-- Move the code for `firewall` function from `Chapter7.nc` in to `Chapter8/Firewall.nc`.
+- In `Firewall.ml`, you have (possibly several) occurrences of `$forwarding` (i.e., the forwarding policy from the previous chapter).  Replace all occurrences of `$forwarding` with `id`.
 
-- In `firewall`, you have (possibly several) occurrences of `forwarding` (i.e., the forwarding policy from Chapter 7).  Replace all occurrences of `forwarding` with `pass`.
-
-- Edit `Forwarding.nc` to include `Firewall.nc` and compose the firewall and
+- Edit `Routing.ml` to include `Firewall.ml` and compose the firewall and
   the forwarding policy:
 
   ~~~
-  include "Firewall.nc"
+  open "Firewall.ml"
 
   let forwarding = ...
 
-  firewall; forwarding
+  let _ = run_static <:netkat< $firewall; $forwarding >>
   ~~~
 
-  You should test this policy just as you tested the firewall in
-  [Chapter 7][Ch7].
+  You should test this policy just as you tested the firewall in the previous chapter.
+ 
 
-### Extra Credit I
+### Extra Credit 
 
 Per the firewall, host `00:00:00:00:00:02` cannot send a packet to port `25` on host `00:00:00:00:00:04`. If host host `00:00:00:00:00:02` attempts to send such a packet, on which switch is that packet dropped? You should be able to answer the question just by reading your policy and inspecting the topology figure above.
 
-### Extra Credit II
-
-Show that your firewall in `Firewall.nc` is truly reuseable.  Reimplement your solution in `Chapter7.nc` in a modular fashion using `Firewall.nc`. You may start with `Sol_Chapter7.nc` if you wish.
 
 {% include api.md %}
