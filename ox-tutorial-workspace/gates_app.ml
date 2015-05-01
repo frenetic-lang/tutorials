@@ -38,16 +38,30 @@ module GatesApp : OxStart.OXMODULE = struct
     | ONP           | all ports (excluding src port) + controller   | 10       |
     ----------------------------------------------------------------------------
  *)
-  
-  let switch_stps_hash = Hashtbl.create 50
-  let routing_rules = Hashtbl.create 50 
 
-  let is_switch v = 
+  (* The hashtables switch_stps_hash, switch_n_stps_hash, and switch_inps_hash
+    map a switch vertex to its spanning tree ports (STPs), non-spanning tree 
+    ports (N-STPs), and inner network ports (INPs), respectively.
+    For each switch, INPs is the union of STPs and N-STPs *)
+  let switch_stps_hash : (Topology.vertex, Topology.PortSet.t) Hashtbl.t = 
+    Hashtbl.create 50
+  let switch_n_stps_hash : (Topology.vertex, Topology.PortSet.t) Hashtbl.t = 
+    Hashtbl.create 50
+  let switch_inps_hash : (Topology.vertex, Topology.PortSet.t) Hashtbl.t = 
+    Hashtbl.create 50  
+
+  (* maps a switch ID to the low priority rules described in the main 
+    comment above *)
+  let spanning_tree_rules 
+      : (switchId, (int * pattern * (action list)) list) Hashtbl.t = 
+    Hashtbl.create 50 
+
+  let is_switch (v: Topology.vertex) : bool = 
     match Node.device (Topology.vertex_to_label !topology v) with 
     | Node.Switch -> true 
     | _ -> false  
   
-  let all_switches = 
+  let all_switches : (Topology.VertexSet.t) = 
     Topology.VertexSet.filter (Topology.vertexes !topology) ~f:is_switch
 
   let spanningtree_edges (root: Topology.vertex) 
@@ -62,10 +76,9 @@ module GatesApp : OxStart.OXMODULE = struct
         subroot_edges_lst in
     (root, edges)
 
-  (* returns a pair of PortSet's (stps, n_stps) for switch sw. stps and n_stps 
-    are the spanning tree ports and the non-spanning tree ports, respectively, 
-    associated with switch sw *)
-  let switch_to_inps (sw : Topology.vertex) : Topology.PortSet.t * Topology.PortSet.t = 
+  (* populates the two hashtables switch_inps_hash and switch_n_stps_hash.
+    Precondition: the hashtable switch_stps_hash has been populated already *)
+  let populate_hashes (sw : Topology.vertex) : unit = 
     let nhbrs = Topology.neighbors !topology sw in
     let edges = 
       Topology.VertexSet.fold 
@@ -80,18 +93,18 @@ module GatesApp : OxStart.OXMODULE = struct
         ~f:(fun ports edge -> 
           Topology.PortSet.add ports (snd (Topology.edge_src edge))) in
     let stps = Hashtbl.find switch_stps_hash sw in
-    let n_stps = Topology.PortSet.diff inps stps in 
-    (* Printf.printf "<switch_to_inps>: (%d, %d)\n" 
-      (List.length (Topology.PortSet.elements stps)) 
-      (List.length (Topology.PortSet.elements n_stps)); *)
-    (stps, n_stps)
+    let n_stps = Topology.PortSet.diff inps stps in
+    let () = Hashtbl.add switch_inps_hash sw inps in 
+    Hashtbl.add switch_n_stps_hash sw n_stps
 
-  let in_port_rule priority in_port acts= 
+  let in_port_rule (priority: int) (in_port: Topology.port) (acts: action list)
+      : int * pattern * (action list) = 
     let pat = { match_all with inPort = Some (Int32.to_int in_port)} in 
     (priority, pat, acts)
 
-  let switch_rules (sw: Topology.vertex) =
-    let (stps, n_stps) = switch_to_inps sw in 
+  let switch_rules (sw: Topology.vertex) : (int * pattern * (action list)) list =
+    let stps = Hashtbl.find switch_stps_hash sw in 
+    let n_stps = Hashtbl.find switch_n_stps_hash sw in 
     let all_rules = 
       Topology.PortSet.fold 
         stps 
@@ -107,6 +120,7 @@ module GatesApp : OxStart.OXMODULE = struct
     (10, match_all, [Output (Controller 1024); Output AllPorts]):: all_rules
 
   let () = 
+    (* populate the hashtable switch_stps_hash *)
     let root = 
       match Topology.VertexSet.choose all_switches with 
       | Some sw -> sw
@@ -127,35 +141,24 @@ module GatesApp : OxStart.OXMODULE = struct
       ~init:()
       ~f:(fun () sw -> Hashtbl.add switch_stps_hash sw Topology.PortSet.empty);
     List.fold_left (fun () edge -> add_to_hash edge) () st_edges;
+    (* populate the hashtables switch_inps_hash and switch_n_stps_hash *)
+    Topology.VertexSet.fold 
+      all_switches 
+      ~init:()
+      ~f:(fun () sw -> populate_hashes sw);
+    (* compute spanning tree rules and save them in spanning_tree_rules hashtable *)
     Topology.VertexSet.fold 
       all_switches 
       ~init:()
       ~f:(fun () sw -> 
         Hashtbl.add 
-          routing_rules 
+          spanning_tree_rules 
           (Node.id (Topology.vertex_to_label !topology sw)) 
           (switch_rules sw))
 
   (************************** Shortest Path Routing ***************************)
-
-  let is_host v = 
-    match Node.device (Topology.vertex_to_label !topology v) with 
-    | Node.Host -> true 
-    | _ -> false  
-  
-  let hosts = 
-    Topology.VertexSet.filter (Topology.vertexes !topology) ~f:is_host
-
-  let all_hops = 
-    let t = Topology.VertexHash.create () in 
-    Topology.VertexSet.iter 
-      hosts
-      ~f:(fun h -> 
-        Topology.VertexHash.add_exn t h 
-        (Net.UnitPath.all_shortest_paths !topology h));
-    t
        
-  let prev_hop src curr = 
+  let prev_hop all_hops (src: Topology.vertex) (curr: Topology.vertex) = 
     try
       let paths = Topology.VertexHash.find_exn all_hops src in
       let prev = Topology.VertexHash.find_exn paths curr in
@@ -163,34 +166,41 @@ module GatesApp : OxStart.OXMODULE = struct
     with _ -> 
       None
 
-  let rule mac port = 
+  let rule (mac: dlAddr) (port: Topology.port) : pattern * (action list) = 
     let pat = { match_all with dlDst = Some mac } in 
     let acts = [Output (PhysicalPort(Int32.to_int port))] in 
     (pat,acts)    
 
-  let path_rules src dst = 
+  let compute_rules_type_1 (sw_vertex: Topology.vertex) 
+      (rule: dlAddr * (switchId * int * pattern * (action list)))
+      : (dlAddr * (switchId * int * pattern * (action list))) list = 
+    let (mac, (sw, priority, pat, acts)) = rule in 
+    let inps = Hashtbl.find switch_inps_hash sw_vertex in 
+    Topology.PortSet.fold
+      inps
+      ~init: []
+      ~f: (fun rules in_port ->
+          let updated_pat = {pat with inPort = Some (Int32.to_int in_port)} in 
+          (mac, (sw, priority, updated_pat, acts))::rules)
+
+  let path_rules all_hops (src: Topology.vertex) (dst: Topology.vertex) 
+      : (dlAddr * (switchId * int * pattern * (action list))) list = 
     let mac = Node.mac (Topology.vertex_to_label !topology dst) in 
     let rec loop src curr rules = 
       if src = curr then rules 
-      else 
-	match prev_hop src curr with
-	| Some (prev,port) -> 
-	   let sw = Node.id (Topology.vertex_to_label !topology prev) in 
-	   loop src prev ((sw, rule mac port)::rules)
-	| None -> rules in 
-    loop src dst []
+      else begin
+        match prev_hop all_hops src curr with
+        | Some (prev,port) -> 
+          let sw = Node.id (Topology.vertex_to_label !topology prev) in 
+          let (pat, acts) = rule mac port in 
+          let rule_1_list = compute_rules_type_1 prev (mac, (sw, 200, pat, acts)) in 
+          let rule_2 = (mac, (sw, 100, pat, (Output (Controller 1024))::acts)) in 
+          loop src prev (rule_1_list@(rule_2::rules))
+        | None -> rules  
+      end 
+    in loop src dst []     
 
-  let all_rules = 
-    Topology.VertexSet.fold 
-      hosts 
-      ~init:[]
-      ~f:(fun rules src ->
-	  Topology.VertexSet.fold 
-	    hosts 
-	    ~init:rules
-	    ~f:(fun rules dst ->
-		if src = dst then rules
-		else (path_rules src dst)@rules))
+
 
   (************************** Routing Between Hosts **************************)
 
@@ -228,16 +238,16 @@ module GatesApp : OxStart.OXMODULE = struct
     List.iter install_rule rules_list
 
   (* returns (t, v), where t is a new topology with the host with the given 
-    [mac] address is added to switch [sw] on port [p], and v is the vertex 
+    [mac] and [ip] address is added to switch [sw] on port [p], and v is the vertex 
     representing this new host in the new topology. 
     the new returned topology should have a new edge added from the host 
     to its switch AND vice versa. *)
-  let add_host_to_topology (old_topology : Topology.t) (mac: int64) 
+  let add_host_to_topology (old_topology : Topology.t) (mac: int64) (ip: int32)
       (sw : switchId) (p: portId) : (Topology.t * Topology.vertex) = 
-    let host_node = Node.create "" mac Node.Host 0l mac in 
+    let host_node = Node.create "" mac Node.Host ip mac in 
     let host_edge = Link.create 1L Int64.max_int in 
     let (t, v) = Topology.add_vertex old_topology host_node in
-    failwith "TODO: finish <add_host_to_topology"    
+    failwith "TODO: finish <add_host_to_topology>"    
     (* TODO *)
 
   (* returns a new topology with the host given by its vertex representation
@@ -247,20 +257,43 @@ module GatesApp : OxStart.OXMODULE = struct
     failwith "TODO: finish <remove_host_from_topology"    
     (* TODO *)
 
-  (** This gets called when a packet from a host is sent to the controller. 
-      This should do the following 
+  (* computes shortest path routing rules from the old_hosts to new_host and 
+    vice versa. The elements of the returned list are of the form (mac, rule)
+    where mac is the host's mac address for which the associated rule 
+    is routing TO *)
+  let get_new_routing_rules (old_hosts: Topology.VertexSet.t) 
+      (new_host: Topology.vertex)
+      : (dlAddr * (switchId * int * pattern * (action list))) list =
+    let all_hops =     
+      let t = Topology.VertexHash.create () in 
+      Topology.VertexSet.iter 
+        (Topology.VertexSet.add old_hosts new_host)
+        ~f:(fun h -> 
+          Topology.VertexHash.add_exn t h 
+          (Net.UnitPath.all_shortest_paths !topology h));
+      t
+    in 
+    Topology.VertexSet.fold 
+      old_hosts 
+      ~init:[]
+      ~f:(fun rules host -> 
+        (path_rules all_hops host new_host)@(path_rules all_hops new_host host)@rules)
+
+  (** MAIN FUNCTION: This gets called when a packet from a host is sent to 
+      the controller. This should do the following: 
       1) extract the mac address and location of the src host of this packet
       2) check if this host is in known_hosts
         a) if no, then do the following in THIS order: 
           - add the host to the topology in the correct location 
             (use add_host_to_topology function);
           - compute the routing rules from the old hosts to this new host and 
-            vice versa;
+            vice versa (use get_new_routing_rules function);
           - installed these new rules in the appropriate switches 
             (use install_rules_on_switches function); 
           - add the new host and its location and vertex to known_hosts;
-          - sort the new rules computed earlier by the routing destination and 
-            add the new rules to hosts_installed_rules; return.
+          - sort the new rules computed earlier by the mac address of the host
+            each rule is routing TO; 
+          - add the sorted rules to hosts_installed_rules; return.
         b) if yes and host's location didn't change, then just return.
         c) if yes and host's location changed, then do the following in 
           THIS order: 
@@ -272,7 +305,8 @@ module GatesApp : OxStart.OXMODULE = struct
   *)
   let process_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     let pk = parse_payload pktIn.input_payload in
-    let (host_mac, host_sw, host_port) = (pk.Packet.dlSrc, sw, pktIn.port) in
+    let (host_mac, host_ip, host_sw, host_port) = 
+      (pk.Packet.dlSrc, (try nwSrc pk with _ -> 0l), sw, pktIn.port) in
     (* TODO: step 1 is done above, complete step 2 *)
     () 
 
@@ -280,7 +314,7 @@ module GatesApp : OxStart.OXMODULE = struct
     
   let switch_connected (sw: switchId) (feats : SwitchFeatures.t) : unit =
     try 
-      let rules = Hashtbl.find routing_rules sw in
+      let rules = Hashtbl.find spanning_tree_rules sw in
       List.iter
         (fun (priority, pat, acts) -> 
           send_flow_mod sw 0l (add_flow priority pat acts))
