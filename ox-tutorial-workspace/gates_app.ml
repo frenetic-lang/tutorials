@@ -248,7 +248,7 @@ module GatesApp : OxStart.OXMODULE = struct
     let (t, v) = Topology.add_vertex old_topology host_node in
     let dummy_sw_label = Node.create "dummy" sw Node.Switch ip mac in
     let sw = Topology.vertex_of_label old_topology dummy_sw_label in
-    let t_with_port = Topology.add_port (Topology.add_port sw portId) v portId in
+    let t_with_port = Topology.add_port (Topology.add_port sw p) v p in
     let (t_with_edge,_) = Topology.add_edge t_with_port sw portId host_edge v portId in
     let (final_t,_) = Topology.add_edge t_with_edge v portId host_edge sw portId in
     (final_t,v)
