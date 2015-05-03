@@ -251,7 +251,7 @@ module GatesApp : OxStart.OXMODULE = struct
     (*unclear what to do with to pass in as port right now passing in max_int*)
     let t_with_port = Topology.add_port (Topology.add_port t sw Int32.max_int) v Int32.max_int in
     let (t_with_edge,_) = Topology.add_edge t_with_port sw Int32.max_int host_edge v Int32.max_int in
-    let (final_t,_) = Topology.add_edge t_with_edge v Int32.max_int host_edge sw portId in
+    let (final_t,_) = Topology.add_edge t_with_edge v Int32.max_int host_edge sw Int32.max_int in
     (final_t,v)
       
   (* returns a new topology with the host given by its vertex representation
