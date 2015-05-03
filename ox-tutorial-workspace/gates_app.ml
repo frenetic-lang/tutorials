@@ -260,10 +260,10 @@ module GatesApp : OxStart.OXMODULE = struct
       (host_vertex: Topology.vertex) : Topology.t = 
     let neighbor_set = Topology.neighbors old_topology host_vertex in
     let edge_removed_topology = Topology.VertexSet.fold neighbor_set ~init: old_topology
-			 ~f:(fun e a ->
+			 ~f:(fun a e ->
 			  let edges = Topology.find_all_edges old_topology e host_vertex in
 			  Topology.EdgeSet.fold edges ~init: a 
-						~f:(fun e a -> remove_edge a e))
+						~f:(fun a e -> Topology.remove_edge a e))
     in
     Topology.remove_vertex edge_removed_topology host_vertex
 
@@ -318,24 +318,24 @@ module GatesApp : OxStart.OXMODULE = struct
     let (host_mac, host_ip, host_sw, host_port) = 
       (pk.Packet.dlSrc, (try nwSrc pk with _ -> 0l), sw, pktIn.port) in
     let add_new_host () = 
-      let (new_t, v) = add_host_to_topology topology host_mac host_ip host_sw host_port in  
+      let (new_t, v) = add_host_to_topology !topology host_mac host_ip host_sw host_port in  
       let is_host v = 
-	match Node.device (Topology.vertex_to_label topology v) with 
+	match Node.device (Topology.vertex_to_label !topology v) with 
 	| Node.Host -> true 
 	| _ -> false  
       in
-      let old_hosts = Topology.VertexSet.filter (Topology.vertexes topology) ~f:is_host in
+      let old_hosts = Topology.VertexSet.filter (Topology.vertexes !topology) ~f:is_host in
       let new_rules = get_new_routing_rules old_hosts v in
       let rules_to_install = List.map snd new_rules in
       install_rules_on_switches rules_to_install;
       Hashtbl.add known_hosts host_mac (host_sw, host_port, v);
       (*why is this sorting necessary?*)
       let sorted_new_rules = List.sort(fun (ad1,_) (ad2,_) -> Pervasives.compare ad1 ad2) new_rules in
-      List.fold_left(fun _ (ad,rule) -> 
+      List.iter(fun (ad,rule) -> 
 		     try 
 		       let prev_rule = Hashtbl.find hosts_installed_rules ad in
-		       Hashtbl.replace hosts_instealled_rules ad (prev_rule@rule)
-		     with Not_found -> Hashtbl.add) () sorted_new_rules
+		       Hashtbl.replace hosts_installed_rules ad (rule::prev_rule)
+		     with Not_found -> Hashtbl.add hosts_installed_rules ad [rule]) sorted_new_rules
     in
     if (Hashtbl.mem known_hosts host_mac) then
       let (sw_id, pt_id, v) = Hashtbl.find known_hosts host_mac in
@@ -343,7 +343,7 @@ module GatesApp : OxStart.OXMODULE = struct
       else 
 	let old_rules = Hashtbl.find hosts_installed_rules host_mac in
 	delete_rules_from_switches old_rules;
-	topology := (remove_host_from_topology topology v);
+	topology := (remove_host_from_topology !topology v);
 	add_new_host ()
     else
       add_new_host ()
