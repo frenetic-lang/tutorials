@@ -175,13 +175,15 @@ module GatesApp : OxStart.OXMODULE = struct
       (rule: dlAddr * (switchId * int * pattern * (action list)))
       : (dlAddr * (switchId * int * pattern * (action list))) list = 
     let (mac, (sw, priority, pat, acts)) = rule in 
-    let inps = Hashtbl.find switch_inps_hash sw_vertex in 
-    Topology.PortSet.fold
-      inps
-      ~init: []
-      ~f: (fun rules in_port ->
-          let updated_pat = {pat with inPort = Some (Int32.to_int in_port)} in 
-          (mac, (sw, priority, updated_pat, acts))::rules)
+    try
+      let inps = Hashtbl.find switch_inps_hash sw_vertex in 
+      Topology.PortSet.fold
+        inps
+        ~init: []
+        ~f: (fun rules in_port ->
+            let updated_pat = {pat with inPort = Some (Int32.to_int in_port)} in 
+            (mac, (sw, priority, updated_pat, acts))::rules)
+    with _ -> []
 
   let path_rules all_hops (src: Topology.vertex) (dst: Topology.vertex) 
       : (dlAddr * (switchId * int * pattern * (action list))) list = 
@@ -306,6 +308,7 @@ module GatesApp : OxStart.OXMODULE = struct
         a) if no, then do the following in THIS order: 
           - add the host to the topology in the correct location 
             (use add_host_to_topology function);
+          - update topology ref;
           - compute the routing rules from the old hosts to this new host and 
             vice versa (use get_new_routing_rules function);
           - installed these new rules in the appropriate switches 
@@ -330,19 +333,19 @@ module GatesApp : OxStart.OXMODULE = struct
       (pk.Packet.dlSrc, (try nwSrc pk with _ -> 0l), sw, pktIn.port) in
     let add_new_host () = 
       let (new_t, v) = add_host_to_topology !topology host_mac host_ip host_sw host_port in  
+      let () = topology := new_t in
       let new_rules = get_new_routing_rules !known_host_verticies v in
       let rules_to_install = List.map snd new_rules in
       install_rules_on_switches rules_to_install;
       Hashtbl.add known_hosts host_mac (host_sw, host_port, v);
       let () = 
         List.iter(fun (ad,rule) -> 
-		     try 
-		       let prev_rule = Hashtbl.find hosts_installed_rules ad in
-		       Hashtbl.replace hosts_installed_rules ad (rule::prev_rule)
-		     with Not_found -> Hashtbl.add hosts_installed_rules ad [rule]) new_rules
+         try 
+           let prev_rule = Hashtbl.find hosts_installed_rules ad in
+           Hashtbl.replace hosts_installed_rules ad (rule::prev_rule)
+         with _ -> Hashtbl.add hosts_installed_rules ad [rule]) new_rules
       in
-      known_host_verticies := Topology.VertexSet.add !known_host_verticies v;
-      topology := new_t
+      known_host_verticies := Topology.VertexSet.add !known_host_verticies v
     in
     let delete_host v = 
       let old_rules = Hashtbl.find hosts_installed_rules host_mac in
@@ -353,11 +356,9 @@ module GatesApp : OxStart.OXMODULE = struct
     in
     if (Hashtbl.mem known_hosts host_mac) then 
       let (sw_id, pt_id, v) = Hashtbl.find known_hosts host_mac in
-      if (sw_id = host_sw) && (pt_id = host_port) then () else
-        delete_host v;
-        add_new_host ()
-    else
-      add_new_host ()
+      if (sw_id = host_sw) && (pt_id = host_port) then ()
+      else (delete_host v; add_new_host ())
+    else add_new_host ()
       
 
   (****************************** ********* ******************************)
@@ -369,17 +370,16 @@ module GatesApp : OxStart.OXMODULE = struct
         (fun (priority, pat, acts) -> 
           send_flow_mod sw 0l (add_flow priority pat acts))
         rules;
-      (* Printf.printf "<switch_connected>: switch %d connected. %d\n" 
-        (Int64.to_int sw) (List.length rules); *)
       send_flow_mod sw 0l (add_flow 0 match_all [])
     with _ -> 
-      (* Printf.printf "<switch_connected>: switch %d connected...\n" 
-        (Int64.to_int sw); *)
       send_flow_mod sw 0l (add_flow 0 match_all [])
 
-  let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
-    Printf.printf "<packet_in>: %s\n%!" (packetIn_to_string pk);
-    process_packet_in sw xid pk;
+  let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
+    let pk = parse_payload pktIn.input_payload in
+    if dlTyp pk == 0x86DD then ()
+    else process_packet_in sw xid pktIn
+    
+
 
 end
 
