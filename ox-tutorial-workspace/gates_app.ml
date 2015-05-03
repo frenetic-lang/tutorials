@@ -246,11 +246,12 @@ module GatesApp : OxStart.OXMODULE = struct
     let host_node = Node.create "" mac Node.Host ip mac in 
     let host_edge = Link.create 1L Int64.max_int in 
     let (t, v) = Topology.add_vertex old_topology host_node in
-    let dummy_sw_label = Node.create "dummy" switchId Node.Switch ip mac in
+    let dummy_sw_label = Node.create "dummy" sw Node.Switch ip mac in
     let sw = Topology.vertex_of_label old_topology dummy_sw_label in
-    let t_with_port = Topology.add_port (Topology.add_port sw portId) v portId in
-    let (t_with_edge,_) = Topology.add_edge t_with_port sw portId host_edge v portId in
-    let (final_t,_) = Topology.add_edge t_with_edge v portId host_edge sw portId in
+    (*unclear what to do with to pass in as port right now passing in max_int*)
+    let t_with_port = Topology.add_port (Topology.add_port t sw Int32.max_int) v Int32.max_int in
+    let (t_with_edge,_) = Topology.add_edge t_with_port sw Int32.max_int host_edge v Int32.max_int in
+    let (final_t,_) = Topology.add_edge t_with_edge v Int32.max_int host_edge sw Int32.max_int in
     (final_t,v)
       
   (* returns a new topology with the host given by its vertex representation
@@ -258,11 +259,12 @@ module GatesApp : OxStart.OXMODULE = struct
   let remove_host_from_topology (old_topology : Topology.t) 
       (host_vertex: Topology.vertex) : Topology.t = 
     let neighbor_set = Topology.neighbors old_topology host_vertex in
-    let edge_removed_topology = Set.fold 
-			 (fun e a ->
+    let edge_removed_topology = Topology.VertexSet.fold neighbor_set ~init: old_topology
+			 ~f:(fun e a ->
 			  let edges = Topology.find_all_edges old_topology e host_vertex in
-			  Set.fold(fun e a -> remove_edge a e) edges a) 
-			 neighbor_set old_topology in
+			  Topology.EdgeSet.fold edges ~init: a 
+						~f:(fun e a -> remove_edge a e))
+    in
     Topology.remove_vertex edge_removed_topology host_vertex
 
   (* computes shortest path routing rules from the old_hosts to new_host and 
@@ -333,7 +335,7 @@ module GatesApp : OxStart.OXMODULE = struct
 		     try 
 		       let prev_rule = Hashtbl.find hosts_installed_rules ad in
 		       Hashtbl.replace hosts_instealled_rules ad (prev_rule@rule)
-		     with Not_found -> Hashtbl.add) () sorted_new_rules)
+		     with Not_found -> Hashtbl.add) () sorted_new_rules
     in
     if (Hashtbl.mem known_hosts host_mac) then
       let (sw_id, pt_id, v) = Hashtbl.find known_hosts host_mac in
