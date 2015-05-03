@@ -201,7 +201,6 @@ module GatesApp : OxStart.OXMODULE = struct
     in loop src dst []     
 
 
-
   (************************** Routing Between Hosts **************************)
 
   (* maps host's mac address to (sw, port, v), where sw and port are the switch
@@ -247,15 +246,24 @@ module GatesApp : OxStart.OXMODULE = struct
     let host_node = Node.create "" mac Node.Host ip mac in 
     let host_edge = Link.create 1L Int64.max_int in 
     let (t, v) = Topology.add_vertex old_topology host_node in
-    failwith "TODO: finish <add_host_to_topology>"    
-    (* TODO *)
-
+    let dummy_sw_label = Node.create "dummy" switchId Node.Switch ip mac in
+    let sw = Topology.vertex_of_label old_topology dummy_sw_label in
+    let t_with_port = Topology.add_port (Topology.add_port sw portId) v portId in
+    let (t_with_edge,_) = Topology.add_edge t_with_port sw portId host_edge v portId in
+    let (final_t,_) = Topology.add_edge t_with_edge v portId host_edge sw portId in
+    (final_t,v)
+      
   (* returns a new topology with the host given by its vertex representation
     is removed with all the edges relating to that vertex. *)
   let remove_host_from_topology (old_topology : Topology.t) 
       (host_vertex: Topology.vertex) : Topology.t = 
-    failwith "TODO: finish <remove_host_from_topology"    
-    (* TODO *)
+    let neighbor_set = Topology.neighbors old_topology host_vertex in
+    let edge_removed_topology = Set.fold 
+			 (fun e a ->
+			  let edges = Topology.find_all_edges old_topology e host_vertex in
+			  Set.fold(fun e a -> remove_edge a e) edges a) 
+			 neighbor_set old_topology in
+    Topology.remove_vertex edge_removed_topology host_vertex
 
   (* computes shortest path routing rules from the old_hosts to new_host and 
     vice versa. The elements of the returned list are of the form (mac, rule)
@@ -307,8 +315,37 @@ module GatesApp : OxStart.OXMODULE = struct
     let pk = parse_payload pktIn.input_payload in
     let (host_mac, host_ip, host_sw, host_port) = 
       (pk.Packet.dlSrc, (try nwSrc pk with _ -> 0l), sw, pktIn.port) in
-    (* TODO: step 1 is done above, complete step 2 *)
-    () 
+    let add_new_host () = 
+      let (new_t, v) = add_host_to_topology topology host_mac host_ip host_sw host_port in  
+      let is_host v = 
+	match Node.device (Topology.vertex_to_label topology v) with 
+	| Node.Host -> true 
+	| _ -> false  
+      in
+      let old_hosts = Topology.VertexSet.filter (Topology.vertexes topology) ~f:is_host in
+      let new_rules = get_new_routing_rules old_hosts v in
+      let rules_to_install = List.map snd new_rules in
+      install_rules_on_switches rules_to_install;
+      Hashtbl.add known_hosts host_mac (host_sw, host_port, v);
+      (*why is this sorting necessary?*)
+      let sorted_new_rules = List.sort(fun (ad1,_) (ad2,_) -> Pervasives.compare ad1 ad2) new_rules in
+      List.fold_left(fun _ (ad,rule) -> 
+		     try 
+		       let prev_rule = Hashtbl.find hosts_installed_rules ad in
+		       Hashtbl.replace hosts_instealled_rules ad (prev_rule@rule)
+		     with Not_found -> Hashtbl.add) () sorted_new_rules)
+    in
+    if (Hashtbl.mem known_hosts host_mac) then
+      let (sw_id, pt_id, v) = Hashtbl.find known_hosts host_mac in
+      if sw_id = host_sw then ()
+      else 
+	let old_rules = Hashtbl.find hosts_installed_rules host_mac in
+	delete_rules_from_switches old_rules;
+	topology := (remove_host_from_topology topology v);
+	add_new_host ()
+    else
+      add_new_host ()
+      
 
   (****************************** ********* ******************************)
     
