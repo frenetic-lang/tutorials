@@ -333,7 +333,7 @@ module GatesApp : OxStart.OXMODULE = struct
 		     try 
 		       let prev_rule = Hashtbl.find hosts_installed_rules ad in
 		       Hashtbl.replace hosts_instealled_rules ad (prev_rule@rule)
-		     with Not_found -> Hashtbl.add) () sorted_new_rules)
+		     with Not_found -> Hashtbl.add) () sorted_new_rules
     in
     if (Hashtbl.mem known_hosts host_mac) then
       let (sw_id, pt_id, v) = Hashtbl.find known_hosts host_mac in
