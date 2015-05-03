@@ -259,10 +259,10 @@ module GatesApp : OxStart.OXMODULE = struct
   let remove_host_from_topology (old_topology : Topology.t) 
       (host_vertex: Topology.vertex) : Topology.t = 
     let neighbor_set = Topology.neighbors old_topology host_vertex in
-    let edge_removed_topology = Set.fold 
+    let edge_removed_topology = Topology.VertexSet.fold 
 			 (fun e a ->
 			  let edges = Topology.find_all_edges old_topology e host_vertex in
-			  Set.fold(fun e a -> remove_edge a e) edges a) 
+			  Topology.EdgeSet.fold(fun e a -> remove_edge a e) edges a) 
 			 neighbor_set old_topology in
     Topology.remove_vertex edge_removed_topology host_vertex
 
