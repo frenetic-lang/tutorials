@@ -321,6 +321,7 @@ module GatesApp : OxStart.OXMODULE = struct
           - remove these rules from the switches affected
             (use delete_rules_from_switches function); 
           - remove host from topology (use remove_host_from_topology function);
+          - remove host from know_hosts;
           - do the same steps taken in part (2.a); return.
   *)
   let process_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
@@ -333,24 +334,28 @@ module GatesApp : OxStart.OXMODULE = struct
       let rules_to_install = List.map snd new_rules in
       install_rules_on_switches rules_to_install;
       Hashtbl.add known_hosts host_mac (host_sw, host_port, v);
-      (List.iter(fun (ad,rule) -> 
+      let () = 
+        List.iter(fun (ad,rule) -> 
 		     try 
 		       let prev_rule = Hashtbl.find hosts_installed_rules ad in
 		       Hashtbl.replace hosts_installed_rules ad (rule::prev_rule)
-		     with Not_found -> Hashtbl.add hosts_installed_rules ad [rule]) new_rules);
+		     with Not_found -> Hashtbl.add hosts_installed_rules ad [rule]) new_rules
+      in
       known_host_verticies := Topology.VertexSet.add !known_host_verticies v;
       topology := new_t
     in
-    if (Hashtbl.mem known_hosts host_mac) then
+    let delete_host v = 
+      let old_rules = Hashtbl.find hosts_installed_rules host_mac in
+      delete_rules_from_switches old_rules;
+      topology := (remove_host_from_topology !topology v);
+      Hashtbl.remove known_hosts host_mac;
+      known_host_verticies := Topology.VertexSet.remove !known_host_verticies v
+    in
+    if (Hashtbl.mem known_hosts host_mac) then 
       let (sw_id, pt_id, v) = Hashtbl.find known_hosts host_mac in
-      if (sw_id = host_sw) && (pt_id = host_port) then ()
-      else 
-	let old_rules = Hashtbl.find hosts_installed_rules host_mac in
-	delete_rules_from_switches old_rules;
-	topology := (remove_host_from_topology !topology v);
-	Hashtbl.remove known_hosts host_mac;
-        known_host_verticies := Topology.VertexSet.remove !known_host_verticies v;
-	add_new_host ()
+      if (sw_id = host_sw) && (pt_id = host_port) then () else
+        delete_host v;
+        add_new_host ()
     else
       add_new_host ()
       
