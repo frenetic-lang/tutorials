@@ -29,13 +29,13 @@ module GatesApp : OxStart.OXMODULE = struct
     At the start of the controller, these low priority rules are installed on 
     each switch:
     ----------------------------------------------------------------------------
-    | src port type | output ports                                  | priority |
+    | in_port type  | output ports                                  | priority |
     ----------------------------------------------------------------------------
-    | STP           | all ports (excluding src port)                | 30       |
+    | STP           | all ports (excluding in_port)                 | 30       |
     ----------------------------------------------------------------------------
     | N-STP         | DROP                                          | 20       |
     ----------------------------------------------------------------------------
-    | ONP           | all ports (excluding src port) + controller   | 10       |
+    | ONP           | all ports (excluding in_port) + controller    | 10       |
     ----------------------------------------------------------------------------
  *)
 
@@ -157,7 +157,22 @@ module GatesApp : OxStart.OXMODULE = struct
           (switch_rules sw))
 
   (************************** Shortest Path Routing ***************************)
-       
+  (* 
+    To route packets to a know host, this shortest path routing algorithm 
+    produces two types of rules to be installed on appropriate switch. 
+
+    For simplicity, let's suppose that we want to rout to the know host h1, and 
+    the shortest path for packets destined to h1 on switch sw4 is to go out 
+    port 17. Then, these two types of rules are installed in the flow table 
+    of sw4:  
+    ----------------------------------------------------------------------------
+    | pattern                               | output ports          | priority |
+    ----------------------------------------------------------------------------
+    | in_port type = INP & packet dst = h1  | port 17               | 200      |
+    ----------------------------------------------------------------------------
+    | in_port type = ONP & packet dst = h1  | port 17 + controller  | 100      |
+    ----------------------------------------------------------------------------
+ *)   
   let prev_hop all_hops (src: Topology.vertex) (curr: Topology.vertex) = 
     try
       let paths = Topology.VertexHash.find_exn all_hops src in
@@ -376,11 +391,9 @@ module GatesApp : OxStart.OXMODULE = struct
 
   let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     let pk = parse_payload pktIn.input_payload in
-    if dlTyp pk == 0x86DD then ()
+    if dlTyp pk == 0x86DD then () 
     else process_packet_in sw xid pktIn
     
-
-
 end
 
 module Controller = OxStart.Make (GatesApp)
