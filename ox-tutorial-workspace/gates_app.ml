@@ -61,6 +61,7 @@ module GatesApp : OxStart.OXMODULE = struct
     | Node.Switch -> true 
     | _ -> false  
   
+
   let all_switches : (Topology.VertexSet.t) = 
     Topology.VertexSet.filter (Topology.vertexes !topology) ~f:is_switch
 
@@ -200,20 +201,35 @@ module GatesApp : OxStart.OXMODULE = struct
             (mac, (sw, priority, updated_pat, acts))::rules)
     with _ -> []
 
-  let path_rules all_hops (src: Topology.vertex) (dst: Topology.vertex) 
+  let path_rules all_hops (src: Topology.vertex) (dst: Topology.vertex) (src_port: portId) 
       : (dlAddr * (switchId * int * pattern * (action list))) list = 
-    let mac = Node.mac (Topology.vertex_to_label !topology dst) in 
+    let src_mac = Node.mac (Topology.vertex_to_label !topology src) in 
+    let dst_mac = Node.mac (Topology.vertex_to_label !topology dst) in 
+    let src_dst_pat = {match_all with dlSrc = Some src_mac; dlDst = Some dst_mac; inPort = Some src_port} in
     let rec loop src curr rules = 
       if src = curr then rules 
       else begin
-        match prev_hop all_hops src curr with
-        | Some (prev,port) -> 
-          let sw = Node.id (Topology.vertex_to_label !topology prev) in 
-          let (pat, acts) = rule mac port in 
-          let rule_1_list = compute_rules_type_1 prev (mac, (sw, 200, pat, acts)) in 
-          let rule_2 = (mac, (sw, 100, pat, (Output (Controller 1024))::acts)) in 
-          loop src prev (rule_1_list@(rule_2::rules))
-        | None -> rules  
+        match prev_hop all_hops src curr with 
+        | Some (prev,port) -> begin
+          if src = prev then rules 
+          else begin
+            let sw = Node.id (Topology.vertex_to_label !topology prev) in 
+            let (pat, acts) = rule dst_mac port in 
+            let rule_1_list = compute_rules_type_1 prev (dst_mac, (sw, 200, pat, acts)) in 
+            let rule_2 = (dst_mac, (sw, 100, pat, (Output (Controller 1024))::acts)) in
+            let new_rules = rule_2::rule_1_list in 
+            match prev_hop all_hops src prev with
+              | Some (prev2, _) -> begin
+                if src = prev2 then begin 
+                  let src_dst_rule = (src_mac, (sw, 300, src_dst_pat, acts)) in
+                  src_dst_rule::(new_rules@rules)
+                end
+                else loop src prev (new_rules@rules)
+              end
+              | None -> (new_rules@rules)
+          end
+        end
+        | None -> rules
       end 
     in loop src dst []     
 
@@ -299,7 +315,7 @@ module GatesApp : OxStart.OXMODULE = struct
     where mac is the host's mac address for which the associated rule 
     is routing TO *)
   let get_new_routing_rules (old_hosts: Topology.VertexSet.t) 
-      (new_host: Topology.vertex)
+      (new_host: Topology.vertex) (new_host_port: portId)
       : (dlAddr * (switchId * int * pattern * (action list))) list =
     let all_hops =     
       let t = Topology.VertexHash.create () in 
@@ -310,11 +326,23 @@ module GatesApp : OxStart.OXMODULE = struct
           (Net.UnitPath.all_shortest_paths !topology h));
       t
     in 
+    let vertex_to_port = 
+      let t = Topology.VertexHash.create () in 
+      Hashtbl.iter
+        (fun key value ->
+          let (_, p, v) = value in  
+          Topology.VertexHash.add_exn t v p)
+        known_hosts; 
+      t
+    in
     Topology.VertexSet.fold 
       old_hosts 
       ~init:[]
-      ~f:(fun rules host -> 
-        (path_rules all_hops host new_host)@(path_rules all_hops new_host host)@rules)
+      ~f:(fun rules host ->
+        let old_host_port = Topology.VertexHash.find_exn vertex_to_port host in 
+        (path_rules all_hops host new_host old_host_port)@
+        (path_rules all_hops new_host host new_host_port)@
+        rules)
 
   (** MAIN FUNCTION: This gets called when a packet from a host is sent to 
       the controller. This should do the following: 
@@ -349,7 +377,7 @@ module GatesApp : OxStart.OXMODULE = struct
     let add_new_host () = 
       let (new_t, v) = add_host_to_topology !topology host_mac host_ip host_sw host_port in  
       let () = topology := new_t in
-      let new_rules = get_new_routing_rules !known_host_verticies v in
+      let new_rules = get_new_routing_rules !known_host_verticies v host_port in
       let rules_to_install = List.map snd new_rules in
       install_rules_on_switches rules_to_install;
       Hashtbl.add known_hosts host_mac (host_sw, host_port, v);
@@ -390,6 +418,7 @@ module GatesApp : OxStart.OXMODULE = struct
       send_flow_mod sw 0l (add_flow 0 match_all [])
 
   let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
+    (* print_endline "packet"; *)
     let pk = parse_payload pktIn.input_payload in
     if dlTyp pk == 0x86DD then () 
     else process_packet_in sw xid pktIn
