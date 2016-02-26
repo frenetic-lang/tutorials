@@ -15,3 +15,12 @@
 * For the [NCFirewall Chapter](https://github.com/frenetic-lang/frenetic/wiki/07-NCFirewall), when running fortune on `h1`, `h3` and `h4` timeout when running curl. Is this expected behavior? When running fortune on `h3`, `h4` times out when running curl instead of connecting.
 
 * In the [NetCore Composition Chapter](https://github.com/frenetic-lang/frenetic/wiki/07-NetCoreComposition), specify where Port_Map.nc and other example code can be found (`~/src/frenetic/examples/`)
+
+* API Pages referenced throughout do not currently work.  
+
+* The three line starter for Ox applications may not be necessary.  It may be as simple as doing 
+module Controller = OxStart.Make (MyApplication)
+
+* Need to find some place for the netkat tutorial workspace and solutions.  
+
+* NetKAT Manual, though in the index, should be indexed, formatted and checked for accuracy

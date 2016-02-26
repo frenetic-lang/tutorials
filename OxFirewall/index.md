@@ -39,12 +39,15 @@ number for ICMP is 1 (`Packet.nwProto pk = 1`).
 Fill in the `is_icmp_packet` function in the following template:
 
 ~~~ ocaml
-open OpenFlow0x01_Core
-open OxPlatform
+open Frenetic_Ox
+open Frenetic_OpenFlow0x01
+open Core.Std
+open Async.Std
 
 module MyApplication = struct
 
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let is_icmp_packet (pk : Packet.packet) = ... (* [FILL] *)
 
@@ -59,7 +62,9 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make (MyApplication) in
+  C.start ();
 ~~~
 
 ### Building and Testing Your Firewall

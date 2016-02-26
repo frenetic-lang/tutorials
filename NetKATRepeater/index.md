@@ -9,7 +9,7 @@ platform. Most of the controllers we built followed a two-step recipe:
 * Write a `packet_in` handler that implements the desired
   packet-processing functionality.
 
-* Use `flow__mod` messages to configure the switch flow tables to
+* Use `flow_mod` messages to configure the switch flow tables to
   implement the same functionality efficiently.
 
 In the next few chapters, we will explore a completely different
@@ -18,12 +18,11 @@ programming language, and let a compiler and run-time system handle
 the details related to configuring switch flow tables (as well as
 sending requests for statistics, accumulating replies, etc.)
 
-The templates for this part of the tutorial are in the
-`netkat-tutorial-workspace` directory, and the solutions are in
-`netkat-tutorial-solutions`.
+The templates for this part are in
+`src/netkat-tutorial-solutions`.
 
 ~~~
-$ cd tutorials/netkat-tutorial-solutions
+$ cd src/netkat-tutorial-solutions
 ~~~
 
 ### Example 1: A Repeater (Redux)
@@ -39,7 +38,9 @@ of a single switch with four ports, numbered 1 through 4:
 The following program implements a repeater in NetKAT:
 
 ~~~ ocaml
-open NetKAT.Std
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
 
 (* a simple repeater *)
 let repeater : policy =
@@ -51,7 +52,12 @@ let repeater : policy =
     else drop
   >>
 
-let _ = run_static repeater
+let _ =
+  let module Controller = Frenetic_NetKAT_Controller.Make in
+  Controller.start 6633;
+  Controller.update_policy repeater;
+  never_returns (Scheduler.go ());
+
 ~~~
 
 This main part of this code uses a Camlp4 quotation,
@@ -67,13 +73,16 @@ the switch with a static NetKAT policy.
 
 To run the repeater, type the code above into a file
 <code>Repeater.ml</code> within the
-<code>netkat-tutorial-workspace</code> directory. Then compile and
+<code>netkat-tutorial-solutionbs</code> directory. Then compile and
 start the repeater controller using the following commands.
+
 ~~~
-$ netkatbuild Repeater.native
-$ ./Repeater.native
+$ netkat-build Repeater
+$ ./Repeater.d.byte
 ~~~
+
 Next, in a separate terminal, start up mininet.
+
 ~~~
 $ sudo mn --controller=remote --topology=single,4 --mac --arp
 ~~~
@@ -111,7 +120,9 @@ wanted to implement repeaters on switches with different numbers of
 ports.
 
 ~~~ ocaml
-open NetKAT.Std
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
 
 (* a simple repeater *)
 let all_ports : int list = [1; 2; 3; 4]
@@ -125,5 +136,5 @@ let repeater : policy =
   List.fold_right
     (fun m pol -> <:netkat<let p = flood m in if port = $m then $p else $pol>>)
     all_ports <:netkat<drop>>
->>
+
 ~~~

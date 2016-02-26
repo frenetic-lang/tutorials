@@ -78,7 +78,9 @@ last chapter to this new network. Unfortunately, you cannot simply reuse the fir
 Your firewall policy from the previous chapter probably has the following form: 
 
 ~~~
-open NetKAT.Std
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
 open Forwarding
 
 let firewall =

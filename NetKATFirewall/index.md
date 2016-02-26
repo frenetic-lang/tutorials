@@ -14,15 +14,22 @@ to configure the switch.
 We can implement the same policy in NetKAT as follows:
 
 ~~~ ocaml
-open NetKAT.Std
-open RepeaterPolicy
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
+open Repeater
 
 let firewall : policy =
   <:netkat<
     if ipProto = 0x01 && ethType = 0x800 then drop else $pol
   >>
 
-let _ = run_static firewall
+let _ =
+  let module Controller = Frenetic_NetKAT_Controller.Make in
+  Controller.start 6633;
+  Controller.update_policy repeater;
+  never_returns (Scheduler.go ());
+
 ~~~
 
 There are two things to note about this program. First, rather than
@@ -44,8 +51,8 @@ To test your code, compile the firewall and start the controller in
 one terminal,
 
 ~~~
-$ netkat-build Firewall.native
-$ ./Firewall.native
+$ netkat-build Firewall
+$ ./Firewall.d.byte
 ~~~
 
 and Mininet in another:
@@ -86,7 +93,9 @@ The hosts have IP addresses 10.0.0.1 through 10.0.0.4 and are
 connected to ports 1 through 4 respetively.
 
 ~~~
-open NetKAT.Std
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
 
 let forwarding : policy =
   <:netkat<
@@ -103,7 +112,9 @@ Type this policy into a file `Forwarding.ml` in the
 We want our firewall policy to wrap this forwarding policy:
 
 ~~~
-open NetKAT.Std
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
 open Forwarding
 
 let firewall : policy =
@@ -111,7 +122,12 @@ let firewall : policy =
     if (* FILL condition for ICMP packets *) then drop else (filter ethType = 0x800; $forwarding)
   >>
 
-let _ = run_static firewall
+let _ =
+  let module Controller = Frenetic_NetKAT_Controller.Make in
+  Controller.start 6633;
+  Controller.update_policy repeater;
+  never_returns (Scheduler.go ());
+
 ~~~
 
 Save this policy into a file `Firewall2.ml` in the
@@ -122,8 +138,8 @@ Save this policy into a file `Firewall2.ml` in the
 - Build and launch the controller:
 
 ~~~ shell
-$ netkat-build Firewall2.native
-$ ./Firewall2.native
+$ netkat-build Firewall2
+$ ./Firewall2.d.byte
 ~~~
 
 - Start Mininet using the same parameters you've used before:
@@ -188,7 +204,9 @@ policy in NetKAT, you need to allow packets from the first host to
 port 80 on second *and* from port 80 on the second back to the first:
 
 ~~~ ocaml
-open NetKAT.Std
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
 open Forwarding
 
 let firewall : policy =

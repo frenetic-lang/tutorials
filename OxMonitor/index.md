@@ -36,18 +36,20 @@ let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
 
 Use the following code as a template for this exercise.  Save it in a file
 called `Monitor.ml` and place it in the directory
-`~/src/frenetic/ox-tutorial-workspace/Monitor.ml`.
+`~/src/frenetic-tutorial-workspace/Monitor.ml`.
 
 ~~~ ocaml
-(* ~/src/frenetic/ox-tutorial-workspace/Monitor.ml *)
+(* ~/src/frenetic-tutorial-workspace/Monitor.ml *)
 
-open OxPlatform
-open OpenFlow0x01_Core
-module Stats = OpenFlow0x01_Stats
+open Frenetic_Ox
+open Frenetic_OpenFlow0x01
+open Core.Std
+open Async.Std
 
 module MyApplication = struct
 
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   (* [FILL] copy over the packet_in function from Firewall.ml
      verbatim, including any helper functions. *)
@@ -71,7 +73,9 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make (MyApplication) in
+  C.start ();
 ~~~
 
 Your task:
@@ -225,7 +229,7 @@ let rec periodic_stats_request sw interval xid pat =
   let callback () =
     Printf.printf "Sending stats request to %Ld\n%!" sw;
     send_stats_request sw xid
-      (Stats.AggregateRequest (pat, 0xff, None));
+      (AggregateRequest (pat, 0xff, None));
     periodic_stats_request sw interval xid pat in
   timeout interval callback
 ~~~
@@ -259,12 +263,12 @@ let num_http_response_packets = ref 0L
 
 let stats_reply (sw : switchId) (xid : xid) (stats : Stats.reply) : unit =
   match stats with
-  | Stats.AggregateFlowRep rep ->
+  | AggregateFlowRep rep ->
     begin
       if xid = 10l then
-        num_http_request_packets := rep.Stats.total_packet_count
+        num_http_request_packets := rep.total_packet_count
       else if xid = 20l then
-        num_http_response_packets := rep.Stats.total_packet_count
+        num_http_response_packets := rep.total_packet_count
     end;
     Printf.printf "Saw %Ld HTTP packets.\n%!"
       (Int64.add !num_http_request_packets !num_http_response_packets)
@@ -282,7 +286,7 @@ Consider what happens if the controller receives HTTP packets before
 the switch is fully initialized and extend your monitoring program to
 handle this situation.
 
-[statistics]: https://github.com/frenetic-lang/ocaml-openflow/blob/master/lib/OpenFlow0x01_Stats.mli
+[statistics]: https://github.com/frenetic-lang/frenetic/blob/master/lib/OpenFlow0x01.mli
 
 [Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
 

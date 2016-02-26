@@ -40,18 +40,20 @@ learns host locations.
 
 You should use the template below to get started.  Save it in a file
 called `Learning.ml` and place it in the directory
-`~/src/frenetic/ox-tutorial-workspace/Learning.ml`.
+`~/src/frenetic-tutorial-workspace/Learning.ml`.
 
 ~~~ ocaml
-(* ~/src/frenetic/ox-tutorial-workspace/Learning.ml *)
+(* ~/src/frenetic-tutorial-workspace/Learning.ml *)
 
-open OxPlatform
-open OpenFlow0x01_Core
-open Packet
+open Frenetic_Ox
+open Frenetic_OpenFlow0x01
+open Frenetic_Packet
+open Core.Std
+open Async.Std
 
 module MyApplication = struct
-
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50
 
@@ -90,7 +92,9 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make (MyApplication) in
+  C.start ();
 ~~~
 
 Note that it contains a hash table to map hosts to ports:

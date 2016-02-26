@@ -24,33 +24,33 @@ forward to the next hop in the path.
 ### Topology
 
 We will represent network topologies using the data types defined in
-the [Network module] and [Network_Common module] from [ocaml-topology
-repository]. For simplicity, in this tutorial, we will test our code
+the [Frenetic_Topology.Net module]. 
+For simplicity, in this tutorial, we will test our code
 on the tree topologies. The following figure depicts a tree with 5
 hosts and 3 switches in a tree of depth 2:
 
 ![images](../images/Routing.jpg)
 
 However, the application itself should work with any
-`Network_Common.Topology.t`.
+`Frenetic_Topology.Net.Topology.t`.
 
 #### Programming Task
 
 Fill in the missing code in the template below. Save it in a file
 called `Routing.ml` and place it in the directory
-`~/src/frenetic/ox-tutorial-workspace/Routing.ml`.
+`~/src/frenetic-tutorial-workspace/Routing.ml`.
 
 ~~~ ocaml
  open OxPlatform
  open OpenFlow0x01
  open OpenFlow0x01_Core
- open Network_Common
+ open Frenetic_Topology
 
  module Topology = Net.Topology
  
  module MyApplication = struct
-
-   include OxStart.DefaultTutorialHandlers
+   include DefaultHandlers
+   open Platform
 
    let topology = Net.Parse.from_dotfile "topology.dot"
    
@@ -79,7 +79,9 @@ called `Routing.ml` and place it in the directory
 
  end
   
- module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make (MyApplication) in
+  C.start ();
 ~~~
 
 In more detail:
@@ -105,7 +107,7 @@ path back to a given source.
 
  * Build and launch the controller:
  
-       $ oxbuild Routing.native
+       $ ox-build Routing.native
        $ ./Routing.native
  
 

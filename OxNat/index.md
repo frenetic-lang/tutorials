@@ -43,18 +43,19 @@ $ sudo mn --controller=remote --topo=single,3 --mac --arp
 #### Programming Task
 
 Use the template below to get started. Save it in a file called
-`Nat1.ml` and place it in the directory `~/src/frenetic/ox-tutorial-workspace/Nat1.ml`.
+`Nat1.ml` and place it in the directory `~/src/frenetic-tutorial-workspace/Nat1.ml`.
 
 ~~~ ocaml
-(* ~/src/frenetic/ox-tutorial-workspace/Nat1.ml *)
+(* ~/src/frenetic-tutorial-workspace/Nat1.ml *)
 
-open OxPlatform
-open Packet
-open OpenFlow0x01_Core
+open Frenetic_Ox
+open Frenetic_OpenFlow0x01
+open Core.Std
+open Async.Std
 
 module MyApplication = struct
-
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let mappings = Hashtbl.create 50
 
@@ -88,7 +89,9 @@ module MyApplication = struct
           ...
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make (MyApplication) in
+  C.start ();
 
 ~~~
 

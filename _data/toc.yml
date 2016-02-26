@@ -15,7 +15,7 @@
 - name: Network Address Translation with Ox
   path: ../OxNat
   group: ox
-- name: Shortest Path Routing with Ox
+- name: Shortest Path Forwarding with Ox
   path: ../OxRouting
   group: ox
 - name: NetKAT Repeater

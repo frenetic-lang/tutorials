@@ -46,7 +46,7 @@ Software Environment
 This is a hands-on tutorial with several programming exercises.  We
 recommend using the virtual machine we've prepared that has all the
 necessary software that you need pre-installed. You can get the
-tutorial VM from the following link: [Frenetic Tutorial VM](http://storage.googleapis.com/arjun-umass-disks/Frenetic-Tutorial.ova).
+tutorial VM from the following link: [Frenetic Tutorial VM](https://cornell.box.com/frenetic-4-tutorial).
 
 References
 ----------
@@ -76,4 +76,3 @@ References
   [NetKAT](http://frenetic-lang.github.io/api/frenetic) libraries, as
   well as other supporting libraries used in this tutorial.
 
-[Real World OCaml]: https://realworldocaml.org

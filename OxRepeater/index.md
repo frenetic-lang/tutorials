@@ -100,18 +100,24 @@ Fill in the body of this function and save it in a file called
 `Repeater.ml`.
 
 ~~~ ocaml
-open OxPlatform
-open OpenFlow0x01_Core
+open Frenetic_Ox
+open Frenetic_OpenFlow0x01
+open Core.Std
+open Async.Std
 
 module MyApplication = struct
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let packet_in (sw : switchId) (xid : xid) (pk : packetIn) : unit =
      ...
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make (MyApplication) in
+  C.start ();
+
 ~~~
 
 You will need to use the `send_packet_out` command, which takes a list
@@ -162,7 +168,7 @@ hosts and have them ping each other:
 
   A brief explanation of the flags:
 
-  * `topo=single,4` creates a network with one switch and four hosts.
+  * `--topo=single,4` creates a network with one switch and four hosts.
 
   * `--mac` sets the hosts' mac addresses to 1, 2, 3, and 4 (instead
     of random numbers) which makes debugging much easier.
