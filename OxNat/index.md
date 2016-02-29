@@ -43,10 +43,10 @@ $ sudo mn --controller=remote --topo=single,3 --mac --arp
 #### Programming Task
 
 Use the template below to get started. Save it in a file called
-`Nat1.ml` and place it in the directory `~/src/frenetic-tutorial-workspace/Nat1.ml`.
+`Nat1.ml` and place it in the directory `~/src/ox-tutorial-solutions/Nat1.ml`.
 
 ~~~ ocaml
-(* ~/src/frenetic-tutorial-workspace/Nat1.ml *)
+(* ~/src/ox-tutorial-solutions/Nat1.ml *)
 
 open Frenetic_Ox
 open Frenetic_OpenFlow0x01

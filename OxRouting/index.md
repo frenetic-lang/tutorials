@@ -107,7 +107,7 @@ path back to a given source.
 
  * Build and launch the controller:
  
-       $ ox-build Routing.native
+       $ ./ox-build Routing.native
        $ ./Routing.native
  
 

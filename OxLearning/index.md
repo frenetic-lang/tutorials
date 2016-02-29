@@ -40,10 +40,10 @@ learns host locations.
 
 You should use the template below to get started.  Save it in a file
 called `Learning.ml` and place it in the directory
-`~/src/frenetic-tutorial-workspace/Learning.ml`.
+`~/src/ox-tutorial-solutions/Learning.ml`.
 
 ~~~ ocaml
-(* ~/src/frenetic-tutorial-workspace/Learning.ml *)
+(* ~/src/ox-tutorial-solutions/Learning.ml *)
 
 open Frenetic_Ox
 open Frenetic_OpenFlow0x01

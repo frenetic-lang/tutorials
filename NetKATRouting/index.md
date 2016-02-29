@@ -48,14 +48,14 @@ Using NetKAT, write a forwarding policy that connects all hosts to each other. Y
 >>
 ~~~
 
-Save this in a file called `Routing.ml` and save it in the `netkat-tutorial-workspace` folder.
+Save this in a file called `Routing.ml` and save it in the `netkat-tutorial-solutions` folder.
 
 #### Testing
 
 Compile and start the controller:
 
 ~~~
-$ netkat-build Routing.d.byte
+$ ./netkat-build Routing
 $ ./Routing.d.byte
 ~~~
 

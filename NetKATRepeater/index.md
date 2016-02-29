@@ -18,11 +18,10 @@ programming language, and let a compiler and run-time system handle
 the details related to configuring switch flow tables (as well as
 sending requests for statistics, accumulating replies, etc.)
 
-The templates for this part are in
-`src/netkat-tutorial-solutions`.
+You will place these files in `netkat-tutorial-solutions`.
 
 ~~~
-$ cd src/netkat-tutorial-solutions
+$ cd netkat-tutorial-solutions
 ~~~
 
 ### Example 1: A Repeater (Redux)
@@ -77,7 +76,7 @@ To run the repeater, type the code above into a file
 start the repeater controller using the following commands.
 
 ~~~
-$ netkat-build Repeater
+$ ./netkat-build Repeater
 $ ./Repeater.d.byte
 ~~~
 

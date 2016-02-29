@@ -43,7 +43,7 @@ chapter. The ability to combine policies in a compositional way is one
 of the key benefits of NetKAT's language-based approach.
 
 Type this policy into a file `Firewall.ml` in the
-`netkat-tutorial-workspace` directory.
+`netkat-tutorial-solutions` directory.
 
 #### Testing
 
@@ -51,7 +51,7 @@ To test your code, compile the firewall and start the controller in
 one terminal,
 
 ~~~
-$ netkat-build Firewall
+$ ./netkat-build Firewall
 $ ./Firewall.d.byte
 ~~~
 
@@ -107,7 +107,7 @@ let forwarding : policy =
 ~~~
 
 Type this policy into a file `Forwarding.ml` in the
-`netkat-tutorial-workspace` directory.
+`netkat-tutorial-solutions` directory.
 
 We want our firewall policy to wrap this forwarding policy:
 
@@ -131,14 +131,14 @@ let _ =
 ~~~
 
 Save this policy into a file `Firewall2.ml` in the
-`netkat-tutorial-workspace` directory.
+`netkat-tutorial-solutions` directory.
 
 ### Testing
 
 - Build and launch the controller:
 
 ~~~ shell
-$ netkat-build Firewall2
+$ ./netkat-build Firewall2
 $ ./Firewall2.d.byte
 ~~~
 
@@ -221,7 +221,7 @@ Then you should modify the firewall to only allow ICMP traffic between
 hosts `10.0.0.3` and `10.0.0.4`.
 
 Type this policy into a file `Firewall3.ml` in the
-`netkat-tutorial-workspace` directory and test it in Mininet. Note
+`netkat-tutorial-solutions` directory and test it in Mininet. Note
 that due to the access control policy, it probably makes sense to test
 a few points of the access control policy. For example, if you run
 _fortune_ on port 80 on `h1`,
@@ -242,6 +242,6 @@ flow using conditionals. However, using NetKAT's predicates (`p1 &&
 p2`, `p1 || p2`, and `!p`) is is often possible to write a more
 compact and legible policy. Revise your advanced firewall this policy,
 putting the result in a file `Firewall4.ml` in the
-`netkat-tutorial-workspace` directory and test it in Mininet.
+`netkat-tutorial-solutions` directory and test it in Mininet.
 
 {% include api.md %}

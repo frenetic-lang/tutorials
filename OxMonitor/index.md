@@ -36,10 +36,10 @@ let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
 
 Use the following code as a template for this exercise.  Save it in a file
 called `Monitor.ml` and place it in the directory
-`~/src/frenetic-tutorial-workspace/Monitor.ml`.
+`~/src/ox-tutorial-solutions/Monitor.ml`.
 
 ~~~ ocaml
-(* ~/src/frenetic-tutorial-workspace/Monitor.ml *)
+(* ~/src/ox-tutorial-solutions/Monitor.ml *)
 
 open Frenetic_Ox
 open Frenetic_OpenFlow0x01

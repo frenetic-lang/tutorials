@@ -97,7 +97,7 @@ message. Therefore, this repeater only needs to provide a `packet_in`
 handler. We have provided some starter code in a template below.
 
 Fill in the body of this function and save it in a file called
-`Repeater.ml`.
+`ox-tutorial-solutions/Repeater.ml`.
 
 ~~~ ocaml
 open Frenetic_Ox
@@ -141,10 +141,10 @@ the [OpenFlow_Core] module) and fill it in.
 
 <h4 id="compiling">Compiling your Controller</h4>
 
-To build your controller, run the following command:
+To build your controller, run the following command from the <code>ox-tutorial-solutions</code> directory:
 
 ~~~
-$ ox-build Repeater.d.byte
+$ ./ox-build Repeater.d.byte
 ~~~
 
 Assuming compilation succeeds, you will see output like to this:
