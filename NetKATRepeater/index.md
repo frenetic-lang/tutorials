@@ -26,7 +26,7 @@ $ cd netkat-tutorial-solutions
 
 ### Example 1: A Repeater (Redux)
 
-In the [OxRepeater](OxRepeater) chapter, we wrote an efficient
+In the [OxRepeater](../OxRepeater) chapter, we wrote an efficient
 repeater that installs forwarding rules in the switch flow table.
 Recall that a repeater simply outputs packets out all ports, except
 the one that the packet came in on. Suppose that the topology consists
@@ -72,7 +72,7 @@ the switch with a static NetKAT policy.
 
 To run the repeater, type the code above into a file
 <code>Repeater.ml</code> within the
-<code>netkat-tutorial-solutionbs</code> directory. Then compile and
+<code>netkat-tutorial-solutions</code> directory. Then compile and
 start the repeater controller using the following commands.
 
 ~~~
@@ -83,7 +83,7 @@ $ ./Repeater.d.byte
 Next, in a separate terminal, start up mininet.
 
 ~~~
-$ sudo mn --controller=remote --topology=single,4 --mac --arp
+$ sudo mn --controller=remote --topo=single,4 --mac --arp
 ~~~
 
 #### Test the Example

@@ -31,8 +31,8 @@ let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
 Applying `parse_payload` parses the packet into a series of nested
 frames. The easiest way to examine packet headers is to then use the
 [header accessor functions] in the packet library. The frame type for
-IP packets is 0x800 (`Packet.dlTyp pk = 0x800`) and the protocol
-number for ICMP is 1 (`Packet.nwProto pk = 1`).
+IP packets is 0x800 (`Frenetic_Packet.dlTyp pk = 0x800`) and the protocol
+number for ICMP is 1 (`Frenetic_Packet.nwProto pk = 1`).
 
 ### Firewall Template
 
@@ -41,15 +41,12 @@ Fill in the `is_icmp_packet` function in the following template:
 ~~~ ocaml
 open Frenetic_Ox
 open Frenetic_OpenFlow0x01
-open Core.Std
-open Async.Std
 
 module MyApplication = struct
-
   include DefaultHandlers
   open Platform
 
-  let is_icmp_packet (pk : Packet.packet) = ... (* [FILL] *)
+  let is_icmp_packet (pk : Frenetic_Packet.packet) = ... (* [FILL] *)
 
   let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     let pk = parse_payload pktIn.input_payload in
@@ -71,8 +68,8 @@ let _ =
 
 - Build and launch the controller:
 
-      $ ox-build Firewall.d.byte
-      $ ./Firewall.d.byte
+      $ ./ox-build Firewall1.d.byte
+      $ ./Firewall1.d.byte
 
 - In a separate terminal window, start Mininet using the same
   parameters you've used before:
@@ -97,44 +94,31 @@ packetIn{
   total_len=98 port=1 reason=NoMatch
   payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,<b>ICMP echo request</b> (buffered at 277)
 }
-packetIn{
-  total_len=98 port=1 reason=NoMatch
-  payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,<b>ICMP echo request</b> (buffered at 278)
-}
-packetIn{
-  total_len=98 port=1 reason=NoMatch
-  payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:02,nwSrc=10.0.0.1,nwDst=10.0.0.2,<b>ICMP echo request</b> (buffered at 279)
-}
-...
 ~~~
 
-  This indicates that the controller sees the ping request and drops it,
+- This indicates that the controller sees the ping request and drops it,
   thus no host ever sends a reply.
 
 - Although ICMP is blocked, other traffic, such as Web traffic should
   be unaffected. To ensure that this is the case, try to run a Web server
-  on one host and a client on another.
-
-  * In Mininet, start new terminals for `h1` and `h2`:
+  on one host and a client on another.  In Mininet, run a simple web server on h1:
 
 ~~~
-mininet> xterm h1 h2
+mininet> h1 python -m SimpleHTTPServer 80 &
 ~~~
 
-  * In the terminal for `h1` start a local "fortune server" (a server
-    that returns insightful fortunes to those who query it):
+  * And run a HTTP request to h1 from h2
 
 ~~~
-# while true; do fortune | nc -l 80; done
+mininet> h2 curl h1:80
 ~~~
 
-  * In the terminal for `h2` fetch a fortune from `h1`:
+  * This command should succeed and you should see a directory listing for the tutorial directory. 
+    Finally, run this command to shut down the web server on h1
 
 ~~~
-# curl 10.0.0.1:80
+mininet> h1 kill %python
 ~~~
-
-    This command should succeed.
 
 ## Exercise 2: An Efficient Firewall
 

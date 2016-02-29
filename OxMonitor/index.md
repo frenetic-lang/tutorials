@@ -7,14 +7,14 @@ In this exercise, we will write a controller that measures the volume
 of Web traffic on a network. To implement monitoring efficiently, we
 will need to read the traffic [statistics] counters that OpenFlow
 switches maintain. You will compose your new traffic monitor with the
-[repeater][OxRepeater] and [firewall][OxFirewall] you wrote in earlier
+[Repeater with Ox](../OxRepeater) and [Firewall with Ox](../OxFirewall) you wrote in earlier
 exercises.
 
 As usual, we will proceed in two steps: first writing and tesing a
 traffic monitoring function and then implementing it efficiently using
 flow tables.
 
-### The Monitoring Function
+## Exercise 1: The Monitoring Function
 
 The monitor should count the total number of packets sent to *and*
 received from port 80. Since the `packet_in` function receives all
@@ -32,26 +32,20 @@ let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     end
 ~~~
 
-#### Programming Task
-
 Use the following code as a template for this exercise.  Save it in a file
-called `Monitor.ml` and place it in the directory
-`~/src/ox-tutorial-solutions/Monitor.ml`.
+called `Monitor1.ml`.
 
 ~~~ ocaml
-(* ~/src/ox-tutorial-solutions/Monitor.ml *)
+(* ~/ox-tutorial-solutions/Monitor1.ml *)
 
 open Frenetic_Ox
 open Frenetic_OpenFlow0x01
-open Core.Std
-open Async.Std
 
 module MyApplication = struct
-
   include DefaultHandlers
   open Platform
 
-  (* [FILL] copy over the packet_in function from Firewall.ml
+  (* [FILL] copy over the packet_in function from Firewall2.ml
      verbatim, including any helper functions. *)
   let firewall_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     ()
@@ -87,9 +81,9 @@ Your task:
 - Remember that we are not just monitoring Web traffic. We also need
   to firewall ICMP traffic and apply the repeater to non-ICMP traffic,
   as you did before. In fact, you should use the `packet_in` function
-  from `Firewall.ml` _verbatim_.
+  from `Firewall2.ml` _verbatim_.
 
-#### Building and Testing Your Monitor
+### Building and Testing Your Monitor
 
 You should first test that your monitor preserves the features of the
 firewall and repeater. To do so, you'll run the same tests you in the
@@ -100,8 +94,8 @@ traffic does not).
 - Build and launch the controller:
 
   ~~~ shell
-  $ oxbuild Monitor.native
-  $ ./Monitor.native
+  $ ./ox-build Monitor1.d.byte
+  $ ./Monitor1.d.byte
   ~~~
 
 - In a separate terminal window, start Mininet:
@@ -121,35 +115,27 @@ traffic does not).
 - Test that Web traffic is unaffected, but logged. To do so, run a
    fortune server on one host and a client on another:
 
-  * In Mininet, start new terminals for `h1` and `h2`:
+  ~~~
+  mininet> h1 python -m SimpleHTTPServer 80 &
+  ~~~
 
-    ~~~
-    mininet> xterm h1 h2
-    ~~~
+- And run a HTTP request to h1 from h2
 
-  * In the terminal for `h1` start a local fortune server:
+  ~~~
+  mininet> h2 curl h1:80
+  ~~~
 
-    ~~~
-    # while true; do fortune | nc -l 80; done
-    ~~~
+  This command should succeed and you should find HTTP traffic
+  logged in the controller's terminal:
 
-  * In the terminal for `h2` fetch a fortune from `h1`:
-
-    ~~~
-    # curl 10.0.0.1:80
-    ~~~
-
-    This command should succeed and you should find HTTP traffic
-    logged in the controller's terminal:
-
-    ~~~
+  ~~~
     Saw 1 HTTP packets.
     Saw 2 HTTP packets.
     Saw 3 HTTP packets.
     Saw 4 HTTP packets.
     Saw 5 HTTP packets.
-    ...
-    ~~~
+  ...
+  ~~~
 
 > If you are seeing <code>packetIn</code> messages in between the HTTP
 > traffic logs, you could comment out the appropriate printf commands.
@@ -160,23 +146,21 @@ traffic does not).
   server running on `h1` and start a new fortune server on a
   non-standard port (e.g., 8080):
 
-  * On the terminal for `h1`:
+  ~~~
+  mininet> h1 kill %python
+  mininet> h1 python -m SimpleHTTPServer 8080 &
+  ~~~
 
-    ~~~
-    ^C
-    $ while true; do fortune | nc -l 8080; done
-    ~~~
+- On the terminal for `h2`, fetch the directory listing:
 
-  * On the terminal for `h2`, fetch a fortune:
+  ~~~
+  mininet> h2 curl h1:8080
+  ~~~
 
-    ~~~
-    $ curl 10.0.0.1:8080
-    ~~~
-
-  The client should successfully download the fortune. However, none of
+  The client should successfully download the directory listing. However, none of
   these packets should get logged by the controller.
 
-### Efficiently Monitoring Web Traffic
+## Exercise 2: Efficiently Monitoring Web Traffic
 
 Switches themselves keeps track of the number of packets (and bytes)
 they receive. To implement an efficient monitor, we can use OpenFlow's
@@ -204,18 +188,12 @@ traffic. Although this flow table implements the desired forwarding
 policy, it is too coarse grained to implement the desired monitoring
 policy.
 
-#### Programming Task 1
-
-Augment `Monitor.ml` to build a flow table. The forwarding logic only
+Copy `Monitor1.ml` to a new file `Monitor2.ml` and 
+build a flow table. The forwarding logic above
 requires two rules&mdash;one for ICMP and the other for non-ICMP
 traffic&mdash;but we will need additional rules to ensure that we have
-sufficiently fine-grained counters. Once we have determined these
-rules, add the `switch_connected` function to `Monitor.ml` and install
-them using `send_flow_mod`.
-
-#### Programming Task 2
-
-As shown in the previous task, we cannot write a single OpenFlow
+sufficiently fine-grained counters. 
+In particular, we cannot write a single OpenFlow
 pattern that matches both HTTP requests and replies. You need to match
 them separately, using two rules, which will give you two
 counters. Therefore, you need to read each counter independently and
@@ -234,7 +212,7 @@ let rec periodic_stats_request sw interval xid pat =
   timeout interval callback
 ~~~
 
-> Add this definition to your `Monitor.ml`.
+Add this definition to your `Monitor2.ml`.
 
 This function issues a request every `interval` seconds for counters
 that match `pat`. Use `periodic_stats_request` in `switch_connected`.
@@ -261,7 +239,7 @@ counters. The following code implements such a handler:
 let num_http_request_packets = ref 0L
 let num_http_response_packets = ref 0L
 
-let stats_reply (sw : switchId) (xid : xid) (stats : Stats.reply) : unit =
+let stats_reply (sw : switchId) (xid : xid) (stats : reply) : unit =
   match stats with
   | AggregateFlowRep rep ->
     begin

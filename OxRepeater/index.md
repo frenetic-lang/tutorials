@@ -97,7 +97,7 @@ message. Therefore, this repeater only needs to provide a `packet_in`
 handler. We have provided some starter code in a template below.
 
 Fill in the body of this function and save it in a file called
-`ox-tutorial-solutions/Repeater.ml`.
+`ox-tutorial-solutions/Repeater1.ml`.
 
 ~~~ ocaml
 open Frenetic_Ox
@@ -144,14 +144,14 @@ the [OpenFlow_Core] module) and fill it in.
 To build your controller, run the following command from the <code>ox-tutorial-solutions</code> directory:
 
 ~~~
-$ ./ox-build Repeater.d.byte
+$ ./ox-build Repeater1.d.byte
 ~~~
 
-Assuming compilation succeeds, you will see output like to this:
+Assuming compilation succeeds, you will see output like this:
 
 ~~~
-ocamlbuild -use-ocamlfind Repeater.d.byte
-Finished, 4 targets (4 cached) in 00:00:00.
+ocamlbuild ocamldep -package frenetic.async -package frenetic -package async -package core -modules Repeater1.ml Repeater1.d.byte
+...
 ~~~
 
 #### Testing your Controller
@@ -162,7 +162,10 @@ isolating each virtual host in a Linux container. To test the
 repeater, use Mininet to create a network with one switch and three
 hosts and have them ping each other:
 
-- Start Mininet in a separate terminal window:
+- Start up a separate terminal window on your host.  Change into the ```frenetic-tutorial-vm``` directory
+and type ```vagrant ssh``` to start a separate session in the same VM.  
+
+- Start Mininet in this new terminal window:
 
       $ sudo mn --controller=remote --topo=single,4 --mac --arp
 
@@ -186,12 +189,10 @@ hosts and have them ping each other:
 
 - Start your controller back in the original terminal:
 
-      $ ./Repeater.d.byte
+      $ ./Repeater1.d.byte
 
 
-  It should print `[Ox] Controller launching...` and then you should
-  see switch 1 connecting to the controller: `[Ox] switch 1
-  connected`.
+  It should print `[Ox] Controller launching...`
 
 - From the Mininet prompt, ping from one host to another:
 
@@ -259,6 +260,8 @@ switch. The remaining lines describe the hosts <code>h1</code> through
 
 ### Exercise 2: An Efficient Repeater
 
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Repeater2.ml)**
+
 Processing all packets at the controller works, in a sense, but is
 inefficient. Next let's install forwarding rules in the flow table on
 the switch so that it processes packets itself.
@@ -303,8 +306,8 @@ any packets.
 - Build and start the controller:
 
 
-      $ ox-build Repeater.d.byte
-      $ ./Repeater.d.byte
+      $ ./ox-build Repeater2.d.byte
+      $ ./Repeater2.d.byte
 
 
 - From the Mininet prompt, try a ping:
@@ -334,7 +337,7 @@ artificially:
 
 - Launch the repeater again:
 
-      $ ./Repeater.d.byte
+      $ ./Repeater2.d.byte
 
 
 It is very likely that a few packets will get sent to the controller
