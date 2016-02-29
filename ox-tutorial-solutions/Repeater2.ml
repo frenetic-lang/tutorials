@@ -5,6 +5,10 @@ module MyApplication = struct
   include DefaultHandlers
   open Platform
 
+  let switch_connected (sw : switchId) feats : unit =
+    Printf.printf "Switch %Ld connected.\n%!" sw;
+    send_flow_mod sw 1l (add_flow 1 match_all [Output AllPorts])
+
   (* [FILL] This packet_in function sends all packets out of port 1.
      Modify it to behave like a repeater: send the packet out of all
      ports, except its input port. *)

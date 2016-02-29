@@ -1,19 +1,19 @@
-open OxPlatform
-open OpenFlow0x01_Core
-module Stats = OpenFlow0x01_Stats
+open Frenetic_OpenFlow0x01
+open Frenetic_Ox
+module Packet = Frenetic_Packet
 
 module MyApplication = struct
-
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let rec periodic_stats_request (sw : switchId) (interval : float) 
       (xid : xid) (pat : pattern) : unit =
     let callback () =
       Printf.printf "Sending stats request to %Ld\n%!" sw; 
       send_stats_request sw xid
-        (Stats.AggregateRequest {Stats.as_of_match = pat;
-                                 Stats.as_table_id = 0xff;
-                                 Stats.as_out_port = None});
+        (AggregateRequest {sr_of_match = pat;
+                                 sr_table_id = 0xff;
+                                 sr_out_port = None});
       periodic_stats_request sw interval xid pat in
     timeout interval callback
       
@@ -52,26 +52,16 @@ module MyApplication = struct
     is_http_request_packet pk || is_http_response_packet pk
 
   let firewall_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
-    let payload = pktIn.input_payload in
-    let pk = parse_payload payload in
-    if is_icmp_packet pk then
-      send_packet_out sw 0l
-        { output_payload = payload;
-          port_id = None;
-          apply_actions = []
-        }
-    else 
-      send_packet_out sw 0l
-        { output_payload = payload;
-          port_id = None;
-          apply_actions = [Output AllPorts]
-        }
-
+    let pk = parse_payload pktIn.input_payload in
+    send_packet_out sw 0l {
+      output_payload = pktIn.input_payload;
+      port_id = None;
+      apply_actions = if is_icmp_packet pk then [] else [Output AllPorts]
+    }
 
   let num_http_packets = ref 0
     
   let packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
-    Printf.printf "%s\n%!" (packetIn_to_string pktIn);
     firewall_packet_in sw xid pktIn;
     if is_http_packet (parse_payload pktIn.input_payload) then
       begin
@@ -83,14 +73,14 @@ module MyApplication = struct
 
   let num_http_response_packets = ref 0L
 
-  let stats_reply (sw : switchId) (xid : xid) (stats : Stats.reply) : unit =
+  let stats_reply (sw : switchId) (xid : xid) (stats : reply) : unit =
     match stats with
-      | Stats.AggregateFlowRep rep ->
+      | AggregateFlowRep rep ->
         begin
           if xid = 10l then
-            num_http_request_packets := rep.Stats.total_packet_count
+            num_http_request_packets := rep.total_packet_count
           else if xid = 20l then
-            num_http_response_packets := rep.Stats.total_packet_count
+            num_http_response_packets := rep.total_packet_count
         end;
         Printf.printf "Saw %Ld HTTP packets.\n%!"
           (Int64.add !num_http_request_packets !num_http_response_packets)
@@ -98,4 +88,8 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make (MyApplication) in
+  C.start ();
+
+
