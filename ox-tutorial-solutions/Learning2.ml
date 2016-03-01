@@ -1,10 +1,10 @@
-open OxPlatform
-open Packet
-open OpenFlow0x01_Core
+open Frenetic_Ox
+open Frenetic_Packet
+open Frenetic_OpenFlow0x01
 
 module MyApplication = struct
-
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50 (* initial capacity *)
 
@@ -12,14 +12,14 @@ module MyApplication = struct
      known_hosts hashtable. Use the code in the tutorial as a guide. *)
   let learning_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     let pk = parse_payload pktIn.input_payload in
-    Hashtbl.add known_hosts pk.Packet.dlSrc pktIn.port
+    Hashtbl.add known_hosts pk.dlSrc pktIn.port
 
   (* [FILL] Route packets to known hosts out the correct port,
      otherwise flood them. *)
   let routing_packet_in (sw : switchId) (xid : xid) (pktIn : packetIn) : unit =
     let pk = parse_payload pktIn.input_payload in
-    let pkt_dst = pk.Packet.dlDst in
-    let pkt_src = pk.Packet.dlSrc in
+    let pkt_dst = pk.dlDst in
+    let pkt_src = pk.dlSrc in
     try 
       let out_port = Hashtbl.find known_hosts pkt_dst in
       let src_port = pktIn.port in
@@ -51,4 +51,6 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make(MyApplication) in 
+  C.start ();

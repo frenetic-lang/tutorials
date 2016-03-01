@@ -1,13 +1,12 @@
-open OxPlatform
-open OpenFlow0x01
-open OpenFlow0x01_Core
-open Network_Common
+open Frenetic_Ox
+open Frenetic_OpenFlow0x01
+open Frenetic_Network
 
 module Topology = Net.Topology
 
 module MyApplication = struct
-
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let topology = Net.Parse.from_dotfile "topology.dot"
 
@@ -22,15 +21,15 @@ module MyApplication = struct
     | _ -> false  
   
   let hosts = 
-    Topology.VertexSet.filter is_host (Topology.vertexes topology)
+    Topology.VertexSet.filter (Topology.vertexes topology) is_host
 
   let all_hops = 
-    let t = Topology.VertexHash.create 17 in 
+    let t = Topology.VertexHash.create () in 
     Topology.VertexSet.iter
-      (fun h -> Topology.VertexHash.add t h (Net.UnitPath.all_shortest_paths topology h))
-      hosts;
+      hosts
+      (fun h -> let _ = Topology.VertexHash.add t h (Net.UnitPath.all_shortest_paths topology h) in () ) ;
     t
-       
+
   let prev_hop src curr = 
     try 
       let paths = Topology.VertexHash.find all_hops src in 
@@ -84,4 +83,6 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make (MyApplication) in
+  C.start ();

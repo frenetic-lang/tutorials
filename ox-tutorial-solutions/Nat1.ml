@@ -1,19 +1,19 @@
-open OxPlatform
-open Packet
-open OpenFlow0x01_Core
+open Frenetic_Ox
+open Frenetic_Packet
+open Frenetic_OpenFlow0x01
 
 module MyApplication = struct
-
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let mappings = Hashtbl.create 50
 
-  let publicIP = 167772259l
-  let publicMAC = 153L
+  let publicIP = ip_of_string "10.0.0.99"
+  let publicMAC = mac_of_string "00:00:00:00:00:99"
 
-  let privateIP1 = 167772161l
+  let privateIP1 = ip_of_string "10.0.0.1"
 
-  let privateIP2 = 167772162l
+  let privateIP2 = ip_of_string "10.0.0.2"
 
   let switch_connected (sw:switchId) feats : unit = 
     Printf.printf "Switch Connected %Ld\n%!" sw
@@ -21,8 +21,8 @@ module MyApplication = struct
   let packet_in (sw: switchId) (xid : xid) (pktIn : packetIn) : unit = 
     let pk = parse_payload pktIn.input_payload in
       if (pktIn.port = 1 || pktIn.port = 2)  
-        && Packet.dlTyp pk = 0x800 
-        && Packet.nwProto pk = 0x06 
+        && dlTyp pk = 0x800 
+        && nwProto pk = 0x06 
       then
 	begin
        	  Printf.printf "Outgoing flow %s\n%!" (packetIn_to_string pktIn);
@@ -30,11 +30,11 @@ module MyApplication = struct
 	     [SetDlSrc publicMAC;
 	      SetNwSrc publicIP;
 	      Output (PhysicalPort 3)] in
-	   let privateMAC = pk.Packet.dlSrc in
-           let privateIP = Packet.nwSrc pk in
+	   let privateMAC = pk.dlSrc in
+           let privateIP = nwSrc pk in
            let src_port = pktIn.port in
-           let tcp_src = Packet.tpSrc pk in 
-	   Printf.printf "Translating Private IP:%ld to Public IP:%ld.\n%!" privateIP publicIP;
+           let tcp_src = tpSrc pk in 
+	   Printf.printf "Translating Private IP:%s to Public IP:%s.\n%!" (string_of_ip privateIP) (string_of_ip publicIP);
            Hashtbl.add mappings (tcp_src) (privateMAC, privateIP, src_port); 
            let match_pk = 
 	     { match_all with 
@@ -53,17 +53,17 @@ module MyApplication = struct
       else
 	try
 	  Printf.printf "Non TCP or incoming flow %s \n" (packetIn_to_string pktIn);
-          let (mac_dst, ip_dst, inPort) = Hashtbl.find mappings (Packet.tpDst pk) in
+          let (mac_dst, ip_dst, inPort) = Hashtbl.find mappings (tpDst pk) in
 	  Printf.printf "Found a mapping in the hashtable! \n";
           let src_port = pktIn.port in
-          let tcp_dst_pk = Packet.tpDst pk in 
+          let tcp_dst_pk = tpDst pk in 
           let match_pk = 
 	    { match_all with 
 	      inPort = Some src_port; 
 	      dlSrc = Some publicMAC;
 	      dlTyp = Some 0x800;	
-	      nwSrc = Some publicIP; 
-	      nwProto = Some {m_value = publicIP; m_mask = None}; 
+	      nwProto = Some 0x06; 
+	      nwSrc = Some {m_value = publicIP; m_mask = None}; 
 	      tpDst = Some tcp_dst_pk } in
           let action = 
 	    [ SetDlDst mac_dst;
@@ -87,4 +87,6 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ = 
+  let module C = Make (MyApplication) in
+  C.start ();

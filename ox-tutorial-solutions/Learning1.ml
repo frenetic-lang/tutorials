@@ -1,10 +1,10 @@
-open OxPlatform
-open OpenFlow0x01_Core
-open Packet
+open Frenetic_Ox
+open Frenetic_OpenFlow0x01
+open Frenetic_Packet
 
 module MyApplication = struct
-
-  include OxStart.DefaultTutorialHandlers
+  include DefaultHandlers
+  open Platform
 
   let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50 (* initial capacity *)
 
@@ -44,4 +44,6 @@ module MyApplication = struct
 
 end
 
-module Controller = OxStart.Make (MyApplication)
+let _ =
+  let module C = Make(MyApplication) in
+  C.start();
