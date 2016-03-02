@@ -1,4 +1,6 @@
-open NetKAT.Std
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
 open Firewall
 
 let forwarding : policy =
@@ -18,5 +20,9 @@ let forwarding : policy =
     else
       drop
    >>
-    
-let _ = run_static <:netkat< $firewall; $forwarding >>
+ 
+let _ =
+  let module Controller = Frenetic_NetKAT_Controller.Make in
+  Controller.start 6633;
+  Controller.update_policy <:netkat< $firewall; $forwarding >>;
+  never_returns (Scheduler.go ());

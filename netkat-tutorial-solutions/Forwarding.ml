@@ -1,4 +1,4 @@
-open NetKAT.Std
+open Frenetic_NetKAT
 
 let forwarding : policy =
   <:netkat<
