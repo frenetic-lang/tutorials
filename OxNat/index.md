@@ -8,7 +8,9 @@ first writing and testing a translator function that first translates
 IP addresses and then extending it so that it translates port numbers
 as well.
 
-### The Network Address Translating Function
+### Exercise 1: The Network Address Translating Function
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Nat1.ml)**
 
 The explosive growth of the Internet in the early 1990s created a
 demand for IP addresses, which are limited to 32 bits. NAT allows
@@ -27,7 +29,7 @@ specifically, a NAT device works as follows:
   address to the private address and forwards it to the corresponding
   private port. If not, it drops the packet. 
 
-### Topology
+#### Topology
 
 You will work with the following network topology:
 
@@ -43,15 +45,16 @@ $ sudo mn --controller=remote --topo=single,3 --mac --arp
 #### Programming Task
 
 Use the template below to get started. Save it in a file called
-`Nat1.ml` and place it in the directory `~/src/ox-tutorial-solutions/Nat1.ml`.
+`Nat1.ml` and place it in the directory `~/ox-tutorial-solutions/Nat1.ml`.
+In our case, we will use 10.0.0.99 as the public IP, and 00:00:00:00:00:99 as 
+the public MAC address.
 
 ~~~ ocaml
-(* ~/src/ox-tutorial-solutions/Nat1.ml *)
+(* ~/ox-tutorial-solutions/Nat1.ml *)
 
 open Frenetic_Ox
 open Frenetic_OpenFlow0x01
-open Core.Std
-open Async.Std
+open Frenetic_Packet
 
 module MyApplication = struct
   include DefaultHandlers
@@ -59,22 +62,22 @@ module MyApplication = struct
 
   let mappings = Hashtbl.create 50
 
-  let publicIP = 167772259l
-  let publicMAC = 153L
+  let publicIP = ip_of_string "10.0.0.99"
+  let publicMAC = mac_of_string "00:00:00:00:00:99"
 
-  let privateIP1 = 167772161l
+  let privateIP1 = ip_of_string "10.0.0.1"
 
-  let privateIP2 = 167772162l
+  let privateIP2 = ip_of_string "10.0.0.2"
 
-   let switch_connected (sw:switchId) feats : unit =
+  let switch_connected (sw:switchId) feats : unit =
      Printf.printf "Switch Connected %Ld\n%!" sw
 
   let packet_in (sw: switchId) (xid : xid) (pktIn : packetIn) : unit =
     let pk = parse_payload pktIn.input_payload in
       (* If the packet is of type TCP and came in through port 1 or 2 *)
       if (pktIn.port = 1 || pktIn.port = 2)
-        && Packet.dlTyp pk = 0x800
-        && Packet.nwProto pk = 0x06
+        && dlTyp pk = 0x800
+        && nwProto pk = 0x06
       then
 	(* [FILL] Add packet info into hashtable and install rules to
            forward packet out of correct port *)
@@ -101,30 +104,33 @@ To ensure that TCP packets are being sent and received to the correct
 hosts and addresses are translated correctly, perform the following
 steps.
 
- * Start Mininet:
+* Start Mininet:
 
-       $ sudo mn --controller=remote --topo=single,3 --mac --arp
+  ~~~
+  $ sudo mn --controller=remote --topo=single,3 --mac --arp
+  ~~~
 
- * In a separate terminal window, build and launch the controller:
+* In a separate terminal window, build and launch the controller:
 
-       $ oxbuild Nat1.native
-       $ ./Nat1.native
+  ~~~
+  $ ./ox-build Nat1.d.byte
+  $ ./Nat1.d.byte
+  ~~~
 
- * In Mininet, start new terminals for `h1`, `h2`, and `h3`:
+* On `h3` add an ARP entry for the public IP, and start a web server.
 
-       mininet> xterm h1 h2 h3
-
- * In the terminal for `h3`, add static entries into the arp table for
-   the public IP address, and start a fortune server.
-
-       # arp -v -s [public IP address] [public MAC address]
-       # while true; do fortune | nc -l 80; done
+  ~~~
+  mininet> h3 arp -s 10.0.0.99 00:00:00:00:00:99
+  mininet> h3 python -m SimpleHTTPServer 80 &
+  ~~~
   
-* In the terminal for `h1`, fetch a fortune from `h3`.
+* On `h1`, fetch the default web page from `h3`.
 
-      # curl 10.0.0.3:80
+  ~~~
+  mininet> h1 curl 10.0.0.3:80
+  ~~~
 
-  You should’ve received a fortune. Now try to fetch a fortune on the `h2` terminal.
+  You should’ve received the default directory listing. Now try to fetch it on the `h2` host.
 
 * In the terminal for the controller, check to see that your IP addresses are translating
   correctly.
@@ -135,7 +141,7 @@ steps.
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
    nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)
 
-  Translating Private IP:167772161 to Public IP:167772259.
+  Translating Private IP:10.0.1 to Public IP:10.0.0.99.
   ~~~
  
 * Incoming packets should look similar to this:
@@ -151,7 +157,9 @@ steps.
   
   Notice how this packet matches the outgoing flow packet above.
 
-### Port Translatation
+### Exercise 2: Port Translatation
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Nat2.ml)**
 
 The scheme we have implemented so far works as long as the private
 hosts never initiate simultaneous flows with the same TCP source
@@ -160,7 +168,7 @@ the TCP source ports to unique values and prevent conflicts.
 
 #### Programming Task
 
-Modify Nat1.ml to translate port numbers as well.
+Copy Nat1.ml to Nat2.ml, and change the program to translate port numbers as well.
 
 More specifically,
 
@@ -186,7 +194,7 @@ Compile and test the controller the same way as before.
    payload=dlSrc=00:00:00:00:00:01,dlDst=00:00:00:00:00:03,
    nwSrc=10.0.0.1,nwDst=10.0.0.3,tpSrc=42635;tpDst=80 (buffered at 256)
    }
-  Translating Private IP:167772161:42635 to Public IP:167772259:5000.
+  Translating Private IP:10.0.0.1:42635 to Public IP:10.0.0.99:5000.
   ~~~
 
 * Incoming packets should look similar to this:

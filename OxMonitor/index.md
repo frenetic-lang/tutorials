@@ -16,6 +16,8 @@ flow tables.
 
 ## Exercise 1: The Monitoring Function
 
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Monitor1.ml)**
+
 The monitor should count the total number of packets sent to *and*
 received from port 80. Since the `packet_in` function receives all
 packets, all you need to do is increment a global counter each time
@@ -161,6 +163,8 @@ traffic does not).
   these packets should get logged by the controller.
 
 ## Exercise 2: Efficiently Monitoring Web Traffic
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Monitor2.ml)**
 
 Switches themselves keeps track of the number of packets (and bytes)
 they receive. To implement an efficient monitor, we can use OpenFlow's

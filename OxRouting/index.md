@@ -7,7 +7,9 @@ In this exercise, we will write an application that forwards packets
 along the shortest paths in a static network topology. This is an
 essential application that provides the foundation of most networks.
 
-### The Shortest Path Forwarding Function
+### Exercise 1: The Shortest Path Forwarding Function
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Router.ml)**
 
 More specifically, this application will implement the following
 functionality:
@@ -21,7 +23,7 @@ pattern and an action (as well as a priority and counters). We will
 use patterns that match on destination addresses and actions that
 forward to the next hop in the path.
 
-### Topology
+#### Topology
 
 We will represent network topologies using the data types defined in
 the [Frenetic_Topology.Net module]. 
@@ -38,12 +40,11 @@ However, the application itself should work with any
 
 Fill in the missing code in the template below. Save it in a file
 called `Routing.ml` and place it in the directory
-`~/src/frenetic-tutorial-workspace/Routing.ml`.
+`~/ox-tutorial-solutions/Routing.ml`.
 
 ~~~ ocaml
- open OxPlatform
- open OpenFlow0x01
- open OpenFlow0x01_Core
+ open Frenetic_Ox
+ open Frenetic_OpenFlow0x01
  open Frenetic_Topology
 
  module Topology = Net.Topology

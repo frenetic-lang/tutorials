@@ -3,13 +3,15 @@ layout: main
 title: Firewall with NetKAT
 ---
 
-In an [earlier chapter](OxFirewall), we wrote a firewall that blocks
+In an [earlier chapter](../OxFirewall), we wrote a firewall that blocks
 ICMP traffic using OpenFlow and Ox. Even though this policy is
 extremely simple, the implementation was somewhat involved, as we had
 to both write a `packet_in` handler and also use `flow_mod` messages
 to configure the switch.
 
 ## Exercise 1: Naive Firewall
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Firewall1.ml)**
 
 We can implement the same policy in NetKAT as follows:
 
@@ -21,13 +23,13 @@ open Repeater
 
 let firewall : policy =
   <:netkat<
-    if ipProto = 0x01 && ethType = 0x800 then drop else $pol
+    if ipProto = 0x01 and ethTyp = 0x800 then drop else $repeater
   >>
 
 let _ =
   let module Controller = Frenetic_NetKAT_Controller.Make in
   Controller.start 6633;
-  Controller.update_policy repeater;
+  Controller.update_policy firewall;
   never_returns (Scheduler.go ());
 
 ~~~
@@ -42,8 +44,36 @@ we use a conditional to wrap the repeater policy from the last
 chapter. The ability to combine policies in a compositional way is one
 of the key benefits of NetKAT's language-based approach.
 
-Type this policy into a file `Firewall.ml` in the
-`netkat-tutorial-solutions` directory.
+Type this policy into a file `Firewall1.ml` in the
+`netkat-tutorial-solutions` directory.  
+
+Before testing, you'll need to prevent Repeater.ml from starting up its own 
+Frenetic controller and walking all over Firewall1's.  So just edit Repeater.ml and
+comment out the main loop:
+
+~~~ ocaml
+open Frenetic_NetKAT
+open Core.Std
+open Async.Std
+
+(* a simple repeater *)
+let repeater : policy =
+  <:netkat<
+    if port = 1 then port := 2 + port := 3 + port := 4
+    else if port = 2 then port := 1 + port := 3 + port := 4
+    else if port = 3 then port := 1 + port := 2 + port := 4
+    else if port = 4 then port := 1 + port := 2 + port := 3
+    else drop
+  >>
+
+(* Comment out this part
+let _ =
+  let module Controller = Frenetic_NetKAT_Controller.Make in
+  Controller.start 6633;
+  Controller.update_policy repeater;
+  never_returns (Scheduler.go ());
+*)
+~~~
 
 #### Testing
 
@@ -51,8 +81,9 @@ To test your code, compile the firewall and start the controller in
 one terminal,
 
 ~~~
-$ ./netkat-build Firewall
-$ ./Firewall.d.byte
+$ ./netkat-build Repeater.d.byte
+$ ./netkat-build Firewall1.d.byte
+$ ./Firewall1.d.byte
 ~~~
 
 and Mininet in another:
@@ -64,20 +95,24 @@ $ sudo mn --controller=remote --topo=single,4 --mac --arp
 Using Mininet, check that pinging fails between all hosts:
 
 ~~~
-mininet> h1 ping h2
+mininet> h1 ping -c 1 h2
 
 --- 10.0.0.2 ping statistics ---
-2 packets transmitted, 0 received, 100% packet loss, time 1008ms
+1 packet transmitted, 0 received, 100% packet loss, time 1008ms
 ~~~
 
 ~~~
-mininet> h2 ping h1
+mininet> h2 ping -c 1 h1
 
 --- 10.0.0.1 ping statistics ---
-2 packets transmitted, 0 received, 100% packet loss, time 999ms
+1 packet transmitted, 0 received, 100% packet loss, time 999ms
 ~~~
 
 ## Exercise 2: Basic Firewall
+
+**[Forwarding Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Forwarding.ml)**
+,
+**[Firewall Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Firewall2.ml)**
 
 To gain further experience with NetKAT, let's implement a more
 sophisticated firewall policy that uses point-to-forwarding rather
@@ -94,8 +129,6 @@ connected to ports 1 through 4 respetively.
 
 ~~~
 open Frenetic_NetKAT
-open Core.Std
-open Async.Std
 
 let forwarding : policy =
   <:netkat<
@@ -119,7 +152,7 @@ open Forwarding
 
 let firewall : policy =
   <:netkat<
-    if (* FILL condition for ICMP packets *) then drop else (filter ethType = 0x800; $forwarding)
+    if (* FILL condition for ICMP packets *) then drop else (filter ethTyp = 0x800; $forwarding)
   >>
 
 let _ =
@@ -137,51 +170,47 @@ Save this policy into a file `Firewall2.ml` in the
 
 - Build and launch the controller:
 
-~~~ shell
-$ ./netkat-build Firewall2
-$ ./Firewall2.d.byte
-~~~
+  ~~~ shell
+  $ ./netkat-build Forwarding
+  $ ./netkat-build Firewall2
+  $ ./Firewall2.d.byte
+  ~~~
 
 - Start Mininet using the same parameters you've used before:
 
-~~~
-$ sudo mn --controller=remote --topo=single,4 --mac --arp
-~~~
+  ~~~
+  $ sudo mn --controller=remote --topo=single,4 --mac --arp
+  ~~~
 
 - Test that pings fail within Mininet:
 
-~~~
-mininet> h1 ping -c 1 h2
-mininet> h2 ping -c 1 h1
-~~~  
-These commands should fail, printing `100.0% packet loss`.
+  ~~~
+  mininet> h1 ping -c 1 h2
+  mininet> h2 ping -c 1 h1
+  ~~~  
+  These commands should fail, printing `100.0% packet loss`.
 
 - Although ICMP is blocked, other traffic, such as Web traffic should
   be unaffected. To ensure that this is the case, try to run a Web server
   on one host and a client on another.
 
-  * In Mininet, start new terminals for `h1` and `h2`:
+* On `h1`, and start a web server.
 
-~~~
-mininet> xterm h1 h2
-~~~
+  ~~~
+  mininet> h1 python -m SimpleHTTPServer 80 &
+  ~~~
 
-  * In the terminal for `h1` start a local "fortune server" (a server
-    that returns insightful fortunes to those who query it):
+* In the terminal for `h2` grab the default web page from `h1`:
 
-~~~
-# while true; do fortune | nc -l 80; done
-~~~
+  ~~~
+  mininet> h2 curl 10.0.0.1:80
+  ~~~
 
-  * In the terminal for `h2` fetch a fortune from `h1`:
-
-~~~
-# curl 10.0.0.1:80
-~~~
-
-   This command should succeed.
+  This command should succeed.
 
 ## Exercise 3: Advanced Firewall
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Firewall3.ml)**
 
 Now that basic connectivity works, let's extend the example further to
 enforce a more interesting access control policy:
@@ -211,8 +240,8 @@ open Forwarding
 
 let firewall : policy =
   <:netkat<
-   if (ip4Src = 10.0.0.1 && ip4Dst = 10.0.0.2 && tcpSrcPort = 80 ||
-       ip4Src = 10.0.0.2 && ip4Dst = 10.0.0.1 && tcpDstPort = 80)
+   if (ip4Src = 10.0.0.1 and ip4Dst = 10.0.0.2 and ipProto = 6 and tcpSrcPort = 80 or
+          ip4Src = 10.0.0.2 and ip4Dst = 10.0.0.1 and ipProto = 6 and tcpDstPort = 80)
    then $forwarding
    else drop
 ~~~
@@ -224,11 +253,10 @@ Type this policy into a file `Firewall3.ml` in the
 `netkat-tutorial-solutions` directory and test it in Mininet. Note
 that due to the access control policy, it probably makes sense to test
 a few points of the access control policy. For example, if you run
-_fortune_ on port 80 on `h1`,
+the web server on port 80 on `h1`,
 
 ~~~
-## Run on h1's terminal
-$ while true; do fortune | nc -l 80; done
+mininet> h1 python -m SimpleHTTPServer 80 &
 ~~~
 
 the command `curl 10.0.0.1:80` should succeed from `h2`, but fail from
@@ -237,9 +265,11 @@ the command `curl 10.0.0.1:80` should succeed from `h2`, but fail from
 
 ## Exercise 4: Compact Firewall
 
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Firewall4.ml)**
+
 Above, we expressed the firewall policy is to enumerate each allowed
-flow using conditionals. However, using NetKAT's predicates (`p1 &&
-p2`, `p1 || p2`, and `!p`) is is often possible to write a more
+flow using conditionals. However, using NetKAT's predicates (`p1 and
+p2`, `p1 or p2`, and `not p`) is is often possible to write a more
 compact and legible policy. Revise your advanced firewall this policy,
 putting the result in a file `Firewall4.ml` in the
 `netkat-tutorial-solutions` directory and test it in Mininet.

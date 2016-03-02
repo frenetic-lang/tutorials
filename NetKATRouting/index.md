@@ -26,9 +26,9 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 > `--arp` populates host arp table so we don't have to
 > worry about broadcasting arp packets
 
-
-
 ### Exercise 1: Forwarding
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Routing1.ml)**
 
 Using NetKAT, write a forwarding policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch forwarding policy, you can use the `switch = n` predicate as follows:
 
@@ -48,15 +48,15 @@ Using NetKAT, write a forwarding policy that connects all hosts to each other. Y
 >>
 ~~~
 
-Save this in a file called `Routing.ml` and save it in the `netkat-tutorial-solutions` folder.
+Save this in a file called `Routing1.ml` and save it in the `netkat-tutorial-solutions` folder.
 
 #### Testing
 
 Compile and start the controller:
 
 ~~~
-$ ./netkat-build Routing
-$ ./Routing.d.byte
+$ ./netkat-build Routing1.d.byte
+$ ./Routing1.d.byte
 ~~~
 
 Then launch Mininet in another:
@@ -66,6 +66,7 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 ~~~
 
 Then, ensure that all hosts can reach each other:
+
 ~~~
 mininet> pingall
 ~~~
@@ -89,7 +90,6 @@ let firewall =
   else
     drop
 
-let _ = run_static firewall
 ~~~
 
 To truly separate the forwarding policy from the firewall policy, you will use NetKAT's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
@@ -110,26 +110,34 @@ Hopefully, it is evident that if your firewall only applies `id` and `drop`, the
 
 ### Exercise 2: Abstracting the Firewall
 
-In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.ml` and edit it to just `id` and `drop` packets. Also, remove `let _ = run_static firewall` at the bottom. Then you will build a multi-module policy that involves `Firewall.ml` and `Routing.ml`.
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Routing2.ml)**
 
-> If you didn't finish the firewall policy, use
-> `netkat-tutorial-solutions/Sol_Firewall1.ml`.
-> If you didn't finish the first routing policy above, see
-> `netkat-tutorial-solutions/Sol_Routing.ml`.
+In this exercise, you'll move the firewall you wrote in the last chapter to its own file, `Firewall.ml` and edit it to just `id` and `drop` packets. Also, you'll remove the main loop. Then you will build a multi-module policy that involves `Firewall.ml` and `Routing2.ml`.
+
+> If you didn't finish the firewall policy, use 
+> [this](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Firewall1.ml)
+> and if you didn't finish the first routing policy above, use
+> [this](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Routing1.ml).
 
 Once you have a firewall policy and a routing policy to start from, continue as follows.
 
-- In `Firewall.ml`, you have (possibly several) occurrences of `$forwarding` (i.e., the forwarding policy from the previous chapter).  Replace all occurrences of `$forwarding` with `id`.
+- In `Firewall.ml`, you have (possibly several) occurrences of `$repeater` (i.e., the repeater policy from the previous chapter).  Replace all occurrences of `$repeater` with `id`.
 
-- Edit `Routing.ml` to include `Firewall.ml` and compose the firewall and
+- Copy Routing1.ml to Routing2.ml, and edit `Routing2.ml` to include `Firewall.ml` and compose the firewall and
   the forwarding policy:
 
-      open "Firewall.ml"
+  ~~~ ocaml
+  ..
+  open Firewall
 
-      let forwarding = ...
+  let forwarding = ...
 
-      let _ = run_static <:netkat< $firewall; $forwarding >>
-  
+  let _ =
+    let module Controller = Frenetic_NetKAT_Controller.Make in
+    Controller.start 6633;
+    Controller.update_policy <:netkat< $firewall; $forwarding >>;
+    never_returns (Scheduler.go ());
+  ~~~
 
   You should test this policy just as you tested the firewall in the previous chapter.
  

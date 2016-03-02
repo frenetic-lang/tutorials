@@ -9,7 +9,9 @@ traffic onto the network.  As with previous exercises, you will begin
 by writing and testing a learning function and then implement it
 efficiently using flow tables.
 
-### The Learning Switch Function
+### Excerise 1: The Learning Switch Function
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Learning1.ml)**
 
 Thus far, you have provided connectivity simply by forwarding each
 packet out every port, aside from the one on which it arrived. Simple
@@ -39,17 +41,15 @@ learns host locations.
 #### Programming Task
 
 You should use the template below to get started.  Save it in a file
-called `Learning.ml` and place it in the directory
-`~/src/ox-tutorial-solutions/Learning.ml`.
+called `Learning1.ml` and place it in the directory
+`~/ox-tutorial-solutions/Learning1.ml`.
 
 ~~~ ocaml
-(* ~/src/ox-tutorial-solutions/Learning.ml *)
+(* ~/ox-tutorial-solutions/Learning1.ml *)
 
 open Frenetic_Ox
 open Frenetic_OpenFlow0x01
 open Frenetic_Packet
-open Core.Std
-open Async.Std
 
 module MyApplication = struct
   include DefaultHandlers
@@ -103,8 +103,7 @@ Note that it contains a hash table to map hosts to ports:
 let known_hosts : (dlAddr, portId) Hashtbl.t = Hashtbl.create 50
 ~~~
 
-> `50` is the initial capacity of the hash table.
-
+`50` is the initial capacity of the hash table.
 You can use `Hashtbl.add` to add a new host/port mapping:
 
 ~~~ ocaml
@@ -132,8 +131,8 @@ locations of each pair of hosts.
 - Build and launch the controller:
 
   ~~~ shell
-  $ make Learning.native
-  $ ./Learning.native
+  $ ./ox-build Learning1.d.byte
+  $ ./Learning1.d.byte
   ~~~
 
 - In a separate terminal window, start Mininet:
@@ -161,16 +160,10 @@ traffic, we will invoke `tcpdump` to monitor packets arriving at `h1`
 while sending traffic from `h2` to `h3`.  No traffic should reach
 `h1`.
 
-  * In Mininet, start new terminals for `h1`, `h2`, and `h3`:
+  * On `h1`, start `tcpdump`:
 
     ~~~
-    mininet> xterm h1 h2 h3
-    ~~~
-
-  * In the terminal for `h1`, start `tcpdump`:
-
-    ~~~
-    # tcpdump -c 1 port 80
+    mininet> h1 tcpdump -c 1 port 80 &
     tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
     listening on h1-eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
     ~~~
@@ -182,28 +175,32 @@ while sending traffic from `h2` to `h3`.  No traffic should reach
 
     Together, these flags cause `tcpdump` to exit as soon as a packet arrives on port 80.
 
-  * In the terminal for `h2`, start a local fortune server:
+  * On `h2`, start a web server server:
 
     ~~~
-    # while true; do fortune | nc -l 80; done
+    mininet> h2 python -m SimpleHTTPServer 80 &
     ~~~
 
-  * In the terminal for `h3`, fetch a fortune from `h2`:
+  * On `h3` fetch the default web page from `h2`:
 
     ~~~
-    # curl 10.0.0.2:80
+    mininet> h3 curl 10.0.0.2:80
     ~~~
 
   * Finally, check the status of `tcpdump` in the terminal for `h1`;
-    it should still be hanging, listening for an incoming packet.  If
-    it terminated with the message `1 packet captured`, then your
-    controller sent a packet to `h1` as well as `h2` (flooded the
-    network).
+    it should still be hanging, listening for an incoming packet.
+
+    ~~~
+    mininet> h1 jobs
+    [1]+ Running            tcpdump -c 1 port 80 &
+    ~~~
 
     > Note that this will fail if we have not already used `ping` to
     > learn the locations of `h2` and `h3` before starting `tcpdump`.
 
-### An Efficient Learning Switch
+### Exercise 2: An Efficient Learning Switch
+
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/ox-tutorial-solutions/Learning2.ml)**
 
 Sending packets directly to their destinations is a clear improvement
 over flooding, but we can do better. Just as in each previous chapter,

@@ -26,6 +26,8 @@ $ cd netkat-tutorial-solutions
 
 ### Example 1: A Repeater (Redux)
 
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Repeater.ml)**
+
 In the [OxRepeater](../OxRepeater) chapter, we wrote an efficient
 repeater that installs forwarding rules in the switch flow table.
 Recall that a repeater simply outputs packets out all ports, except
@@ -71,12 +73,12 @@ the switch with a static NetKAT policy.
 #### Run the Example
 
 To run the repeater, type the code above into a file
-<code>Repeater.ml</code> within the
+<code>Repeater1.ml</code> within the
 <code>netkat-tutorial-solutions</code> directory. Then compile and
 start the repeater controller using the following commands.
 
 ~~~
-$ ./netkat-build Repeater
+$ ./netkat-build Repeater.d.byte
 $ ./Repeater.d.byte
 ~~~
 
@@ -110,6 +112,8 @@ Try pinging <code>h1</code> from <code>h2</code> as well.
 
 ### Example 2: Referring to OCaml variables
 
+**[Solution](https://github.com/frenetic-lang/tutorials/blob/master/netkat-tutorial-solutions/Repeater2.ml)**
+
 In many programs it is useful to refer to an OCaml variable. We can do
 this by writing `$x`, where `x` is the name of an OCaml variable. As
 an example, here is an equivalent, but more concise version of the
@@ -124,16 +128,24 @@ open Core.Std
 open Async.Std
 
 (* a simple repeater *)
-let all_ports : int list = [1; 2; 3; 4]
+let all_ports : int32 list = [1l; 2l; 3l; 4l]
 
-let flood (n : int) : policy =
+let flood (n : int32) : policy =
   List.fold_left
-    (fun pol m -> if n = m then pol else <:netkat<$pol + port := $m>>)
-    <:netkat<drop>> all_ports
+    all_ports
+    ~f: (fun pol m -> if n = m then pol else <:netkat<$pol + port := $m>>)
+    ~init: <:netkat<drop>> 
 
 let repeater : policy =
   List.fold_right
-    (fun m pol -> <:netkat<let p = flood m in if port = $m then $p else $pol>>)
-    all_ports <:netkat<drop>>
+    all_ports 
+    ~f: (fun m pol -> let p = flood m in <:netkat<if port = $m then $p else $pol>>)
+    ~init: <:netkat<drop>>
+
+let _ =
+  let module Controller = Frenetic_NetKAT_Controller.Make in
+  Controller.start 6633;
+  Controller.update_policy repeater;
+  never_returns (Scheduler.go ());
 
 ~~~

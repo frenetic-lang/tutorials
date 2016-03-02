@@ -53,6 +53,10 @@ following open source software packages applicable for your host computer:
 - [Vagrant](http://www.vagrantup.com/downloads): automates the process of 
   creating, provisioning, starting and stopping VM's.
 
+> The Windows version of Vagrant requires an SSH client to run.  Installing 
+> [Git for Windows](https://git-scm.com/download/win) or 
+> [Cygwin](https://www.cygwin.com/) is the easiest way to get an SSH client.  
+
 The Frenetic Tutorial VM runs Ubuntu 14.04 as the guest OS.  It has OCaml, OPAM, Mininet, 
 Wireshark, and Frenetic itself pre-installed.  The standard VIM and Nano editor packages
 are installed, but you can install your own through the normal Ubuntu package mechanisms.
@@ -70,7 +74,7 @@ OS host PC.  Then:
 
 The output will look something like this:
 
-~~~ bash
+~~~ 
 $ mkdir frenetic-tutorial-vm
 $ cd frenetic-tutorial-vm
 ~/frenetic-tutorial-vm$ vagrant init cr396/frenetic-tutorial
@@ -96,9 +100,30 @@ To use the VM:
 
 - To start, change into the <code>frenetic-tutorial-vm</code> directory and type <code>vagrant up</code> followed
   by <code>vagrant ssh</code>.
+
+~~~ 
+$ cd frenetic-tutorial-vm
+~/frenetic-tutorial-vm$ vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+
+... lots of text
+
+~/frenetic-tutorial-vm$ vagrant ssh
+Welcome to Ubuntu 14.04.2 LTS (GNU/Linux 3.16.0-30-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Sun Feb 28 11:57:22 2016 from 10.0.2.2
+vagrant@frenetic:~$ 
+~~~
+
 - To stop, simply exit from the Frenetic VM command prompt.  Back at your host command prompt, type <code>vagrant
   halt</code>.  This step is optional - if you forget and shut down your host machine, the Frenetic VM will 
   itself shut down cleanly beforehand.  But halting it will save you some memory and CPU cycles on the host.
+
+~~~ 
+vagrant@frenetic:~$ exit
+~/frenetic-tutorial-vm$ vagrant halt
+~~~
 
 References
 ----------
