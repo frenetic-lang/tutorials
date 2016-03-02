@@ -1,16 +1,18 @@
 #!/bin/bash
 
 # Inspired by Jane Street's corebuild script, this script just adds the
-# usual dependencies of Ox.
+# usual dependencies of Frenetic.
 ocamlbuild \
   -use-ocamlfind \
   -classic-display \
   -pkg core \
   -pkg async \
-  -pkg ox \
+  -pkg frenetic \
+  -pkg frenetic.async \
   -tag thread \
   -tag debug \
   -tag annot \
   -tag bin_annot \
   -tag short_paths \
+  -cflags "-w -40" \
   $@

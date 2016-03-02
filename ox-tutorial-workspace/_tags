@@ -1,3 +1,0 @@
-<*.ml{,i}> : package(packet), package(openflow), package(topology), package(ox)
-<*.d.byte> : package(packet), package(openflow), package(topology), package(ox)
-true:thread

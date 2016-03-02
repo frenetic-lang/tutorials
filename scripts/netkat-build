@@ -1,20 +1,69 @@
 #!/bin/bash
 
-# Inspired by Jane Street's corebuild script, this script just adds the
-# usual dependencies of Frenetic.
+# It's be nice if this was handled by an ocamlbuild -syntax, but we couldn't get that to work with Core
+# as a dependency in frenetic.syntax.  So we handle the camlp4 translation out-of-band
+
+[ -d _build ] || mkdir _build
+
+BARE_NAME=$(echo $1 | cut -f 1 -d '.')
+
+rm _build/$BARE_NAME.* 2> /dev/null
+
+if ! camlp4 \
+  '-I' '/usr/lib/ocaml/camlp4' \
+  '-I' '/home/vagrant/.opam/system/lib/ulex' \
+  '-I' '/home/vagrant/.opam/system/lib/bytes' \
+  '-I' '/usr/lib/ocaml' \
+  '-I' '/usr/lib/ocaml/threads' \
+  '-I' '/home/vagrant/.opam/system/lib/sexplib' \
+  '-I' '/home/vagrant/.opam/system/lib/ipaddr' \
+  '-I' '/home/vagrant/.opam/system/lib/bin_prot' \
+  '-I' '/home/vagrant/.opam/system/lib/custom_printf' \
+  '-I' '/home/vagrant/.opam/system/lib/variantslib' \
+  '-I' '/home/vagrant/.opam/system/lib/enumerate' \
+  '-I' '/home/vagrant/.opam/system/lib/fieldslib' \
+  '-I' '/home/vagrant/.opam/system/lib/pa_bench' \
+  '-I' '/home/vagrant/.opam/system/lib/pa_ounit' \
+  '-I' '/home/vagrant/.opam/system/lib/pa_test' \
+  '-I' '/home/vagrant/.opam/system/lib/typerep_lib' \
+  '-I' '/home/vagrant/.opam/system/lib/core_kernel' \
+  '-I' '/home/vagrant/.opam/system/lib/sexplib_unix' \
+  '-I' '/home/vagrant/.opam/system/lib/pa_structural_sexp' \
+  '-I' '/home/vagrant/.opam/system/lib/core' \
+  '-I' '/home/vagrant/.opam/system/lib/frenetic' \
+  '-I' '/home/vagrant/.opam/system/lib/cstruct' \
+  '-I' '/home/vagrant/.opam/system/lib/ocplib-endian' \
+  '-I' '/home/vagrant/.opam/system/lib/tcpip' \
+  '-I' '/home/vagrant/.opam/system/lib/ocamlgraph' \
+  '-I' '/home/vagrant/.opam/system/lib/yojson' \
+  '-I' '/home/vagrant/.opam/system/lib/biniou' \
+  '-I' '/home/vagrant/.opam/system/lib/easy-format' \
+  '-I' '/home/vagrant/.opam/system/lib/base64' \
+  '-I' '/home/vagrant/.opam/system/lib/ulex' \
+  '-parser' 'o' \
+  '-parser' 'op' \
+  '-printer' 'Camlp4OCamlPrinter' \
+  'pa_ulex.cma' 'threads.cma' 'unix.cma' 'bigarray.cma' 'sexplib.cma' 'ipaddr.cma' 'bin_prot.cma' 'custom_printf.cma' \
+  'variantslib.cma' 'fieldslib.cma' 'pa_bench_lib.cma' 'pa_ounit_lib.cma' 'pa_test_lib.cma' 'typerep_lib.cma' \
+  'core_kernel.cma'  'sexplib_unix.cma' 'core.cma' 'ocplib_endian.cma' 'bigstring.cma' \
+  'cstruct.cma' 'str.cma' 'tcpip.cma' 'graph.cma' 'easy_format.cmo' 'biniou.cma' 'yojson_biniou.cmo' 'yojson.cmo' \
+  'base64.cma' 'ulexing.cma' 'frenetic.cma' 'syntax.cma'  \
+  $BARE_NAME.ml > _build/$BARE_NAME.ml ; then
+  rm _build/$BARE_NAME.*
+  exit 1;
+fi
+
 ocamlbuild \
   -use-ocamlfind \
-  -classic-display \
-  -syntax camlp4o \
   -pkg core \
   -pkg async \
-  -pkg netkat \
-  -pkg netkat.async \
-  -pkg netkat.syntax \
+  -pkg frenetic \
+  -pkg frenetic.async \
   -tag thread \
   -tag debug \
   -tag annot \
   -tag bin_annot \
   -tag short_paths \
-  -cflags "-w -40" \
-  $@
+  -cflags "-w,-40,-thread" \
+  $1
+
