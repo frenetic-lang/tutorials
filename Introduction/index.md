@@ -146,10 +146,10 @@ References
   This webpage describes Mininet, a system we will use to run
   controllers on a simulated network of switches.
 
-- [OCaml APIs](http://frenetic-lang.github.io/api)
+- [Frenetic OCaml APIs](http://frenetic-lang.github.io/frenetic/index.html)
 
   This web page provides documentation for the
-  [Ox](http://freneti-lang.github.io/api/ox) and
-  [NetKAT](http://frenetic-lang.github.io/api/frenetic) libraries, as
+  [Ox](https://github.com/frenetic-lang/frenetic/blob/master/async/Frenetic_Ox.mli) and
+  [NetKAT](http://frenetic-lang.github.io/frenetic/Frenetic_NetKAT.html) libraries, as
   well as other supporting libraries used in this tutorial.
 

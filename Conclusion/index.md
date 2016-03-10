@@ -11,7 +11,7 @@ developed in OCaml.  You saw how to use it to analyze packets on
 an SDN controller, install rules in the data plane and monitor traffic
 statistics.
 
-  - *NetKAt* is a high-level domain-specific language for specifying SDN
+  - *NetKAT* is a high-level domain-specific language for specifying SDN
 policies.  In just a few, simple lines of code, you could specify forwarding
 policy and queries for multi-switch networks in a modular, compositional
 fashion.  The Frenetic compiler (built using Ox, of course) compiled your
@@ -21,10 +21,15 @@ the data plane.
 Still, there's a lot more to the Frenetic environment than what you
 have seen in this tutorial.  One way to get started finding out more is
 to dig further in to the code.  For instance, you might look at
-[NetCoreLib](https://github.com/frenetic-lang/frenetic/tree/master/lib), which is the primary library that implements FreneticDSL.  Take a look at the internal syntax of Frenetic in the [NetCoreTypes Module](https://github.com/frenetic-lang/frenetic/blob/master/lib/NetCore_Types.mli) and then move on to other libraries, including those that implement [Mac Learning](https://github.com/frenetic-lang/frenetic/blob/master/lib/NetCore_MacLearning.mli) and
-[Nat](https://github.com/frenetic-lang/frenetic/blob/master/lib/NetCore_NAT.ml).  The latter components will introduce you to the basics of
+[Frenetic_NetKAT](http://frenetic-lang.github.io/frenetic/Frenetic_NetKAT.html), 
+which is the primary library that implements NetKAT.  Take a look at the internal syntax of Frenetic in the 
+[Compiler Module](http://frenetic-lang.github.io/frenetic/Frenetic_NetKAT_Compiler.html) 
+and then move on to other libraries, including those that implement 
+[Mac Learning](https://github.com/frenetic-lang/frenetic/blob/master/examples/Learning_Switch.ml).  The 
+latter components will introduce you to the basics of
 how to construct your own dynamic policies in the Frenetic programming
-environment using NetCoreLib combined with OCaml's [Lwt Threading Libraries](http://ocsigen.org/lwt/manual).
+environment using NetCoreLib combined with OCaml's 
+[Async library](https://realworldocaml.org/v1/en/html/concurrent-programming-with-async.html).
 
 Have fun!
 

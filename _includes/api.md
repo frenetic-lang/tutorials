@@ -1,37 +1,32 @@
-[OpenFlow_Core]: http://frenetic-lang.github.io/api//openflow/#OpenFlow0x01_Core
+#### API Reference
 
-[send_stats_request]: https://github.com/frenetic-lang/ox/blob/master/lib/OxPlatform.mli#VALsend_stats_request
+[OpenFlow_Core](http://frenetic-lang.github.io/frenetic/Frenetic_OpenFlow0x01.html)
 
-[header accessor functions]: https://github.com/frenetic-lang/ocaml-packet/blob/master/lib/Packet.mli
+[send_stats_request](https://github.com/frenetic-lang/frenetic/blob/master/async/Frenetic_Ox.mli)
 
-[send_flow_mod]: https://github.com/frenetic-lang/ox/blob/master/lib/OxPlatform.mli#VALsend_flow_mod
+[header accessor functions](http://frenetic-lang.github.io/frenetic/Frenetic_Packet.html)
 
-[pattern]: http://frenetic-lang.github.io/api//openflow/#OpenFlow0x01_Core.pattern
+[send_flow_mod](https://github.com/frenetic-lang/frenetic/blob/master/async/Frenetic_Ox.mli)
 
-[match_all]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01_Core.html#VALmatch_all
+[pattern](http://frenetic-lang.github.io/frenetic/Frenetic_OpenFlow0x01.html#TYPEpattern)
 
-[example patterns]: https://github.com/frenetic-lang/ocaml-openflow/blob/master/lib/OpenFlow0x01_Core.mli
+[match_all](http://frenetic-lang.github.io/frenetic/Frenetic_OpenFlow0x01.html#VALmatch_all)
 
-[header accessor functions]: https://github.com/frenetic-lang/ocaml-packet/blob/master/lib/Packet.mli
+[Action](http://frenetic-lang.github.io/frenetic/Frenetic_OpenFlow0x01.html#TYPEaction)
 
+[PacketIn](http://frenetic-lang.github.io/frenetic/Frenetic_OpenFlow0x01.html#TYPEpacketIn)
 
-[Action]: http://frenetic-lang.github.io/api//openflow/#OpenFlow0x01.Action
+[PacketOut](http://frenetic-lang.github.io/frenetic/Frenetic_OpenFlow0x01.html#TYPEpacketOut)
 
-[PacketIn]: http://frenetic-lang.github.io/api//openflow/#OpenFlow0x01_Core.packetIn
+[OxPlatform](https://github.com/frenetic-lang/frenetic/blob/master/async/Frenetic_Ox.mli)
 
-[PacketOut]: http://frenetic-lang.github.io/api//openflow/#OpenFlow0x01_Core.packetOut
+[Match](http://frenetic-lang.github.io/frenetic/Frenetic_OpenFlow0x01.Match.html)
 
-[OxPlatform]: http://frenetic-lang.github.io/frenetic/docs/Ox_Controller.OxPlatform.html
+[Packet](http://frenetic-lang.github.io/frenetic/Frenetic_Packet.html)
 
-[Match]: http://frenetic-lang.github.io/api//openflow/#OpenFlow0x01.Match
+[Network module](http://frenetic-lang.github.io/frenetic/Frenetic_Topology.Net.html                  )
 
-[Packet]:http://frenetic-lang.github.io/api//packet/#Packet
-
-[Network module]: http://frenetic-lang.github.io/api//topology/#Network                       
-
-[Network_Common module]: http://frenetic-lang.github.io/api//topology/#Network_Common
-
-[ocaml-topology repository]: http://frenetic-lang.github.io/api//topology/
+[Topology](http://frenetic-lang.github.io/frenetic/Frenetic_Topology.html)
 
 
 

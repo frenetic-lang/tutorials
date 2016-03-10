@@ -1,17 +1,13 @@
 ---
 layout: main
-title: Frenetic Tutorial
+title: NetKAT Manual
 ---
 
-NetCore Manual
-==============
-
-The NetCore Manual is intended as a lightweight reference to the syntax of the
-NetCore domain-specific language (NetCoreDSL).  More detailed documentation can
-be found in the [NetCore tutorial](06-Frenetic-Introduction).
+The NetKAT Manual is intended as a lightweight reference to the syntax of the
+NetKAT domain-specific language.  
 
 
-NetCore Syntax
+NetKAT Syntax
 --------------
 
 Types:
@@ -21,10 +17,15 @@ Types:
 
 <mac-address> ::= xx:xx:xx:xx:xx:xx
 <ip-address> ::= xxx.xxx.xxx.xxx
+<mask> = 1 ... 32
+<masked-ip-address> ::= <ip-address> / <mask>
 <switch-id> ::= 64-bit integer
 <port-id> ::= 16-bit integer
+<vport-id> ::= 64-bit integer
+<vfrabric-id> ::= 64-bit integer
 <vlan-id> ::= none | 12-bit integer
 <tcp-port> ::= 16-bit integer
+<vlan-pcp> ::= 16-bit integer
 <frame-type> ::= arp (* shorthand for 0x806 *)
                | ip  (* shorthand for 0x800 *)
                | 8-bit integer
@@ -32,81 +33,82 @@ Types:
                 | tcp  (* shorthand for 0x06 *)
                 | udp  (* shorthand for 0x11 *)
                 | 8-bit integer
-
-<seconds> ::= [0-9]+ | [0-9]+ . [0-9]+
-<string> ::= '"' [^ '"']* '"'
+<location> ::= <switch-id> @ <port-id>
 ```
 
 Predicates:
 
 ```
-<apred> ::= ( <pred> )
-          | ! <apred>
-          | *
-          | <none>
-          | switch = <switch-id>
-          | inPort = <port-id>
-          | dlSrc = <mac-address>
-          | dlDst = <mac-address>
-          | vlan = <vlan-id>
-          | srcIP = <ip-address>
-          | dstIP = <ip-address>
-          | nwProto = <ip-protocol>
-          | tcpSrcPort = <tcp-port>
-          | tcpDstPort = <tcp-port>
-          | dlTyp = <frame-type>
+<pred-atom> ::= ( <pred> )
+            | true
+            | false
+            | switch = <switch-id>
+            | port = <port-id>
+            | vswitch = <switch-id>
+            | vport = <vport-id>
+            | vfabric = <vfabric-id>
+            | vlan = <vlan-id>
+            | vlanPcp = <vlan-pcp>
+            | ethTyp = <frame-type>
+            | ipProto = <ip-protocol>
+            | tcpSrcPort = <tcp-port>
+            | tcpDstPort = <tcp-port>
+            | ethSrc = <mac-address>
+            | ethDst = <mac-address>
+            | ip4Src = <masked-ip-address> | <ip-address>
+            | ip4Dst = <masked-ip-address> | <ip-address>
 
-<orpred> ::= <apred>
-           | <apred> || <orpred>
+<not-pred> ::= <pred-atom>
+            | not <not-pred>
 
-<pred> ::= <orpred>
-         | <orpred> && <pred>
+<and-pred> ::= <not-pred>
+            | <and-pred> and <not-pred>
+
+<or-pred> ::= <and-pred>
+           | <or-pred> or <and-pred>
+
+<pred> ::= <or-pred>
 
 ```
 
 Policies:
 
 ```
-<id> ::= [A-Z a-z _] [A-Z a-z _ 0-9]*
+<pol-atom> ::= ( <pol> )
+           | id
+           | drop
+           | filter <pred>
+           | switch := <switch-id>
+           | port := <port-id>
+           | vswitch := <switch-id>
+           | vport := <vport-id>
+           | vfabric := <vfabric-id>
+           | vlan := <vlan-id>
+           | vlanPcp := <vlan-pcp>
+           | ethTyp := <frame-type>
+           | ipProto := <ip-protocol>
+           | tcpSrcPort := <tcp-port>
+           | tcpDstPort := <tcp-port>
+           | ethSrc := <mac-address>
+           | ethDst := <mac-address>
+           | ip4Src := <ip-address>
+           | ip4Dst := <ip-address>
+           | <location> => <location>
+           | <location> =>> <location>
 
-<module> ::= learn ( )
-           | nat ( publicIP = <ip-addr> )
+<star-pol> ::= <pol-atom> 
+            | <star-pol> *
 
-<apol> ::= ( <pol> )
-         | <id>
-         | filter <pred>
-         | <port-id> (* Forward out port <port-id>. *)
-         | pass
-         | drop
-         | all (* Forward out all ports. *)
-         | dlSrc <mac-address> -> <mac-address>
-         | dlDst <mac-address> -> <mac-address>
-         | vlan <vlan-id> -> <vlan-id>
-         | srcIP <ip-address> -> <ip-address>
-         | dstIP <ip-address> -> <ip-address>
-         | tcpSrcPort <tcp-port> -> <tcp-port>
-         | tcpDstPort <tcp-port> -> <tcp-port>
-         | monitorPackets ( <string> )
-         | monitorPolicy ( <pol> )
-         | monitorTable ( <switch-id> , <pol> )
-         | monitorLoad (<seconds>, <string>) (* Print the number of packets  *)
-                                             (* and bytes processed by this  *)
-                                             (* policy in the last <seconds>.*)
-                                             (* Label output using <string>. *)
+<seq-pol> ::= <star-pol>
+            | <seq-pol> ; <star-pol>
 
-<cpol> ::= <apol>
-        | if <pred> then <cpol> else <cpol>
+<union-pol> ::= <seq-pol>
+              | <union-pol> + <seq-pol>
 
-<seq_pol_list> ::= <cpol>
-                 | <cpol> ; <seq_pol_list>
+<cond-pol> ::= <union-pol>
+            | if <pred> then <cond-pol> else <cond-pol>
 
-<par_pol_list> ::= <cpol>
-                 | <cpol> + <par_pol_list>
-
-<pol> ::= <cpol>
-        | <cpol> ; <seq_pol_list>
-        | <cpol> + <par_pol_list>
-        | let <id_1>, ... <id_n> = <module>(<arg_1> ,... , <arg_m>)
+<pol> ::= <cond-pol>
 
 <program> ::= <pol>
 ```

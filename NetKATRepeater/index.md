@@ -149,3 +149,7 @@ let _ =
   never_returns (Scheduler.go ());
 
 ~~~
+
+### NetKAT Reference Manual
+
+The complete NetKAT language is described [here](../NetKATManual).

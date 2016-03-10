@@ -268,18 +268,6 @@ Consider what happens if the controller receives HTTP packets before
 the switch is fully initialized and extend your monitoring program to
 handle this situation.
 
-[statistics]: https://github.com/frenetic-lang/frenetic/blob/master/lib/OpenFlow0x01.mli
-
-[Action]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Action.html
-
-[PacketIn]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.PacketIn.html
-
-[PacketOut]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.PacketOut.html
-
-[Ox Platform]: http://frenetic-lang.github.io/frenetic/docs/Ox_Controller.OxPlatform.html
-
-[Match]: http://frenetic-lang.github.io/frenetic/docs/OpenFlow0x01.Match.html
-
-[Packet]: http://frenetic-lang.github.io/frenetic/docs/Packet.html
+[statistics]: http://frenetic-lang.github.io/frenetic/Frenetic_OpenFlow0x01.html#TYPEstatsReq
 
 {% include api.md %}

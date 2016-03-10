@@ -27,6 +27,9 @@
 - name: Routing with NetKAT
   path: ../NetKATRouting
   group: frenetic
+- name: NetKAT Manual
+  path: ../NetKATManual
+  group: frenetic
 - name: Conclusion
   path: ../Conclusion
   group: frenetic
