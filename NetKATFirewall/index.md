@@ -21,15 +21,13 @@ open Core.Std
 open Async.Std
 open Repeater
 
-let firewall : policy =
-  <:netkat<
-    if ipProto = 0x01 and ethTyp = 0x800 then drop else $repeater
-  >>
+let%nk firewall =
+  {| if ipProto = 0x01 and ethTyp = 0x800 then drop else $repeater |}
 
 let _ =
-  let module Controller = Frenetic_NetKAT_Controller.Make in
+  let module Controller = Frenetic_NetKAT_Controller.Make (Frenetic_OpenFlow0x01_Plugin) in
   Controller.start 6633;
-  Controller.update_policy firewall;
+  Deferred.don't_wait_for (Controller.update firewall);
   never_returns (Scheduler.go ());
 
 ~~~
@@ -57,20 +55,19 @@ open Core.Std
 open Async.Std
 
 (* a simple repeater *)
-let repeater : policy =
-  <:netkat<
-    if port = 1 then port := 2 + port := 3 + port := 4
-    else if port = 2 then port := 1 + port := 3 + port := 4
-    else if port = 3 then port := 1 + port := 2 + port := 4
-    else if port = 4 then port := 1 + port := 2 + port := 3
-    else drop
-  >>
+let%nk repeater =
+  {| if port = 1 then port := 2 + port := 3 + port := 4
+     else if port = 2 then port := 1 + port := 3 + port := 4
+     else if port = 3 then port := 1 + port := 2 + port := 4
+     else if port = 4 then port := 1 + port := 2 + port := 3
+     else drop
+  |}
 
 (* Comment out this part
 let _ =
-  let module Controller = Frenetic_NetKAT_Controller.Make in
+  let module Controller = Frenetic_NetKAT_Controller.Make (Frenetic_OpenFlow0x01_Plugin) in
   Controller.start 6633;
-  Controller.update_policy repeater;
+  Deferred.don't_wait_for (Controller.update repeater);
   never_returns (Scheduler.go ());
 *)
 ~~~
@@ -130,13 +127,12 @@ connected to ports 1 through 4 respetively.
 ~~~
 open Frenetic_NetKAT
 
-let forwarding : policy =
-  <:netkat<
-    if ip4Dst = 10.0.0.1 then port := 1
-    else if (* destination is 10.0.0.2, forward out port 2, etc. *)
-      ...
-    else drop
-  >>
+let%nk forwarding =
+  {| if ip4Dst = 10.0.0.1 then port := 1
+     else if (* destination is 10.0.0.2, forward out port 2, etc. *)
+       ...
+     else drop
+  |}
 ~~~
 
 Type this policy into a file `Forwarding.ml` in the
@@ -150,15 +146,13 @@ open Core.Std
 open Async.Std
 open Forwarding
 
-let firewall : policy =
-  <:netkat<
-    if (* FILL condition for ICMP packets *) then drop else (filter ethTyp = 0x800; $forwarding)
-  >>
+let%nk firewall =
+  {| if (* FILL condition for ICMP packets *) then drop else (filter ethTyp = 0x800; $forwarding) |}
 
 let _ =
-  let module Controller = Frenetic_NetKAT_Controller.Make in
+  let module Controller = Frenetic_NetKAT_Controller.Make (Frenetic_OpenFlow0x01_Plugin) in
   Controller.start 6633;
-  Controller.update_policy repeater;
+  Deferred.don't_wait_for (Controller.update firewall);
   never_returns (Scheduler.go ());
 
 ~~~
@@ -215,14 +209,14 @@ Save this policy into a file `Firewall2.ml` in the
 Now that basic connectivity works, let's extend the example further to
 enforce a more interesting access control policy:
 
-|--------------+----------+-----------+----------+----------|
+|--------------|----------|-----------|----------|----------|
 |              | 10.0.0.1 | 10.0.0.2  | 10.0.0.3 | 10.0.0.4 |
 |:------------:|:--------:|:---------:|:--------:|:--------:|
 | **10.0.0.1** | DENY     | HTTP      | DENY     | DENY     | 
 | **10.0.0.2** | HTTP     | DENY      | DENY     | DENY     | 
 | **10.0.0.3** | DENY     | DENY      | DENY     | ICMP     | 
 | **10.0.0.4** | DENY     | DENY      | ICMP     | DENY     | 
-|--------------+----------+-----------+----------+----------|
+|--------------|----------|-----------|----------|----------|
 
 Each cell in this table has a list of allowed protocols for
 communication between the source host in each row and destination host
@@ -239,11 +233,11 @@ open Async.Std
 open Forwarding
 
 let firewall : policy =
-  <:netkat<
-   if (ip4Src = 10.0.0.1 and ip4Dst = 10.0.0.2 and ipProto = 6 and tcpSrcPort = 80 or
+  {| if (ip4Src = 10.0.0.1 and ip4Dst = 10.0.0.2 and ipProto = 6 and tcpSrcPort = 80 or
           ip4Src = 10.0.0.2 and ip4Dst = 10.0.0.1 and ipProto = 6 and tcpDstPort = 80)
-   then $forwarding
-   else drop
+     then $forwarding
+     else drop
+  |}
 ~~~
 
 Then you should modify the firewall to only allow ICMP traffic between
