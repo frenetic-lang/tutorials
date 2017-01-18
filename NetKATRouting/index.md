@@ -33,7 +33,7 @@ $ sudo mn --controller=remote --topo=tree,2,2 --mac --arp
 Using NetKAT, write a forwarding policy that connects all hosts to each other. You already know how to do this for a single switch. To write a multi-switch forwarding policy, you can use the `switch = n` predicate as follows:
 
 ~~~
-<:netkat<
+{|
   if switch = 1 then
     (* Policy for Switch 1 *)
     ...
@@ -45,7 +45,7 @@ Using NetKAT, write a forwarding policy that connects all hosts to each other. Y
     ...
   else
     drop
->>
+|}
 ~~~
 
 Save this in a file called `Routing1.ml` and save it in the `netkat-tutorial-solutions` folder.
@@ -84,12 +84,12 @@ open Core.Std
 open Async.Std
 open Forwarding
 
-let firewall =
-  if (* traffic allowed *) then
-    $forwarding
-  else
-    drop
-
+let%nk firewall =
+  {| if (* traffic allowed *) then
+       $forwarding
+     else
+       drop
+  |}
 ~~~
 
 To truly separate the forwarding policy from the firewall policy, you will use NetKAT's _sequential composition_  operator. Sequential composition lets you take any two policies, `P` and `Q`,
@@ -130,12 +130,13 @@ Once you have a firewall policy and a routing policy to start from, continue as 
   ..
   open Firewall
 
-  let forwarding = ...
+  let%nk forwarding = ...
 
   let _ =
-    let module Controller = Frenetic_NetKAT_Controller.Make in
+    let module Controller = Frenetic_NetKAT_Controller.Make (Frenetic_OpenFlow0x01_Plugin) in
     Controller.start 6633;
-    Controller.update_policy <:netkat< $firewall; $forwarding >>;
+    let%nk pol = {| $firewall; $forwarding |} in
+    Deferred.don't_wait_for (Controller.update pol);
     never_returns (Scheduler.go ());
   ~~~
 

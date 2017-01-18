@@ -45,85 +45,30 @@ Software Environment
 
 This is a hands-on tutorial with several programming exercises.  We
 recommend using the virtual machine we've prepared that has all the
-necessary software that you need pre-installed.   To run this, you need the
-following open source software packages applicable for your host computer:
+necessary software that you need pre-installed. To run this, you need the
+following open source software package applicable for your host computer:
 
 - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
-- [Vagrant](http://www.vagrantup.com/downloads): automates the process of 
-  creating, provisioning, starting and stopping VM's.
-
-> The Windows version of Vagrant requires an SSH client to run.  Installing 
-> [Git for Windows](https://git-scm.com/download/win) or 
-> [Cygwin](https://www.cygwin.com/) is the easiest way to get an SSH client.  
-
-The Frenetic Tutorial VM runs Ubuntu 14.04 as the guest OS.  It has OCaml, OPAM, Mininet, 
-Wireshark, and Frenetic itself pre-installed.  The standard VIM and Nano editor packages
+The Frenetic Tutorial VM runs Ubuntu 16.04 as the guest OS.  It has OCaml, OPAM, Mininet, 
+Wireshark, and Frenetic itself pre-installed.  The standard VIM, Emacs, and Nano editor packages
 are installed, but you can install your own through the normal Ubuntu package mechanisms.
 
-The Frenetic tutorial VM is stored in the Vagrant cloud, and installing it requires
-very little effort.   First start up a command prompt on your Windows, Linux, or Mac
-OS host PC.  Then:
+The Frenetic tutorial VM is stored on Amazon Web Services S3 cloud storage, and
+installing it requires very little effort. First, launch the VirtualBox GUI on
+your Windows, Linux, or Mac OS host PC. Then:
 
-- Create a <code>frenetic-tutorial-vm</code> directory and change into it 
-- Issue a <code>vagrant init cr396/frenetic-tutorial</code>.  This will create a 
-  proper Vagrantfile in the directory.
-- Type <code>vagrant up</code>.  This command does the heavy lifting: downloading the
-  latest VM, installing it into Virtual Box, and creating the right credentials
-- Lastly, type <code>vagrant ssh</code> to login to a command prompt on your VM.  
-
-The output will look something like this:
-
-~~~ 
-$ mkdir frenetic-tutorial-vm
-$ cd frenetic-tutorial-vm
-~/frenetic-tutorial-vm$ vagrant init cr396/frenetic-tutorial
-A `Vagrantfile` has been placed in this directory. You are now
-ready to `vagrant up` your first virtual environment! Please read
-the comments in the Vagrantfile as well as documentation on
-`vagrantup.com` for more information on using Vagrant.
-~/frenetic-tutorial-vm$ vagrant up
-Bringing machine 'default' up with 'virtualbox' provider...
-==> default: Box 'cr396/frenetic-tutorial' could not be found. Attempting to find and install...
-
-... lots of downloading and text
-
-~/frenetic-tutorial-vm$ vagrant ssh
-Welcome to Ubuntu 14.04.2 LTS (GNU/Linux 3.16.0-30-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com/
-Last login: Sun Feb 28 11:57:22 2016 from 10.0.2.2
-vagrant@frenetic:~$ 
-~~~
-
-To use the VM:
-
-- To start, change into the <code>frenetic-tutorial-vm</code> directory and type <code>vagrant up</code> followed
-  by <code>vagrant ssh</code>.
-
-~~~ 
-$ cd frenetic-tutorial-vm
-~/frenetic-tutorial-vm$ vagrant up
-Bringing machine 'default' up with 'virtualbox' provider...
-
-... lots of text
-
-~/frenetic-tutorial-vm$ vagrant ssh
-Welcome to Ubuntu 14.04.2 LTS (GNU/Linux 3.16.0-30-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com/
-Last login: Sun Feb 28 11:57:22 2016 from 10.0.2.2
-vagrant@frenetic:~$ 
-~~~
-
-- To stop, simply exit from the Frenetic VM command prompt.  Back at your host command prompt, type <code>vagrant
-  halt</code>.  This step is optional - if you forget and shut down your host machine, the Frenetic VM will 
-  itself shut down cleanly beforehand.  But halting it will save you some memory and CPU cycles on the host.
-
-~~~ 
-vagrant@frenetic:~$ exit
-~/frenetic-tutorial-vm$ vagrant halt
-~~~
+ - Download the Frenetic tutorial VM OVA (Open Virtualization Appliance) located
+   [here](https://s3.amazonaws.com/plasma-umass/frenetic-tutorial-vm.ova).
+ - Navigate the menus to `File > Import Appliance...`. This will open a modal
+   dialog instructing you to import the appliance.
+ - Enter the path to the downloaded OVA file, or browse your file manager to
+   locate it.
+ - Select `Next`.
+ - Select `Import`. This imports the OVA file into VirtualBox, and the Frenetic
+   VM should now appear in your VirtualBox GUI.
+ - Lastly, double click the VM in the VirtualBox GUI to launch the Frenetic
+   tutorial VM.
 
 References
 ----------

@@ -44,26 +44,25 @@ open Core.Std
 open Async.Std
 
 (* a simple repeater *)
-let repeater : policy =
-  <:netkat<
-    if port = 1 then port := 2 + port := 3 + port := 4
-    else if port = 2 then port := 1 + port := 3 + port := 4
-    else if port = 3 then port := 1 + port := 2 + port := 4
-    else if port = 4 then port := 1 + port := 2 + port := 3
-    else drop
-  >>
+let%nk repeater =
+  {| if port = 1 then port := 2 + port := 3 + port := 4
+     else if port = 2 then port := 1 + port := 3 + port := 4
+     else if port = 3 then port := 1 + port := 2 + port := 4
+     else if port = 4 then port := 1 + port := 2 + port := 3
+     else drop
+  |}
 
 let _ =
-  let module Controller = Frenetic_NetKAT_Controller.Make in
+  let module Controller = Frenetic_NetKAT_Controller.Make (Frenetic_OpenFlow0x01_Plugin) in
   Controller.start 6633;
-  Controller.update_policy repeater;
+  Deferred.don't_wait_for (Controller.update repeater);
   never_returns (Scheduler.go ());
 
 ~~~
 
-This main part of this code uses a Camlp4 quotation,
-<code><:netkat<... >></code> to switch into NetKAT syntax. The
-embedded NetKAT program uses a cascade of nested conditionals
+The main part of this code uses a ppx extension of OCaml syntax,
+<code>let%nk repeater = {| ... |}</code> to switch into NetKAT syntax.
+The embedded NetKAT program uses a cascade of nested conditionals
 (<code>if ... then ... else ...</code>) to match packets on each port
 (<code>port = 1</code>) and forward them out on all other ports
 (<code>port := 2 + port := 3 + port := 4</code>) except the one the
@@ -129,23 +128,29 @@ open Async.Std
 
 (* a simple repeater *)
 let all_ports : int32 list = [1l; 2l; 3l; 4l]
+let%nk drop = {| drop |}
 
 let flood (n : int32) : policy =
   List.fold_left
     all_ports
-    ~f: (fun pol m -> if n = m then pol else <:netkat<$pol + port := $m>>)
-    ~init: <:netkat<drop>> 
+    ~f: (fun pol m ->
+      let%nk flood = {| $pol + port:= $m |} in
+      if n = m then pol else flood)
+    ~init: drop
 
 let repeater : policy =
   List.fold_right
     all_ports 
-    ~f: (fun m pol -> let p = flood m in <:netkat<if port = $m then $p else $pol>>)
-    ~init: <:netkat<drop>>
+    ~f: (fun m pol ->
+      let p = flood m in
+      let%nk repeat = {| if port = $m then $p else $pol |} in
+      repeat)
+    ~init: drop
 
 let _ =
-  let module Controller = Frenetic_NetKAT_Controller.Make in
+  let module Controller = Frenetic_NetKAT_Controller.Make (Frenetic_OpenFlow0x01_Plugin) in
   Controller.start 6633;
-  Controller.update_policy repeater;
+  Deferred.don't_wait_for (Controller.update repeater);
   never_returns (Scheduler.go ());
 
 ~~~
