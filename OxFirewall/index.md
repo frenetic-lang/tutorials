@@ -107,10 +107,11 @@ packetIn{
 mininet> h1 python -m SimpleHTTPServer 80 &
 ~~~
 
-  * And run a HTTP request to h1 from h2
+  * And run a HTTP request to h1 from h2 (assuming h1 has ip address 10.0.0.1,
+    mininet does not resolve hostnames of hosts)
 
 ~~~
-mininet> h2 curl h1:80
+mininet> h2 curl 10.0.0.1:80
 ~~~
 
   * This command should succeed and you should see a directory listing for the tutorial directory. 
