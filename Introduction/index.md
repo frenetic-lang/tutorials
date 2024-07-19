@@ -59,7 +59,7 @@ installing it requires very little effort. First, launch the VirtualBox GUI on
 your Windows, Linux, or Mac OS host PC. Then:
 
  - Download the Frenetic tutorial VM OVA (Open Virtualization Appliance) located
-   [here](https://s3.amazonaws.com/plasma-umass/frenetic-tutorial-vm.ova).
+   [here](https://zenodo.org/records/12784852).
  - Navigate the menus to `File > Import Appliance...`. This will open a modal
    dialog instructing you to import the appliance.
  - Enter the path to the downloaded OVA file, or browse your file manager to
